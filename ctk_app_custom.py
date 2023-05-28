@@ -1,6 +1,6 @@
 import customtkinter as ctk
-
 class App(ctk.CTk):
+
     def __init__(self):
         super().__init__()
 
@@ -35,6 +35,10 @@ class App(ctk.CTk):
         self.sidebar_twitter_button = ctk.CTkButton(self.sidebar_frame, text = 'Twitter', command=self.sidebar_button_event)
         self.sidebar_twitter_button.grid(row=4, column=0, padx=20, pady=10)
 
+        # create textbox
+        self.textbox = ctk.CTkTextbox(self, width=250)
+        self.textbox.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+
         # create main entry and button
         self.entry = ctk.CTkEntry(self, placeholder_text="Entry your text here")
         self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
@@ -53,6 +57,9 @@ class App(ctk.CTk):
         self.scaling_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
                                                             command=self.change_scaling_event)
         self.scaling_optionemenu.grid(row=9, column=0, padx=20, pady=(10, 20))
+
+        # INTENTAR HACER ESTO FUNCIÓN Y PASARLO POR EL BOTÓN DEL INPUT
+        self.textbox.insert("0.0", "CTkTextbox\n\n" + "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.\n\n" * 20)
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
