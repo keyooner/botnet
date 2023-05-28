@@ -35,6 +35,13 @@ class App(ctk.CTk):
         self.sidebar_twitter_button = ctk.CTkButton(self.sidebar_frame, text = 'Twitter', command=self.sidebar_button_event)
         self.sidebar_twitter_button.grid(row=4, column=0, padx=20, pady=10)
 
+        # create main entry and button
+        self.entry = ctk.CTkEntry(self, placeholder_text="Entry your text here")
+        self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
+
+        self.main_button_1 = ctk.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
+        self.main_button_1.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
+
         # appearance mode labels
         self.appearance_mode_label = ctk.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=6, column=0, padx=20, pady=(10, 0))
