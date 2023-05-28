@@ -12,7 +12,7 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("CustomTkinter complex_example.py")
-        self.geometry(f"{1100}x{580}")
+        self.geometry('1100x580')
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -34,12 +34,12 @@ class App(customtkinter.CTk):
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
-                                                                       command=self.change_appearance_mode_event)
+                                                                        command=self.change_appearance_mode_event)
         self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
         self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
         self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
-                                                               command=self.change_scaling_event)
+                                                                command=self.change_scaling_event)
         self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
 
         # create main entry and button
@@ -69,7 +69,7 @@ class App(customtkinter.CTk):
                                                     values=["Value 1", "Value 2", "Value Long....."])
         self.combobox_1.grid(row=1, column=0, padx=20, pady=(10, 10))
         self.string_input_button = customtkinter.CTkButton(self.tabview.tab("CTkTabview"), text="Open CTkInputDialog",
-                                                           command=self.open_input_dialog_event)
+                                                            command=self.open_input_dialog_event)
         self.string_input_button.grid(row=2, column=0, padx=20, pady=(10, 10))
         self.label_tab_2 = customtkinter.CTkLabel(self.tabview.tab("Tab 2"), text="CTkLabel on Tab 2")
         self.label_tab_2.grid(row=0, column=0, padx=20, pady=20)
