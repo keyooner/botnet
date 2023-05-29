@@ -1,3 +1,4 @@
+import datetime
 import customtkinter as ctk
 class App(ctk.CTk):
 
@@ -43,7 +44,7 @@ class App(ctk.CTk):
         self.entry = ctk.CTkEntry(self, placeholder_text="Entry your text here")
         self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
 
-        self.main_button_1 = ctk.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.test_input_message_in_textbox)
+        self.main_button_1 = ctk.CTkButton(master=self, text="Send",fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.test_input_message_in_textbox)
         self.main_button_1.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
         # appearance mode labels
@@ -67,10 +68,11 @@ class App(ctk.CTk):
 
     def sidebar_button_event(self):
         print("sidebar_button click")
-
+    
     def test_input_message_in_textbox(self):
-        #self.textbox.insert("0.0", "CTkTextbox\n\n" + "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.\n\n" * 20)
-        self.textbox.insert("0.0", self.entry.get())
+
+        date_time = datetime.datetime.now()
+        self.textbox.insert("0.0", f'[{date_time}] $: ' + f"{self.entry.get()}\n\n")
         self.entry.delete(0, ctk.END)
 
 if __name__ == "__main__":
