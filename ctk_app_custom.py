@@ -1,5 +1,6 @@
 import datetime
 import customtkinter as ctk
+
 class App(ctk.CTk):
 
     def __init__(self):
@@ -69,10 +70,12 @@ class App(ctk.CTk):
     def sidebar_button_event(self):
         print("sidebar_button click")
     
-    def test_input_message_in_textbox(self):
+    def test_return_variable(self):
+        return 'Testing'
 
+    def test_input_message_in_textbox(self):
         date_time = datetime.datetime.now()
-        self.textbox.insert("0.0", f'[{date_time}] $: ' + f"{self.entry.get()}\n\n")
+        self.textbox.insert("0.0", f'[{date_time}] $: ' + f'{self.entry.get()} ' + self.test_return_variable() + '\n\n')
         self.entry.delete(0, ctk.END)
 
 if __name__ == "__main__":
