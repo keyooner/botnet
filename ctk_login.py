@@ -15,8 +15,8 @@ def login ():
         tkmb.showerror(title = 'Login failed', message = 'Invalid username or password')
 
 # Appearance window tkinter app
-ctk.set_appearance_mode('system') # Modes: system (default), light, dark
-ctk.set_default_color_theme('blue') # Themes: blue (default), dark-blue, green
+ctk.set_appearance_mode('light') # Modes: system (default), light, dark
+ctk.set_default_color_theme('green') # Themes: blue (default), dark-blue, green
 
 # Create main window tkinter app
 main_window = ctk.CTk()
