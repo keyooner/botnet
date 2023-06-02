@@ -113,14 +113,14 @@ class App(ctk.CTk):
 
         elif button == 'logout':
             print ('im logout button')
-            self.seg_button_1 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_2 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_2.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_3 = ctk.CTkButton(self.slider_options_frame, text="Text Here",)
-            self.seg_button_3.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_4 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_4.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.logout_label = ctk.CTkLabel(self.slider_options_frame, text="Are you sure?", anchor="center")
+            self.logout_label.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), columnspan=4)
+
+            self.logout_button_yes = ctk.CTkButton(self.slider_options_frame, text="Yes")
+            self.logout_button_yes.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
+
+            self.logout_button_no = ctk.CTkButton(self.slider_options_frame, text="No")
+            self.logout_button_no.grid(row=1, column=1, padx=(20, 10), pady=(10, 10), sticky="w")
     
     def test_return_variable(self):
         return 'Testing'
