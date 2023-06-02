@@ -25,16 +25,16 @@ class App(ctk.CTk):
         self.sidebar_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # sidebar buttons
-        self.sidebar_email_button = ctk.CTkButton(self.sidebar_frame, text = 'Emails', command=self.sidebar_button_event)
+        self.sidebar_email_button = ctk.CTkButton(self.sidebar_frame, text = 'Emails', command=lambda:self.test_slider_button_clicked('email'))
         self.sidebar_email_button.grid(row=1, column=0, padx=20, pady=10)
 
-        self.sidebar_vpn_button = ctk.CTkButton(self.sidebar_frame, text = 'VPN', command=self.sidebar_button_event)
+        self.sidebar_vpn_button = ctk.CTkButton(self.sidebar_frame, text = 'VPN', command=lambda:self.test_slider_button_clicked('vpn'))
         self.sidebar_vpn_button.grid(row=2, column=0, padx=20, pady=10)
 
-        self.sidebar_twitter_button = ctk.CTkButton(self.sidebar_frame, text = 'Twitter', command=self.sidebar_button_event)
+        self.sidebar_twitter_button = ctk.CTkButton(self.sidebar_frame, text = 'Twitter', command=lambda:self.test_slider_button_clicked('twitter'))
         self.sidebar_twitter_button.grid(row=3, column=0, padx=20, pady=10)
 
-        self.sidebar_logout_button = ctk.CTkButton(self.sidebar_frame, text = 'Log Out', command=self.sidebar_button_event)
+        self.sidebar_logout_button = ctk.CTkButton(self.sidebar_frame, text = 'Log Out', command=lambda:self.test_slider_button_clicked('logout'))
         self.sidebar_logout_button.grid(row=5, column=0, padx=20, pady=10)
 
         # create textbox
@@ -46,33 +46,6 @@ class App(ctk.CTk):
         self.slider_options_frame.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
         self.slider_options_frame.grid_columnconfigure(0, weight=1)
         self.slider_options_frame.grid_rowconfigure(4, weight=1)
-
-        def option_twitter(self):
-            self.seg_button_1 = ctk.CTkSegmentedButton(self.slider_options_frame)
-            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.progressbar_1 = ctk.CTkProgressBar(self.slider_options_frame)
-            self.progressbar_1.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.progressbar_2 = ctk.CTkProgressBar(self.slider_options_frame)
-            self.progressbar_2.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.slider_1 = ctk.CTkSlider(self.slider_options_frame, from_=0, to=1, number_of_steps=4)
-            self.slider_1.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.slider_2 = ctk.CTkSlider(self.slider_options_frame, orientation="vertical")
-            self.slider_2.grid(row=0, column=1, rowspan=5, padx=(10, 10), pady=(10, 10), sticky="ns")
-            self.progressbar_3 = ctk.CTkProgressBar(self.slider_options_frame, orientation="vertical")
-            self.progressbar_3.grid(row=0, column=2, rowspan=5, padx=(10, 20), pady=(10, 10), sticky="ns")
-
-        def option_emails(self):
-            self.seg_button_1 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_2 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_2.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_3 = ctk.CTkButton(self.slider_options_frame, text="Text Here",)
-            self.seg_button_3.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_4 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_4.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-
-        option_twitter(self)
-        #option_emails(self)
 
         # create main entry and button
         self.entry = ctk.CTkEntry(self, placeholder_text="Entry your text here")
@@ -100,8 +73,54 @@ class App(ctk.CTk):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         ctk.set_widget_scaling(new_scaling_float)
 
-    def sidebar_button_event(self):
-        print("sidebar_button click")
+    def test_slider_button_clicked(self, button):
+        if button == 'email':
+            print ('im email button')
+            self.seg_button_1 = ctk.CTkSegmentedButton(self.slider_options_frame)
+            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.progressbar_1 = ctk.CTkProgressBar(self.slider_options_frame)
+            self.progressbar_1.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.progressbar_2 = ctk.CTkProgressBar(self.slider_options_frame)
+            self.progressbar_2.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.slider_1 = ctk.CTkSlider(self.slider_options_frame, from_=0, to=1, number_of_steps=4)
+            self.slider_1.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.slider_2 = ctk.CTkSlider(self.slider_options_frame, orientation="vertical")
+            self.slider_2.grid(row=0, column=1, rowspan=5, padx=(10, 10), pady=(10, 10), sticky="ns")
+            self.progressbar_3 = ctk.CTkProgressBar(self.slider_options_frame, orientation="vertical")
+            self.progressbar_3.grid(row=0, column=2, rowspan=5, padx=(10, 20), pady=(10, 10), sticky="ns")
+            
+        elif button == 'vpn':
+            print ('im vpn button')
+            self.seg_button_1 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_2 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_2.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_3 = ctk.CTkButton(self.slider_options_frame, text="Text Here",)
+            self.seg_button_3.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_4 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_4.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+        
+        elif button == 'twitter':
+            print ('im twitter button')
+            self.seg_button_1 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_2 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_2.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_3 = ctk.CTkButton(self.slider_options_frame, text="Text Here",)
+            self.seg_button_3.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_4 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_4.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+
+        elif button == 'logout':
+            print ('im logout button')
+            self.seg_button_1 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_2 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_2.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_3 = ctk.CTkButton(self.slider_options_frame, text="Text Here",)
+            self.seg_button_3.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.seg_button_4 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
+            self.seg_button_4.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
     
     def test_return_variable(self):
         return 'Testing'
@@ -109,7 +128,7 @@ class App(ctk.CTk):
     def test_input_message_in_textbox(self):
         date_time = datetime.datetime.now()
         self.textbox.insert("0.0", f'[{date_time}] $: ' + f'{self.entry.get()} ' + self.test_return_variable() + '\n\n')
-        self.entry.delete(0, ctk.END)
+        self.entry.delete(0, ctk.END)        
 
 if __name__ == "__main__":
 
