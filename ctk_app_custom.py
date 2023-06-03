@@ -74,8 +74,17 @@ class App(ctk.CTk):
         ctk.set_widget_scaling(new_scaling_float)
 
     def test_slider_button_clicked(self, button):
+        for widget in self.slider_options_frame.winfo_children():
+            widget.destroy()
+
         if button == 'email':
             print ('im email button')
+            #disable and enable other buttons
+            self.sidebar_email_button.configure(state='disabled')
+            self.sidebar_vpn_button.configure(state='normal')
+            self.sidebar_twitter_button.configure(state='normal')
+            self.sidebar_logout_button.configure(state='normal')
+
             self.seg_button_1 = ctk.CTkSegmentedButton(self.slider_options_frame)
             self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
             self.progressbar_1 = ctk.CTkProgressBar(self.slider_options_frame)
@@ -91,17 +100,26 @@ class App(ctk.CTk):
             
         elif button == 'vpn':
             print ('im vpn button')
-            self.seg_button_1 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_2 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_2.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_3 = ctk.CTkButton(self.slider_options_frame, text="Text Here",)
-            self.seg_button_3.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_4 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_4.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            #disable and enable other buttons
+            self.sidebar_vpn_button.configure(state='disabled')
+            self.sidebar_email_button.configure(state='normal')
+            self.sidebar_twitter_button.configure(state='normal')
+            self.sidebar_logout_button.configure(state='normal')
+
+            self.vpn_label_option = ctk.CTkLabel(self.slider_options_frame, text='Vpn', justify='center')
+            self.vpn_label_option.grid(row=0, column=0, padx=(20,20), pady=(20,20), columnspan=5)
+
+            self.vpn_connect_button = ctk.CTkButton(self.slider_options_frame, text="CONNECT VPN")
+            self.vpn_connect_button.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
         
         elif button == 'twitter':
             print ('im twitter button')
+            #disable and enable other buttons
+            self.sidebar_twitter_button.configure(state='disabled')
+            self.sidebar_vpn_button.configure(state='normal')
+            self.sidebar_email_button.configure(state='normal')
+            self.sidebar_logout_button.configure(state='normal')
+
             self.seg_button_1 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
             self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
             self.seg_button_2 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
@@ -113,14 +131,23 @@ class App(ctk.CTk):
 
         elif button == 'logout':
             print ('im logout button')
-            self.logout_label = ctk.CTkLabel(self.slider_options_frame, text="Are you sure?", anchor="center")
-            self.logout_label.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), columnspan=4)
+            #disable and enable other buttons
+            self.sidebar_logout_button.configure(state='disabled')
+            self.sidebar_vpn_button.configure(state='normal')
+            self.sidebar_twitter_button.configure(state='normal')
+            self.sidebar_email_button.configure(state='normal')
+
+            self.logout_label_option = ctk.CTkLabel(self.slider_options_frame, text='LogOut', justify='center')
+            self.logout_label_option.grid(row=0, column=0, padx=(20,20), pady=(20,20), columnspan=5)
+
+            self.logout_label_quest = ctk.CTkLabel(self.slider_options_frame, text="Are you sure?", justify="center")
+            self.logout_label_quest.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), columnspan=4)
 
             self.logout_button_yes = ctk.CTkButton(self.slider_options_frame, text="Yes")
-            self.logout_button_yes.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
+            self.logout_button_yes.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
 
             self.logout_button_no = ctk.CTkButton(self.slider_options_frame, text="No")
-            self.logout_button_no.grid(row=1, column=1, padx=(20, 10), pady=(10, 10), sticky="w")
+            self.logout_button_no.grid(row=2, column=1, padx=(20, 10), pady=(10, 10), sticky="w")
     
     def test_return_variable(self):
         return 'Testing'
