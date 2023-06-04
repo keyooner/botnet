@@ -1,0 +1,29 @@
+import tkinter as tk
+import customtkinter as ctk
+
+def increase():
+    value = int(entry.get())
+    entry.delete(0, ctk.END)
+    entry.insert(0, str(value + 1))
+
+def decrease():
+    value = int(entry.get())
+    entry.delete(0, ctk.END)
+    entry.insert(0, str(value - 1))
+
+root = ctk.CTk()
+
+# Crear Entry con valor 0 por defecto
+entry = ctk.CTkEntry(root, width=10)
+entry.insert(0, "0")
+entry.grid(row=0, column=0, padx=10, pady=10)
+
+# Crear botón de aumento con un ancho menor
+increase_button = ctk.CTkButton(root, text="+", command=increase, width=2)
+increase_button.grid(row=0, column=1, padx=5)
+
+# Crear botón de disminución con un ancho menor
+decrease_button = ctk.CTkButton(root, text="-", command=decrease, width=2)
+decrease_button.grid(row=0, column=2, padx=5)
+
+root.mainloop()
