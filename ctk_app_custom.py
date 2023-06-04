@@ -51,8 +51,8 @@ class App(ctk.CTk):
         self.entry = ctk.CTkEntry(self, placeholder_text="Entry your text here")
         self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
 
-        self.main_button_1 = ctk.CTkButton(master=self, text="Send",fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.test_input_message_in_textbox)
-        self.main_button_1.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
+        self.entry_button_send = ctk.CTkButton(master=self, text="Send",fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.test_input_message_in_textbox)
+        self.entry_button_send.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
         # appearance mode labels
         self.appearance_mode_label = ctk.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
@@ -97,7 +97,7 @@ class App(ctk.CTk):
             self.slider_2.grid(row=0, column=1, rowspan=5, padx=(10, 10), pady=(10, 10), sticky="ns")
             self.progressbar_3 = ctk.CTkProgressBar(self.slider_options_frame, orientation="vertical")
             self.progressbar_3.grid(row=0, column=2, rowspan=5, padx=(10, 20), pady=(10, 10), sticky="ns")
-            
+
         elif button == 'vpn':
             print ('im vpn button')
             #disable and enable other buttons
@@ -106,12 +106,12 @@ class App(ctk.CTk):
             self.sidebar_twitter_button.configure(state='normal')
             self.sidebar_logout_button.configure(state='normal')
 
-            self.vpn_label_option = ctk.CTkLabel(self.slider_options_frame, text='Vpn', justify='center')
-            self.vpn_label_option.grid(row=0, column=0, padx=(20,20), pady=(20,20), columnspan=5)
+            self.vpn_label_option = ctk.CTkLabel(self.slider_options_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+            self.vpn_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
 
             self.vpn_connect_button = ctk.CTkButton(self.slider_options_frame, text="CONNECT VPN")
             self.vpn_connect_button.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-        
+
         elif button == 'twitter':
             print ('im twitter button')
             #disable and enable other buttons
@@ -120,14 +120,26 @@ class App(ctk.CTk):
             self.sidebar_email_button.configure(state='normal')
             self.sidebar_logout_button.configure(state='normal')
 
-            self.seg_button_1 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_1.grid(row=0, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_2 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_2.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_3 = ctk.CTkButton(self.slider_options_frame, text="Text Here",)
-            self.seg_button_3.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-            self.seg_button_4 = ctk.CTkButton(self.slider_options_frame, text="Text Here")
-            self.seg_button_4.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            #label option selected
+            self.twitter_label_option = ctk.CTkLabel(self.slider_options_frame, text='Twitter', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+            self.twitter_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
+
+            self.twitter_label_accounts = ctk.CTkLabel(
+                self.slider_options_frame,
+                text=f'Available accounts: {str(self.test_return_available_accounts_twitter())}',
+                justify='left',
+            )
+            self.twitter_label_accounts.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
+
+            self.twitter_label_interactions = ctk.CTkLabel(self.slider_options_frame, text='Select interactions: ', justify='right')
+            self.twitter_label_interactions.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="e")
+
+            self.twitter_button_like = ctk.CTkButton(self.slider_options_frame, text="Like")
+            self.twitter_button_like.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.twitter_button_rt = ctk.CTkButton(self.slider_options_frame, text="Retweet",)
+            self.twitter_button_rt.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+            self.twitter_button_cmnt = ctk.CTkButton(self.slider_options_frame, text="Comment")
+            self.twitter_button_cmnt.grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
 
         elif button == 'logout':
             print ('im logout button')
@@ -137,17 +149,19 @@ class App(ctk.CTk):
             self.sidebar_twitter_button.configure(state='normal')
             self.sidebar_email_button.configure(state='normal')
 
-            self.logout_label_option = ctk.CTkLabel(self.slider_options_frame, text='LogOut', justify='center')
-            self.logout_label_option.grid(row=0, column=0, padx=(20,20), pady=(20,20), columnspan=5)
+            #label option selected
+            self.logout_label_option = ctk.CTkLabel(self.slider_options_frame, text='LogOut', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+            self.logout_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
 
             self.logout_label_quest = ctk.CTkLabel(self.slider_options_frame, text="Are you sure?", justify="center")
             self.logout_label_quest.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), columnspan=4)
 
-            self.logout_button_yes = ctk.CTkButton(self.slider_options_frame, text="Yes")
-            self.logout_button_yes.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
+            #button option selected
+            self.logout_button_yes = ctk.CTkButton(self.slider_options_frame, text="Yes", anchor='center')
+            self.logout_button_yes.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="w")
 
-            self.logout_button_no = ctk.CTkButton(self.slider_options_frame, text="No")
-            self.logout_button_no.grid(row=2, column=1, padx=(20, 10), pady=(10, 10), sticky="w")
+            self.logout_button_no = ctk.CTkButton(self.slider_options_frame, text="No", anchor='center')
+            self.logout_button_no.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
     
     def test_return_variable(self):
         return 'Testing'
@@ -155,7 +169,10 @@ class App(ctk.CTk):
     def test_input_message_in_textbox(self):
         date_time = datetime.datetime.now()
         self.textbox.insert("0.0", f'[{date_time}] $: ' + f'{self.entry.get()} ' + self.test_return_variable() + '\n\n')
-        self.entry.delete(0, ctk.END)        
+        self.entry.delete(0, ctk.END)     
+
+    def test_return_available_accounts_twitter(self):
+        return 5   
 
 if __name__ == "__main__":
 
