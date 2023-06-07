@@ -114,6 +114,8 @@ class App(ctk.CTk):
         self.vpn_connect_button.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
 
     def twitter_option_button_clicked(self):
+        #añadir input para pegar urls y deshabilitar botones hasta que no se complete
+        #funcion que verifica url de twitter con botón check
         self.disable_option_button('twitter')
 
         #label option selected
@@ -122,7 +124,7 @@ class App(ctk.CTk):
 
         self.twitter_label_accounts = ctk.CTkLabel(
             self.slider_options_frame,
-            text=f'Max interactions: {self.test_return_available_accounts_twitter()}',
+            text=f'Max interactions available: {self.test_return_available_accounts_twitter()}',
             justify='left',
         )
         self.twitter_label_accounts.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
@@ -157,6 +159,9 @@ class App(ctk.CTk):
         self.logout_button_no.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
 
     def email_option_button_clicked(self):
+
+        # añadir tabla
+        #{'email': 'qeexcdof18780895@raptoragency.es', 'password': 'cemwzpey$@62920757', 'name': 'Rosalinda', 'surname': 'Iglesias', 'gender': 'female', 'day': '31', 'month': 'enero', 'year': '1985', 'user': 'lnr1see39egs1Il'}
         self.disable_option_button('emails')
 
         self.email_label_option = ctk.CTkLabel(self.slider_options_frame, text='Emails', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
@@ -165,9 +170,7 @@ class App(ctk.CTk):
         self.email_label_create = ctk.CTkLabel(self.slider_options_frame, text='Create accounts: ', justify='left')
         self.email_label_create.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
 
-        self.add_entry_valuable_button(0,10)
-
-        self.email_create_button = ctk.CTkButton(self.slider_options_frame, text="Create")
+        self.email_create_button = ctk.CTkButton(self.slider_options_frame, text="Create accounts")
         self.email_create_button.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
 
     def add_entry_valuable_button(self, min_value, max_value):
