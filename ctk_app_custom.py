@@ -25,7 +25,7 @@ class App(ctk.CTk):
         self.sidebar_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # sidebar buttons
-        self.sidebar_email_button = ctk.CTkButton(self.sidebar_frame, text = 'Emails', command=lambda:self.test_slider_button_clicked('email'))
+        self.sidebar_email_button = ctk.CTkButton(self.sidebar_frame, text = 'Emails', command=lambda:self.test_slider_button_clicked('emails'))
         self.sidebar_email_button.grid(row=1, column=0, padx=20, pady=10)
 
         self.sidebar_vpn_button = ctk.CTkButton(self.sidebar_frame, text = 'VPN', command=lambda:self.test_slider_button_clicked('vpn'))
@@ -66,6 +66,9 @@ class App(ctk.CTk):
                                                             command=self.change_scaling_event)
         self.scaling_optionemenu.grid(row=9, column=0, padx=20, pady=(10, 20))
 
+        #default settings
+        self.vpn_option_button_clicked()
+
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
 
@@ -74,49 +77,12 @@ class App(ctk.CTk):
         ctk.set_widget_scaling(new_scaling_float)
 
     def test_slider_button_clicked(self, button):
-        min_value = 0
-        max_value = 10
 
         for widget in self.slider_options_frame.winfo_children():
             widget.destroy()
 
-        def increase(self):
-            value = int(self.email_entry.get())
-            if value < max_value:
-                self.email_entry.delete(0, ctk.END)
-                self.email_entry.insert(0, str(value + 1))
-
-        def decrease(self):
-            value = int(self.email_entry.get())
-            if value > min_value:
-                self.email_entry.delete(0, ctk.END)
-                self.email_entry.insert(0, str(value - 1))
-
-        if button == 'email':
-            #disable and enable other buttons
-            self.sidebar_email_button.configure(state='disabled')
-            self.sidebar_vpn_button.configure(state='normal')
-            self.sidebar_twitter_button.configure(state='normal')
-            self.sidebar_logout_button.configure(state='normal')
-
-            self.email_label_option = ctk.CTkLabel(self.slider_options_frame, text='Emails', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-            self.email_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
-
-            self.email_label_create = ctk.CTkLabel(self.slider_options_frame, text='Create accounts: ', justify='left')
-            self.email_label_create.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
-
-            self.email_entry = ctk.CTkEntry(self.slider_options_frame, width=30)
-            self.email_entry.insert(0, "0")
-            self.email_entry.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="e")
-
-            self.email_increase_button = ctk.CTkButton(self.slider_options_frame, text='+', command=lambda:increase(self), width=2)
-            self.email_increase_button.grid(row=1, column=1, padx=(20,10), pady=(20,10))
-
-            self.email_decrease_button = ctk.CTkButton(self.slider_options_frame, text='-', command=lambda:decrease(self), width=2)
-            self.email_decrease_button.grid(row=1, column=2, padx=(20,10), pady=(20,10))
-
-            self.email_create_button = ctk.CTkButton(self.slider_options_frame, text="Create")
-            self.email_create_button.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+        if button == 'emails':
+            self.email_option_button_clicked()
 
         elif button == 'vpn':
             self.vpn_option_button_clicked()
@@ -156,13 +122,15 @@ class App(ctk.CTk):
 
         self.twitter_label_accounts = ctk.CTkLabel(
             self.slider_options_frame,
-            text=f'Available accounts: {self.test_return_available_accounts_twitter()}',
+            text=f'Max interactions: {self.test_return_available_accounts_twitter()}',
             justify='left',
         )
         self.twitter_label_accounts.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
 
         self.twitter_label_interactions = ctk.CTkLabel(self.slider_options_frame, text='Select interactions: ', justify='right')
         self.twitter_label_interactions.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="e")
+
+        self.add_entry_valuable_button(0,self.test_return_available_accounts_twitter())
 
         self.twitter_button_like = ctk.CTkButton(self.slider_options_frame, text="Like")
         self.twitter_button_like.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
@@ -187,6 +155,44 @@ class App(ctk.CTk):
 
         self.logout_button_no = ctk.CTkButton(self.slider_options_frame, text="No", anchor='center')
         self.logout_button_no.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
+
+    def email_option_button_clicked(self):
+        self.disable_option_button('emails')
+
+        self.email_label_option = ctk.CTkLabel(self.slider_options_frame, text='Emails', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        self.email_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
+
+        self.email_label_create = ctk.CTkLabel(self.slider_options_frame, text='Create accounts: ', justify='left')
+        self.email_label_create.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
+
+        self.add_entry_valuable_button(0,10)
+
+        self.email_create_button = ctk.CTkButton(self.slider_options_frame, text="Create")
+        self.email_create_button.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+
+    def add_entry_valuable_button(self, min_value, max_value):
+
+        def increase(self):
+            value = int(self.button_entry.get())
+            if value < max_value:
+                self.button_entry.delete(0, ctk.END)
+                self.button_entry.insert(0, str(value + 1))
+
+        def decrease(self):
+            value = int(self.button_entry.get())
+            if value > min_value:
+                self.button_entry.delete(0, ctk.END)
+                self.button_entry.insert(0, str(value - 1))
+
+        self.button_entry = ctk.CTkEntry(self.slider_options_frame, width=30)
+        self.button_entry.insert(0, "0")
+        self.button_entry.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="e")
+
+        self.button_increase = ctk.CTkButton(self.slider_options_frame, text='+', command=lambda:increase(self), width=2)
+        self.button_increase.grid(row=1, column=1, padx=(20,10), pady=(20,10))
+
+        self.button_decrease = ctk.CTkButton(self.slider_options_frame, text='-', command=lambda:decrease(self), width=2)
+        self.button_decrease.grid(row=1, column=2, padx=(20,10), pady=(20,10))        
 
     def disable_option_button(self,button):
         #enable other buttons
