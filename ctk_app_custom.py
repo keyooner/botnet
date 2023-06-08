@@ -1,5 +1,6 @@
 import datetime
 import customtkinter as ctk
+import re
 
 class App(ctk.CTk):
 
@@ -130,16 +131,22 @@ class App(ctk.CTk):
         self.twitter_label_accounts.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
 
         self.twitter_label_interactions = ctk.CTkLabel(self.slider_options_frame, text='Select interactions: ', justify='right')
-        self.twitter_label_interactions.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="e")
+        self.twitter_label_interactions.grid(row=2, column=0, padx=(20,10), pady=(20,10), sticky="e")
 
         self.add_entry_valuable_button(0,self.test_return_available_accounts_twitter())
 
-        self.twitter_button_like = ctk.CTkButton(self.slider_options_frame, text="Like")
-        self.twitter_button_like.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-        self.twitter_button_rt = ctk.CTkButton(self.slider_options_frame, text="Retweet",)
-        self.twitter_button_rt.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-        self.twitter_button_cmnt = ctk.CTkButton(self.slider_options_frame, text="Comment")
-        self.twitter_button_cmnt.grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+        # create entry urls
+        self.entry_twitter_url = ctk.CTkEntry(self.slider_options_frame, placeholder_text="Entry your twitter url here")
+        self.entry_twitter_url.grid(row=2, column=0, padx=(20, 10), pady=(20, 10), sticky="nsew")
+        self.twitter_url_button = ctk.CTkButton(self.slider_options_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
+        self.twitter_url_button.grid(row=2, column=1, padx=(20,10), pady=(20,10), sticky='w')
+    
+        self.twitter_button_like = ctk.CTkButton(self.slider_options_frame, text="Like", state='disabled')
+        self.twitter_button_like.grid(row=3, column=0, padx=(20, 10), pady=(10, 10), sticky="nsew")
+        self.twitter_button_rt = ctk.CTkButton(self.slider_options_frame, text="Retweet", state='disabled')
+        self.twitter_button_rt.grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky="nsew")
+        self.twitter_button_cmnt = ctk.CTkButton(self.slider_options_frame, text="Comment", state='disabled')
+        self.twitter_button_cmnt.grid(row=5, column=0, padx=(20, 10), pady=(10, 10), sticky="nsew")
 
     def logout_option_button_clicked(self):
         self.disable_option_button('logout')
@@ -212,6 +219,19 @@ class App(ctk.CTk):
             self.sidebar_email_button.configure(state='disabled')
         elif button == 'logout':
             self.sidebar_logout_button.configure(state='disabled')
+
+    def verify_twitter_url(self, url):
+        standard_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
+        if re.match(standard_url, url):
+            self.twitter_button_like.configure(state='normal')
+            self.twitter_button_rt.configure(state='normal')
+            self.twitter_button_cmnt.configure(state='normal')
+            print('is valid url')
+        else:
+            self.twitter_button_like.configure(state='disabled')
+            self.twitter_button_rt.configure(state='disabled')
+            self.twitter_button_cmnt.configure(state='disabled')
+                
 
 if __name__ == "__main__":
 
