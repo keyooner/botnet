@@ -25,9 +25,11 @@ class App(ctk.CTk):
         self.sidebar_frame = ctk.CTkFrame(self, width=140, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
+
         # label sidebar frame
         self.logo_label = ctk.CTkLabel(self.sidebar_frame, text="Options", font=ctk.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+
         # sidebar buttons
         self.sidebar_accounts_button = ctk.CTkButton(self.sidebar_frame, text="Accounts",command=lambda:self.sidebar_button_clicked('accounts'))
         self.sidebar_accounts_button.grid(row=1, column=0, padx=20, pady=10)
@@ -50,16 +52,8 @@ class App(ctk.CTk):
                                                                 command=self.change_scaling_event)
         self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
 
-        # create main entry and button
-        self.entry = ctk.CTkEntry(self, placeholder_text="CTkEntry")
-        self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
-
         self.main_button_1 = ctk.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
         self.main_button_1.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
-
-        # create textbox
-        self.textbox = ctk.CTkTextbox(self, width=250)
-        self.textbox.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         # create interactive options frame
         self.options_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -67,19 +61,26 @@ class App(ctk.CTk):
         self.options_frame.grid_columnconfigure(0, weight=1)
         self.options_frame.grid_rowconfigure(4, weight=1)
 
-        # create radiobutton frame
-        self.radiobutton_frame = ctk.CTkFrame(self)
-        self.radiobutton_frame.grid(row=0, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
-        self.radio_var = tkinter.IntVar(value=0)
-        self.label_radio_group = ctk.CTkLabel(master=self.radiobutton_frame, text="CTkRadioButton Group:")
-        self.label_radio_group.grid(row=0, column=2, columnspan=1, padx=10, pady=10, sticky="")
-        self.radio_button_1 = ctk.CTkRadioButton(master=self.radiobutton_frame, variable=self.radio_var, value=0)
-        self.radio_button_1.grid(row=1, column=2, pady=10, padx=20, sticky="n")
-        self.radio_button_2 = ctk.CTkRadioButton(master=self.radiobutton_frame, variable=self.radio_var, value=1)
-        self.radio_button_2.grid(row=2, column=2, pady=10, padx=20, sticky="n")
-        self.radio_button_3 = ctk.CTkRadioButton(master=self.radiobutton_frame, variable=self.radio_var, value=2)
-        self.radio_button_3.grid(row=3, column=2, pady=10, padx=20, sticky="n")
+        # create textbox frame
+        self.textbox_frame= ctk.CTkFrame(self, fg_color="transparent")
+        self.textbox = ctk.CTkTextbox(self, width=250)
+        self.textbox.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
+        # create main entry and button
+        self.entry = ctk.CTkEntry(self, placeholder_text="CTkEntry")
+        self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
+
+        # create profile data frame
+        self.profile_frame = ctk.CTkFrame(self)
+        self.profile_frame.grid(row=0, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
+        self.label_profile_data = ctk.CTkLabel(master=self.profile_frame, text="Profile Data", font=ctk.CTkFont(size=13, weight="bold"))
+        self.label_profile_data.grid(row=0, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_user = ctk.CTkLabel(master=self.profile_frame, text="User: @User")
+        self.label_profile_user.grid(row=1, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_name = ctk.CTkLabel(master=self.profile_frame, text="Name: Name")
+        self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text="Interactions Available: 10")
+        self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
 
         # create checkbox and switch frame
         self.checkbox_slider_frame = ctk.CTkFrame(self)
@@ -94,9 +95,8 @@ class App(ctk.CTk):
         # set default values
         self.checkbox_3.configure(state="disabled")
         self.checkbox_1.select()
-        self.radio_button_3.configure(state="disabled")
         self.appearance_mode_optionemenu.set("Dark")
-        self.scaling_optionemenu.set("90%")
+        self.scaling_optionemenu.set("80%")
         self.textbox.insert("0.0", "CTkTextbox\n\n" + "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.\n\n" * 20)
 
     def open_input_dialog_event(self):
@@ -116,7 +116,7 @@ class App(ctk.CTk):
             widget.destroy()
 
         if button == 'accounts':
-            self.vpn_option_button_clicked()
+            self.accounts_option_button_clicked()
 
         elif button == 'vpn':
             self.vpn_option_button_clicked()
@@ -127,6 +127,32 @@ class App(ctk.CTk):
         elif button == 'logout':
             self.logout_option_button_clicked()
 
+    def accounts_option_button_clicked(self):
+
+        self.disable_option_button('accounts')
+
+        #create scrollable frame for table
+        self.scrollable_table_frame = ctk.CTkScrollableFrame(self.options_frame, fg_color="transparent", label_text="Accounts")
+        self.scrollable_table_frame.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.scrollable_table_frame.grid_columnconfigure(0, weight=1)
+        self.scrollable_table_frame_values = []
+
+        #accounts available
+        table_values = [[1,"Paco","@pacolocao","dlkddldkld@mddd.com"]]
+        
+        print(table_values[0])
+        
+        for i in range(5):
+
+            table_accounts_available = CTkTable(self.scrollable_table_frame, row=1, column=4, values=table_values, header_color="#2cc985")
+            table_accounts_available.grid(row=i, column=0, padx=10, pady=(0,20))
+            self.scrollable_table_frame_values.append(table_accounts_available)
+        
+        #create button to create account
+        self.account_create_button = ctk.CTkButton(self.options_frame, text="Create account")
+        self.account_create_button.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+    
+    
     def vpn_option_button_clicked(self):
         self.disable_option_button('vpn')
 
@@ -140,40 +166,49 @@ class App(ctk.CTk):
         
         self.disable_option_button('twitter')
 
-        #label option selected
+       # label option selected
         self.twitter_label_option = ctk.CTkLabel(self.options_frame, text='Twitter', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.twitter_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
-
-        self.twitter_label_accounts = ctk.CTkLabel(
-            self.options_frame,
-            text=f'Max interactions available: {self.return_available_accounts_twitter()}',
-            justify='left',
-        )
-        self.twitter_label_accounts.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
+        self.twitter_label_option.pack(padx=(10,10), pady=(10,10))
 
         self.add_entry_valuable_button(0,self.return_available_accounts_twitter())
 
         # create entry urls
-        self.entry_twitter_url = ctk.CTkEntry(self.options_frame, placeholder_text="Entry your twitter url here")
-        self.entry_twitter_url.grid(row=2, column=0, padx=(20, 10), pady=(20, 10), sticky="nsew")
-        self.twitter_url_button = ctk.CTkButton(self.options_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
-        self.twitter_url_button.grid(row=2, column=1, padx=(20,10), pady=(20,10), sticky='w')
+        urls_container_frame = ctk.CTkFrame(self.options_frame)
+        urls_container_frame.pack(fill="x")
+        self.entry_twitter_url = ctk.CTkEntry(urls_container_frame, placeholder_text="Entry your twitter url here")
+        self.entry_twitter_url.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
+        self.twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
+        self.twitter_url_button.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
 
-        # create checkboxs
-        self.twitter_checkbox_like = ctk.CTkCheckBox(self.options_frame, text='Like', state='disabled')
-        self.twitter_checkbox_like.grid(row=3, column=0, pady=(20, 0), padx=20, sticky="e")
-        self.twitter_checkbox_rt = ctk.CTkCheckBox(self.options_frame, text='Retweet', state='disabled')
-        self.twitter_checkbox_rt.grid(row=3, column=0, pady=(20, 0), padx=20, sticky="w")
-        self.twitter_checkbox_cmnt = ctk.CTkCheckBox(self.options_frame, text='Comment', state='disabled')
-        self.twitter_checkbox_cmnt.grid(row=3, column=1, pady=(20, 0), padx=20, sticky="nsew")
-        self.twitter_button_action = ctk.CTkButton(self.options_frame, text="Do it", state='disabled')
-        self.twitter_button_action.grid(row=6, column=0, padx=(20, 10), pady=(10, 10), sticky="nsew")
+        # create checkboxes
+        checkbox_container_frame = ctk.CTkFrame(self.options_frame)
+        checkbox_container_frame.pack()
+
+        self.twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='disabled')
+        self.twitter_checkbox_like.pack(side="left", padx=(20,10), pady=(20,10))
+        self.twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='disabled')
+        self.twitter_checkbox_rt.pack(side="left", padx=(20,10), pady=(20,10))
+        self.twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='disabled')
+        self.twitter_checkbox_cmnt.pack(side="left", padx=(20,10), pady=(20,10))
+        self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
+        self.twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
+        self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled')
+        self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10))
+
 
     def return_available_accounts_twitter(self):
         return 5
 
     def add_entry_valuable_button(self, min_value, max_value):
+        
+        def validate_entry(text):
+            if (text.isdigit() or text == ""):
+                return True
+            else:
+                return False
 
+        validate_command = self.options_frame.register(validate_entry)
+        
         def increase(self):
             value = int(self.button_entry.get())
             if value < max_value:
@@ -186,15 +221,29 @@ class App(ctk.CTk):
                 self.button_entry.delete(0, ctk.END)
                 self.button_entry.insert(0, str(value - 1))
 
-        self.button_entry = ctk.CTkEntry(self.options_frame, width=30)
+        container = ctk.CTkFrame(self.options_frame)
+        container.pack(fill="x")
+
+        self.twitter_label_accounts = ctk.CTkLabel(
+            container,
+            text=f'Max interactions available: {self.return_available_accounts_twitter()}',
+        )
+        self.twitter_label_accounts.pack(side="top", padx=5, pady=5)
+
+        self.twitter_label_interactions = ctk.CTkLabel(container, text="Select number of interactions: ")
+        self.twitter_label_interactions.pack(side="left", padx=5, pady=5, anchor="center")
+
+        self.button_entry = ctk.CTkEntry(container, width=30, validate="key", validatecommand=(validate_command, "%P"))
         self.button_entry.insert(0, "0")
-        self.button_entry.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="e")
+        self.button_entry.pack(side="left", padx=5, pady=5, anchor="center")
 
-        self.button_increase = ctk.CTkButton(self.options_frame, text='+', command=lambda:increase(self), width=2)
-        self.button_increase.grid(row=1, column=1, padx=(20,10), pady=(20,10))
+        self.button_increase = ctk.CTkButton(container, text='+', command=lambda:increase(self), width=2)
+        self.button_increase.pack(side="left", padx=5, pady=5, anchor="center")
 
-        self.button_decrease = ctk.CTkButton(self.options_frame, text='-', command=lambda:decrease(self), width=2)
-        self.button_decrease.grid(row=1, column=2, padx=(20,10), pady=(20,10))
+        self.button_decrease = ctk.CTkButton(container, text='-', command=lambda:decrease(self), width=2)
+        self.button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
+
+
 
     def verify_twitter_url(self, url):
         standard_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
@@ -202,11 +251,13 @@ class App(ctk.CTk):
             self.twitter_checkbox_like.configure(state='normal')
             self.twitter_checkbox_rt.configure(state='normal')
             self.twitter_checkbox_cmnt.configure(state='normal')
+            self.twitter_checkbox_follow.configure(state='normal')
             self.twitter_button_action.configure(state='normal')
         else:
             self.twitter_checkbox_like.configure(state='disabled')
             self.twitter_checkbox_rt.configure(state='disabled')
             self.twitter_checkbox_cmnt.configure(state='disabled')
+            self.twitter_checkbox_follow.configure(state='disabled')
             self.twitter_button_action.configure(state='disabled')
                 
 
