@@ -1,6 +1,7 @@
 import datetime
 import customtkinter as ctk
 import re
+from CTkTable import *
 
 class App(ctk.CTk):
 
@@ -9,7 +10,7 @@ class App(ctk.CTk):
 
         # configure window
         self.title("BotNet Twitter")
-        self.geometry('1100x580')
+        self.geometry('1100x640')
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight = 1)
@@ -26,8 +27,8 @@ class App(ctk.CTk):
         self.sidebar_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # sidebar buttons
-        self.sidebar_email_button = ctk.CTkButton(self.sidebar_frame, text = 'Emails', command=lambda:self.test_slider_button_clicked('emails'))
-        self.sidebar_email_button.grid(row=1, column=0, padx=20, pady=10)
+        self.sidebar_accounts_button = ctk.CTkButton(self.sidebar_frame, text = 'Accounts', command=lambda:self.test_slider_button_clicked('accounts'))
+        self.sidebar_accounts_button.grid(row=1, column=0, padx=20, pady=10)
 
         self.sidebar_vpn_button = ctk.CTkButton(self.sidebar_frame, text = 'VPN', command=lambda:self.test_slider_button_clicked('vpn'))
         self.sidebar_vpn_button.grid(row=2, column=0, padx=20, pady=10)
@@ -82,8 +83,8 @@ class App(ctk.CTk):
         for widget in self.slider_options_frame.winfo_children():
             widget.destroy()
 
-        if button == 'emails':
-            self.email_option_button_clicked()
+        if button == 'accounts':
+            self.accounts_option_button_clicked()
 
         elif button == 'vpn':
             self.vpn_option_button_clicked()
@@ -130,9 +131,6 @@ class App(ctk.CTk):
         )
         self.twitter_label_accounts.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
 
-        self.twitter_label_interactions = ctk.CTkLabel(self.slider_options_frame, text='Select interactions: ', justify='right')
-        self.twitter_label_interactions.grid(row=2, column=0, padx=(20,10), pady=(20,10), sticky="e")
-
         self.add_entry_valuable_button(0,self.test_return_available_accounts_twitter())
 
         # create entry urls
@@ -147,6 +145,8 @@ class App(ctk.CTk):
         self.twitter_button_rt.grid(row=4, column=0, padx=(20, 10), pady=(10, 10), sticky="nsew")
         self.twitter_button_cmnt = ctk.CTkButton(self.slider_options_frame, text="Comment", state='disabled')
         self.twitter_button_cmnt.grid(row=5, column=0, padx=(20, 10), pady=(10, 10), sticky="nsew")
+        self.twitter_button_all = ctk.CTkButton(self.slider_options_frame, text="Like Rt Comment", state='disabled')
+        self.twitter_button_all.grid(row=6, column=0, padx=(20, 10), pady=(10, 10), sticky="nsew")
 
     def logout_option_button_clicked(self):
         self.disable_option_button('logout')
@@ -165,20 +165,35 @@ class App(ctk.CTk):
         self.logout_button_no = ctk.CTkButton(self.slider_options_frame, text="No", anchor='center')
         self.logout_button_no.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
 
-    def email_option_button_clicked(self):
+    def accounts_option_button_clicked(self):
 
-        # añadir tabla
-        #{'email': 'qeexcdof18780895@raptoragency.es', 'password': 'cemwzpey$@62920757', 'name': 'Rosalinda', 'surname': 'Iglesias', 'gender': 'female', 'day': '31', 'month': 'enero', 'year': '1985', 'user': 'lnr1see39egs1Il'}
-        self.disable_option_button('emails')
+        self.disable_option_button('accounts')
 
-        self.email_label_option = ctk.CTkLabel(self.slider_options_frame, text='Emails', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.email_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
+        self.accounts_label_option = ctk.CTkLabel(self.slider_options_frame, text='Accounts', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        self.accounts_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10))
 
-        self.email_label_create = ctk.CTkLabel(self.slider_options_frame, text='Create accounts: ', justify='left')
-        self.email_label_create.grid(row=1, column=0, padx=(20,10), pady=(20,10), sticky="w")
+        #accounts available
+        table_values = [[1,2,3,4,5],
+            [1,2,3,4,5],
+            [1,2,3,4,5],
+            [1,2,3,4,5],
+            [1,2,3,4,5]]
+        
+        #create table
+        table_accounts_available = CTkTable(self.slider_options_frame, row=5, column=5, values=table_values)
+        
 
-        self.email_create_button = ctk.CTkButton(self.slider_options_frame, text="Create accounts")
-        self.email_create_button.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+        #create vertical scrollbar
+        #table_scrollbar = ctk.CTkScrollbar(self.slider_options_frame, command=table_accounts_available.yview)
+        #table_accounts_available.configure(yscrollcommand=table_scrollbar.set)
+
+        #scrollbar and table location
+        table_accounts_available.grid(row=1, column=0, sticky='nsew')
+        #table_scrollbar.grid(row=1, column=1, sticky='ns')
+
+        #create button to create account
+        self.account_create_button = ctk.CTkButton(self.slider_options_frame, text="Create account")
+        self.account_create_button.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
 
     def add_entry_valuable_button(self, min_value, max_value):
 
@@ -207,7 +222,7 @@ class App(ctk.CTk):
     def disable_option_button(self,button):
         #enable other buttons
         self.sidebar_vpn_button.configure(state='normal')
-        self.sidebar_email_button.configure(state='normal')
+        self.sidebar_accounts_button.configure(state='normal')
         self.sidebar_twitter_button.configure(state='normal')
         self.sidebar_logout_button.configure(state='normal')
         #disable specific button
@@ -215,8 +230,8 @@ class App(ctk.CTk):
             self.sidebar_twitter_button.configure(state='disabled')
         elif button == 'vpn':
             self.sidebar_vpn_button.configure(state='disabled')
-        elif button == 'emails':
-            self.sidebar_email_button.configure(state='disabled')
+        elif button == 'accounts':
+            self.sidebar_accounts_button.configure(state='disabled')
         elif button == 'logout':
             self.sidebar_logout_button.configure(state='disabled')
 
@@ -226,11 +241,12 @@ class App(ctk.CTk):
             self.twitter_button_like.configure(state='normal')
             self.twitter_button_rt.configure(state='normal')
             self.twitter_button_cmnt.configure(state='normal')
-            print('is valid url')
+            self.twitter_button_all.configure(state='normal')
         else:
             self.twitter_button_like.configure(state='disabled')
             self.twitter_button_rt.configure(state='disabled')
             self.twitter_button_cmnt.configure(state='disabled')
+            self.twitter_button_all.configure(state='disabled')
                 
 
 if __name__ == "__main__":
