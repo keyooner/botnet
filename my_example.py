@@ -52,9 +52,6 @@ class App(ctk.CTk):
                                                                 command=self.change_scaling_event)
         self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
 
-        self.main_button_1 = ctk.CTkButton(master=self, fg_color="transparent", border_width=2, text_color=("gray10", "#DCE4EE"))
-        self.main_button_1.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
-
         # create interactive options frame
         self.options_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.options_frame.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
@@ -63,12 +60,19 @@ class App(ctk.CTk):
 
         # create textbox frame
         self.textbox_frame= ctk.CTkFrame(self, fg_color="transparent")
-        self.textbox = ctk.CTkTextbox(self, width=250)
-        self.textbox.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox_frame.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox = ctk.CTkTextbox(self.textbox_frame, width=700, state="disabled")
+        self.textbox.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+
+        self.textbox_frame.columnconfigure(0, weight=1)
+        self.textbox_frame.rowconfigure(0, weight=1)
+
 
         # create main entry and button
-        self.entry = ctk.CTkEntry(self, placeholder_text="CTkEntry")
+        self.entry = ctk.CTkEntry(self, placeholder_text="Entry your text here")
         self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
+        self.entry_button = ctk.CTkButton(master=self, fg_color="transparent", text="Send", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.input_message_in_textbox)
+        self.entry_button.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
         # create profile data frame
         self.profile_frame = ctk.CTkFrame(self)
@@ -97,7 +101,6 @@ class App(ctk.CTk):
         self.checkbox_1.select()
         self.appearance_mode_optionemenu.set("Dark")
         self.scaling_optionemenu.set("80%")
-        self.textbox.insert("0.0", "CTkTextbox\n\n" + "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.\n\n" * 20)
 
     def open_input_dialog_event(self):
         dialog = ctk.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
@@ -133,19 +136,16 @@ class App(ctk.CTk):
 
         #create scrollable frame for table
         self.scrollable_table_frame = ctk.CTkScrollableFrame(self.options_frame, fg_color="transparent", label_text="Accounts")
-        self.scrollable_table_frame.grid(row=1, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.scrollable_table_frame.grid(row=0, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
         self.scrollable_table_frame.grid_columnconfigure(0, weight=1)
         self.scrollable_table_frame_values = []
 
         #accounts available
         table_values = [[1,"Paco","@pacolocao","dlkddldkld@mddd.com"]]
         
-        print(table_values[0])
-        
-        for i in range(5):
-
+        for i in range(15):
             table_accounts_available = CTkTable(self.scrollable_table_frame, row=1, column=4, values=table_values, header_color="#2cc985")
-            table_accounts_available.grid(row=i, column=0, padx=10, pady=(0,20))
+            table_accounts_available.grid(row=i, column=0, padx=5, pady=5)
             self.scrollable_table_frame_values.append(table_accounts_available)
         
         #create button to create account
@@ -157,24 +157,29 @@ class App(ctk.CTk):
         self.disable_option_button('vpn')
 
         self.vpn_label_option = ctk.CTkLabel(self.options_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.vpn_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
+        self.vpn_label_option.pack(padx=(10,10), pady=(10,10))
 
-        self.vpn_connect_button = ctk.CTkButton(self.options_frame, text="CONNECT VPN")
-        self.vpn_connect_button.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
+        vpn_container_frame = ctk.CTkFrame(self.options_frame)
+        vpn_container_frame.pack(fill="x")
+
+        self.vpn_connect_button = ctk.CTkButton(vpn_container_frame, text="CONNECT", command=self.vpn_connect_clicked)
+        self.vpn_connect_button.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
     
     def twitter_option_button_clicked(self):
         
         self.disable_option_button('twitter')
 
-       # label option selected
+        # label option selected
         self.twitter_label_option = ctk.CTkLabel(self.options_frame, text='Twitter', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
         self.twitter_label_option.pack(padx=(10,10), pady=(10,10))
 
         self.add_entry_valuable_button(0,self.return_available_accounts_twitter())
 
-        # create entry urls
+        # create urls container frame
         urls_container_frame = ctk.CTkFrame(self.options_frame)
         urls_container_frame.pack(fill="x")
+        
+        # create entry urls
         self.entry_twitter_url = ctk.CTkEntry(urls_container_frame, placeholder_text="Entry your twitter url here")
         self.entry_twitter_url.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
         self.twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
@@ -182,7 +187,7 @@ class App(ctk.CTk):
 
         # create checkboxes
         checkbox_container_frame = ctk.CTkFrame(self.options_frame)
-        checkbox_container_frame.pack()
+        checkbox_container_frame.pack(fill="x")
 
         self.twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='disabled')
         self.twitter_checkbox_like.pack(side="left", padx=(20,10), pady=(20,10))
@@ -193,7 +198,7 @@ class App(ctk.CTk):
         self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
         self.twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
         self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled')
-        self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10))
+        self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
 
 
     def return_available_accounts_twitter(self):
@@ -202,13 +207,10 @@ class App(ctk.CTk):
     def add_entry_valuable_button(self, min_value, max_value):
         
         def validate_entry(text):
-            if (text.isdigit() or text == ""):
-                return True
-            else:
-                return False
+            return bool(text.isdigit() or text == "")
 
         validate_command = self.options_frame.register(validate_entry)
-        
+
         def increase(self):
             value = int(self.button_entry.get())
             if value < max_value:
@@ -243,7 +245,9 @@ class App(ctk.CTk):
         self.button_decrease = ctk.CTkButton(container, text='-', command=lambda:decrease(self), width=2)
         self.button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
 
-
+    def vpn_connect_clicked(self):
+        # if connect vpn return true --> Text Disconnect and change command
+        self.vpn_connect_button.configure(text="DISCONNECT") #add: , command=self.vpn_disconnect_clicked
 
     def verify_twitter_url(self, url):
         standard_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
@@ -264,19 +268,33 @@ class App(ctk.CTk):
     def logout_option_button_clicked(self):
         self.disable_option_button('logout')
 
-        #label option selected
-        self.logout_label_option = ctk.CTkLabel(self.options_frame, text='LogOut', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.logout_label_option.grid(row=0, column=0, padx=(10,10), pady=(10,10), columnspan=5)
+        #create logout container frame
+        logout_container_frame = ctk.CTkFrame(self.options_frame)
+        logout_container_frame.pack(fill="both", expand=True)
 
-        self.logout_label_quest = ctk.CTkLabel(self.options_frame, text="Are you sure?", justify="center")
-        self.logout_label_quest.grid(row=1, column=0, padx=(20, 10), pady=(10, 10), columnspan=4)
+        #label option selected
+        self.logout_label_option = ctk.CTkLabel(logout_container_frame, text='LogOut', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        self.logout_label_option.pack(padx=(10,10), pady=(10,10))
+
+        self.logout_label_quest = ctk.CTkLabel(logout_container_frame, text="Are you sure?", justify="center")
+        self.logout_label_quest.pack(padx=(20, 10), pady=(10, 10))
 
         #button option selected
-        self.logout_button_yes = ctk.CTkButton(self.options_frame, text="Yes", anchor='center')
-        self.logout_button_yes.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="w")
+        self.logout_button_yes = ctk.CTkButton(logout_container_frame, text="Yes", anchor='center')
+        self.logout_button_yes.pack(side="top", padx=10, pady=10)
 
-        self.logout_button_no = ctk.CTkButton(self.options_frame, text="No", anchor='center')
-        self.logout_button_no.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="e")
+        self.logout_button_no = ctk.CTkButton(logout_container_frame, text="No", anchor='center')
+        self.logout_button_no.pack(side="top", padx=10, pady=10)
+
+    def test_return_variable(self):
+        return 'return variable'
+
+    def input_message_in_textbox(self):
+        date_time = datetime.datetime.now()
+        self.textbox.configure(state="normal")
+        self.textbox.insert("0.0", f'[{date_time}] $: ' + f'{self.entry.get()} ' + self.test_return_variable() + '\n\n')
+        self.entry.delete(0, ctk.END)
+        self.textbox.configure(state="disabled")
 
     def disable_option_button(self,button):
         #enable other buttons
