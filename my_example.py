@@ -156,6 +156,17 @@ class App(ctk.CTk):
         self.create_account_button = ctk.CTkButton(button_frame, text="Create account")
         self.create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
     
+    def vpn_option_button_clicked(self):
+        self.disable_option_button('vpn')
+
+        vpn_container_frame = ctk.CTkFrame(self.options_frame, fg_color="transparent")
+        vpn_container_frame.pack(fill="x", expand=True)
+        self.vpn_label_option = ctk.CTkLabel(vpn_container_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        self.vpn_label_option.pack(padx=(10,10), pady=(10,10))
+
+        self.vpn_connect_button = ctk.CTkButton(self.options_frame, text="CONNECT", command=self.vpn_connect_clicked)
+        self.vpn_connect_button.pack(padx=(20, 10), pady=(10, 10), fill="both")
+
     def twitter_option_button_clicked(self):
         
         self.disable_option_button('twitter')
