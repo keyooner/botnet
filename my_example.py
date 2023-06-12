@@ -136,34 +136,25 @@ class App(ctk.CTk):
 
         #create scrollable frame for table
         self.scrollable_table_frame = ctk.CTkScrollableFrame(self.options_frame, fg_color="transparent", label_text="Accounts")
-        self.scrollable_table_frame.grid(row=0, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.scrollable_table_frame.pack(side="top", padx=(20, 0), pady=(20, 0), fill="both", expand=True)
         self.scrollable_table_frame.grid_columnconfigure(0, weight=1)
         self.scrollable_table_frame_values = []
 
         #accounts available
-        table_values = [[1,"Paco","@pacolocao","dlkddldkld@mddd.com"]]
-        
-        for i in range(15):
+        table_values = [[1, "Paco", "@pacolocao", "dlkddldkld@mddd.com"]]
+
+        for _ in range(15):
             table_accounts_available = CTkTable(self.scrollable_table_frame, row=1, column=4, values=table_values, header_color="#2cc985")
-            table_accounts_available.grid(row=i, column=0, padx=5, pady=5)
+            table_accounts_available.pack(side="top", padx=5, pady=5)
             self.scrollable_table_frame_values.append(table_accounts_available)
-        
+
+        #create frame for the button
+        button_frame = ctk.CTkFrame(self.options_frame, fg_color="transparent")
+        button_frame.pack(side="top", fill="x")
+
         #create button to create account
-        self.account_create_button = ctk.CTkButton(self.options_frame, text="Create account")
-        self.account_create_button.grid(row=2, column=0, padx=(20, 10), pady=(10, 10), sticky="ew")
-    
-    
-    def vpn_option_button_clicked(self):
-        self.disable_option_button('vpn')
-
-        self.vpn_label_option = ctk.CTkLabel(self.options_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.vpn_label_option.pack(padx=(10,10), pady=(10,10))
-
-        vpn_container_frame = ctk.CTkFrame(self.options_frame)
-        vpn_container_frame.pack(fill="x")
-
-        self.vpn_connect_button = ctk.CTkButton(vpn_container_frame, text="CONNECT", command=self.vpn_connect_clicked)
-        self.vpn_connect_button.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
+        self.create_account_button = ctk.CTkButton(button_frame, text="Create account")
+        self.create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
     
     def twitter_option_button_clicked(self):
         
