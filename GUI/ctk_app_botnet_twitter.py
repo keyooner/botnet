@@ -4,7 +4,7 @@ import re
 from CTkTable import *
 from PIL import Image
 
-ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
+ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
 
 class App(ctk.CTk):
@@ -57,6 +57,14 @@ class App(ctk.CTk):
         self.options_frame.grid_columnconfigure(0, weight=1)
         self.options_frame.grid_rowconfigure(4, weight=1)
 
+        # welcome image on options frame
+        welcome_image = ctk.CTkImage(light_image=Image.open("GUI/images/welmoce_light.png"),
+                                dark_image=Image.open("GUI/images/welcome_dark.png"),
+                                size=(800, 300))
+
+        welcome_image_label = ctk.CTkLabel(self.options_frame, image=welcome_image, text="")
+        welcome_image_label.pack(anchor="center", expand=True)
+
         # create textbox frame
         self.textbox_frame= ctk.CTkFrame(self, fg_color="transparent")
         self.textbox_frame.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
@@ -95,10 +103,6 @@ class App(ctk.CTk):
         image_label = ctk.CTkLabel(self.checkbox_slider_frame, image=my_image, text="")
         image_label.pack(anchor="center", expand=True)
 
-        # set default values
-        self.appearance_mode_optionemenu.set("Dark")
-        self.scaling_optionemenu.set("80%")
-
 #! ---------------------- methods ------------------------------
 
     def open_input_dialog_event(self):
@@ -110,7 +114,7 @@ class App(ctk.CTk):
 
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
-        ctk.set_widget_scaling(new_scaling_float)
+        ctk.set_widget_scaling(new_scaling_float)        
 
     def sidebar_button_clicked(self, button):
 
