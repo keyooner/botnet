@@ -88,8 +88,8 @@ class App(ctk.CTk):
         # create checkbox and switch frame
         self.checkbox_slider_frame = ctk.CTkFrame(self)
         self.checkbox_slider_frame.grid(row=1, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
-        my_image = ctk.CTkImage(light_image=Image.open("images/botnet_light.png"),
-                                dark_image=Image.open("images/botnet_dark.png"),
+        my_image = ctk.CTkImage(light_image=Image.open("GUI/images/botnet_light.png"),
+                                dark_image=Image.open("GUI/images/botnet_dark.png"),
                                 size=(100, 100))
 
         image_label = ctk.CTkLabel(self.checkbox_slider_frame, image=my_image, text="")
