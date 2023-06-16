@@ -1,5 +1,4 @@
 strings_encrypt.py
-GUI/images/welcome_light.tif
-GUI/images/welcome_dark.tif
+*.tif
 geckodriver.log
 CUSTOMTKINTER.url
