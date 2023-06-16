@@ -2,11 +2,10 @@ import datetime
 import customtkinter as ctk
 import re
 from CTkTable import *
-import tkinter
+from PIL import Image
 
 ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
-
 
 class App(ctk.CTk):
     def __init__(self):
@@ -89,18 +88,18 @@ class App(ctk.CTk):
         # create checkbox and switch frame
         self.checkbox_slider_frame = ctk.CTkFrame(self)
         self.checkbox_slider_frame.grid(row=1, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
-        self.checkbox_1 = ctk.CTkCheckBox(master=self.checkbox_slider_frame)
-        self.checkbox_1.grid(row=1, column=0, pady=(20, 0), padx=20, sticky="n")
-        self.checkbox_2 = ctk.CTkCheckBox(master=self.checkbox_slider_frame)
-        self.checkbox_2.grid(row=2, column=0, pady=(20, 0), padx=20, sticky="n")
-        self.checkbox_3 = ctk.CTkCheckBox(master=self.checkbox_slider_frame)
-        self.checkbox_3.grid(row=3, column=0, pady=20, padx=20, sticky="n")
+        my_image = ctk.CTkImage(light_image=Image.open("images/botnet_light.png"),
+                                dark_image=Image.open("images/botnet_dark.png"),
+                                size=(100, 100))
+
+        image_label = ctk.CTkLabel(self.checkbox_slider_frame, image=my_image, text="")
+        image_label.pack(anchor="center", expand=True)
 
         # set default values
-        self.checkbox_3.configure(state="disabled")
-        self.checkbox_1.select()
         self.appearance_mode_optionemenu.set("Dark")
         self.scaling_optionemenu.set("80%")
+
+#! ---------------------- methods ------------------------------
 
     def open_input_dialog_event(self):
         dialog = ctk.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")

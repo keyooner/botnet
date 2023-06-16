@@ -1,44 +1,32 @@
-import tkinter as tk
-from tkinter import ttk
+from cryptography.fernet import Fernet
 
-# Datos de ejemplo para la tabla
-datos = [
-    ("Juan", "Pérez", 25),
-    ("María", "López", 30),
-    ("Pedro", "Gómez", 35),
-    ("Laura", "Rodríguez", 28)
-]
+# we will be encrypting the below string.
+message = "hello geeks"
 
-# Crear la ventana principal
-ventana = tk.Tk()
+# generate a key for encryption and decryption
+# You can use fernet to generate
+# the key or use random key generator
+# here I'm using fernet to generate key
 
-# Crear el objeto Treeview
-tabla = ttk.Treeview(ventana)
+key = Fernet.generate_key()
 
-# Configurar las columnas de la tabla
-tabla["columns"] = ("Nombre", "Apellido", "Edad")
-tabla.column("#0", width=0, stretch=tk.NO)  # Columna oculta para índices
-tabla.column("Nombre", width=100)
-tabla.column("Apellido", width=100)
-tabla.column("Edad", width=50)
+# Instance the Fernet class with the key
 
-# Encabezados de las columnas
-tabla.heading("#0", text="")
-tabla.heading("Nombre", text="Nombre")
-tabla.heading("Apellido", text="Apellido")
-tabla.heading("Edad", text="Edad")
+fernet = Fernet(key)
 
-# Insertar los datos en la tabla
-for i, (nombre, apellido, edad) in enumerate(datos, start=1):
-    tabla.insert(parent="", index="end", iid=i, text="", values=(nombre, apellido, edad))
+# then use the Fernet class instance
+# to encrypt the string string must
+# be encoded to byte string before encryption
+encMessage = fernet.encrypt(message.encode())
 
-# Crear una barra de desplazamiento vertical
-scrollbar = ttk.Scrollbar(ventana, orient="vertical", command=tabla.yview)
-tabla.configure(yscrollcommand=scrollbar.set)
+print("original string: ", message)
+print("encrypted string: ", encMessage)
 
-# Ubicar la barra de desplazamiento y la tabla
-tabla.pack(side=tk.LEFT, fill=tk.Y)
-scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+# decrypt the encrypted string with the
+# Fernet instance of the key,
+# that was used for encrypting the string
+# encoded byte string is returned by decrypt method,
+# so decode it to string with decode methods
+decMessage = fernet.decrypt(encMessage).decode()
 
-# Ejecutar el bucle principal de la ventana
-ventana.mainloop()
+print("decrypted string: ", decMessage)
