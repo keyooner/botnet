@@ -202,7 +202,7 @@ class App(ctk.CTk):
         self.twitter_checkbox_cmnt.pack(side="left", padx=(20,10), pady=(20,10))
         self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
         self.twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled')
+        self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command=self.twitter_popup_comment_window)
         self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
 
 
@@ -251,23 +251,24 @@ class App(ctk.CTk):
         self.button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
 
     def twitter_popup_comment_window(self):
-        popup_comment_window = ctk.CTkToplevel()
-        popup_comment_window.title("Comments window")
-        popup_comment_window.geometry("250x300")
-
-        # create scrollable frame
-        self.scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window, label_text="Comments available")
-        self.scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.scrollable_popup_frame.grid_columnconfigure(0, weight=2)
-        self.scrollable_frame_entries = []
         range_for = int(self.button_entry.get())
-        for i in range(range_for):
-            comment_entries = ctk.CTkEntry(master=self.scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
-            comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
-            self.scrollable_frame_entries.append(comment_entries)
+        if  self.twitter_checkbox_cmnt.get() == 1 and range_for > 0:
+            popup_comment_window = ctk.CTkToplevel()
+            popup_comment_window.title("Comments window")
+            popup_comment_window.geometry("250x300")
 
-        popup_comment_window_button = ctk.CTkButton(self.scrollable_popup_frame, text='Go!')
-        popup_comment_window_button.grid(row=range_for, column=0)
+            # create scrollable frame
+            self.scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window, label_text="Comments")
+            self.scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
+            self.scrollable_popup_frame.grid_columnconfigure(0, weight=2)
+            self.scrollable_frame_entries = []
+            for i in range(range_for):
+                comment_entries = ctk.CTkEntry(master=self.scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
+                comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
+                self.scrollable_frame_entries.append(comment_entries)
+
+            popup_comment_window_button = ctk.CTkButton(self.scrollable_popup_frame, text='Go!')
+            popup_comment_window_button.grid(row=range_for, column=0)
 
     def vpn_connect_clicked(self):
         # if connect vpn return true --> Text Disconnect and change command
