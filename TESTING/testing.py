@@ -1,18 +1,17 @@
-import customtkinter as ctk
+from tkinter import *
 
-def crear_popup():
-    popup = ctk.CTkToplevel()
-    popup.title("Ventana emergente")
-    
-    # Agrega widgets y personaliza la ventana emergente aquí
-    
-    popup.mainloop()
+root = Tk()
+root.geometry('300x200')
+root.columnconfigure(0, weight=1)   # Set weight to row and 
+root.rowconfigure(0, weight=1)      # column where the widget is
 
-# Crear la ventana principal
-ventana = ctk.CTkToplevel()
+container = Frame(root, bg='tan')   # bg color to show extent
+container.grid(row=0, column=0)     # Grid cell with weight
 
-# Agregar un botón para abrir el popup
-boton_popup = ctk.CTkButton(ventana, text="Abrir Popup", command=crear_popup)
-boton_popup.pack()
+# A couple of widgets to illustrate the principle.
+b1 = Button(container, text='First', width=10)
+b1.grid(pady=10, padx=20)
+b2 = Button(container, text='second', width=10)
+b2.grid(pady=(0,10), padx=20)
 
-ventana.mainloop()
+root.mainloop()
