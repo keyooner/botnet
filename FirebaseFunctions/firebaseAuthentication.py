@@ -1,13 +1,13 @@
 import CryptographyFunctions.cryptographyFunctions as crypto
 import json
 # Firebase library for Wrapper API Client
-import pyrebase
+import firebase
 import const
 def initializeApp():
     config = const.CONFIG
     
     # We return the parameters of the initialize app
-    return pyrebase.initialize_app(config)
+    return firebase.initialize_app(config)
 
 def createUser(email, password):
     # We try to initialize app

@@ -1,7 +1,7 @@
 # Import of the class with the authentication code
 import FirebaseFunctions.firebaseAuthentication as fa
 # Firebase library for Wrapper API Client
-import pyrebase
+import firebase
 from collections import Counter
 
 def getLastValue(email, password):
