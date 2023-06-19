@@ -1,17 +1,40 @@
-from tkinter import *
+import requests
 
-root = Tk()
-root.geometry('300x200')
-root.columnconfigure(0, weight=1)   # Set weight to row and 
-root.rowconfigure(0, weight=1)      # column where the widget is
+# Configura las credenciales de Ghost VPN
+username = 'ricardovaldesgaciia@gmail.com'
+password = '2x4m??T7MAmH'
 
-container = Frame(root, bg='tan')   # bg color to show extent
-container.grid(row=0, column=0)     # Grid cell with weight
+# URL de inicio de sesión de Ghost VPN
+login_url = 'https://my.cyberghostvpn.com/es_ES/login'
 
-# A couple of widgets to illustrate the principle.
-b1 = Button(container, text='First', width=10)
-b1.grid(pady=10, padx=20)
-b2 = Button(container, text='second', width=10)
-b2.grid(pady=(0,10), padx=20)
+# URL para conectar Ghost VPN
+connect_url = 'https://ghostvpn.com/es_ES/connect'
 
-root.mainloop()
+# Crea una sesión de requests
+session = requests.session()
+
+# Realiza la solicitud de inicio de sesión
+login_payload = {
+    'username': username,
+    'password': password
+}
+response = session.post(login_url, data=login_payload)
+
+# Verifica si el inicio de sesión fue exitoso
+if response.status_code == 200:
+    print('Inicio de sesión exitoso')
+
+    # Realiza la solicitud para conectar Ghost VPN
+    connect_payload = {
+        'action': 'connect',
+        'server': 'servidor_de_destino'  # reemplaza con el servidor que desees
+    }
+    response = session.post(connect_url, data=connect_payload)
+
+    # Verifica si la conexión fue exitosa
+    if response.status_code == 200:
+        print('Ghost VPN conectado')
+    else:
+        print('Error al conectar Ghost VPN:', response.text)
+else:
+    print('Error de inicio de sesión:', response.text)
