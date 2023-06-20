@@ -248,10 +248,16 @@ class App(ctk.CTk):
 #########################################################################################################################################################
 
     def checkCheckbox(self):
-        if self.twitter_checkbox_like.get() == 1:
-            print(sf.action_n_times(driver, fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(self.button_entry.get())), self.entry_twitter_url.get(), 
-                        self.entry_twitter_url.get(), 2))
-            
+        entry_value = int(self.button_entry.get())
+        if entry_value > 0:
+
+            if  self.twitter_checkbox_cmnt.get() == 1:
+                self.twitter_popup_comment_window()
+
+            if self.twitter_checkbox_like.get() == 1:
+                print(sf.action_n_times(driver, fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(self.button_entry.get())), self.entry_twitter_url.get(), 
+                            self.entry_twitter_url.get(), 2))
+                
     def return_available_accounts_twitter(self):
         #! CAMBIAR!! POR --> EMAIL, PASSWORD
         return fdb.get_values_unlocked(temp.get_email(), temp.get_password())
@@ -301,42 +307,55 @@ class App(ctk.CTk):
         self.button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
     
     def twitter_popup_comment_window(self):
-        range_for = int(self.button_entry.get())
-        if  self.twitter_checkbox_cmnt.get() == 1 and range_for > 0:
-            popup_comment_window = ctk.CTkToplevel()
-            popup_comment_window.title("Comments window")
-            popup_comment_window.geometry("250x300")
+        entry_value = int(self.button_entry.get())
+        popup_comment_window = ctk.CTkToplevel()
+        popup_comment_window.title("Comments window")
+        popup_comment_window.geometry("250x300")
 
-            # create scrollable frame
-            self.scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window, label_text="Comments")
-            self.scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-            self.scrollable_popup_frame.grid_columnconfigure(0, weight=2)
-            self.scrollable_frame_entries = []
-            for i in range(range_for):
-                comment_entries = ctk.CTkEntry(master=self.scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
-                comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
-                self.scrollable_frame_entries.append(comment_entries)
+        # create scrollable frame
+        self.scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window, label_text="Comments")
+        self.scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.scrollable_popup_frame.grid_columnconfigure(0, weight=2)
+        self.scrollable_frame_entries = []
+        for i in range(entry_value):
+            comment_entries = ctk.CTkEntry(master=self.scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
+            comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
+            self.scrollable_frame_entries.append(comment_entries)
 
-            popup_comment_window_button = ctk.CTkButton(self.scrollable_popup_frame, text='Go!')
-            popup_comment_window_button.grid(row=range_for, column=0)
+        popup_comment_window_button = ctk.CTkButton(self.scrollable_popup_frame, text='Go!')
+        popup_comment_window_button.grid(row=entry_value, column=0)
 
     def vpn_connect_clicked(self):
         # if connect vpn return true --> Text Disconnect and change command
         self.vpn_connect_button.configure(text="DISCONNECT") #add: , command=self.vpn_disconnect_clicked
 
     def verify_twitter_url(self, url):
-        standard_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
-        if re.match(standard_url, url):
+        tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
+        follow_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}$'
+        if re.match(tweet_url, url) and (int(self.button_entry.get()) > 0):
             self._extracted_from_verify_twitter_url_4('normal')
+            self.twitter_checkbox_follow.configure(state='disabled')
+            self.twitter_checkbox_follow.deselect()
+        elif re.match(follow_url, url) and (int(self.button_entry.get()) > 0):
+            self.twitter_checkbox_follow.configure(state='normal')
+            self._extracted_from_verify_twitter_url_4('disabled')
+            self.twitter_button_action.configure(state='normal')
+            self.twitter_checkbox_like.deselect()
+            self.twitter_checkbox_rt.deselect()
+            self.twitter_checkbox_cmnt.deselect()
         else:
             self._extracted_from_verify_twitter_url_4('disabled')
+            self.twitter_checkbox_like.deselect()
+            self.twitter_checkbox_rt.deselect()
+            self.twitter_checkbox_cmnt.deselect()
+            self.twitter_checkbox_follow.configure(state='disabled')
+            self.twitter_checkbox_follow.deselect()
 
     # TODO Rename this here and in `verify_twitter_url`
     def _extracted_from_verify_twitter_url_4(self, state):
         self.twitter_checkbox_like.configure(state=state)
         self.twitter_checkbox_rt.configure(state=state)
         self.twitter_checkbox_cmnt.configure(state=state)
-        self.twitter_checkbox_follow.configure(state=state)
         self.twitter_button_action.configure(state=state)
                 
 
