@@ -243,6 +243,10 @@ class App(ctk.CTk):
         self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command = self.checkCheckbox)
         self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
 
+#########################################################################################################################################################
+####################################################### FUNCTIONS #######################################################################################
+#########################################################################################################################################################
+
     def checkCheckbox(self):
         if self.twitter_checkbox_like.get() == 1:
             print(sf.action_n_times(driver, fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(self.button_entry.get())), self.entry_twitter_url.get(), 
