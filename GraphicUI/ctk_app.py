@@ -379,11 +379,14 @@ class App(ctk.CTk):
 
         self.logout_button_no = ctk.CTkButton(logout_container_frame, text="No", anchor='center')
         self.logout_button_no.pack(side="top", padx=10, pady=10)
+
+    def close_main_window(self):
+        self.destroy()
         
     def action_logOut(self):
+        self.close_main_window()
         import GraphicUI.ctk_login as login_app
         fba.logOutUser()
-        
         login_app.main_window.mainloop()
 
     def test_return_variable(self):
