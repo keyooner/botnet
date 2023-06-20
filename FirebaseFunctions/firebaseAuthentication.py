@@ -3,6 +3,7 @@ import json
 # Firebase library for Wrapper API Client
 import firebase
 import const
+
 def initializeApp():
     config = const.CONFIG
     

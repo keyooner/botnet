@@ -10,3 +10,5 @@ for i in range(3):
     print('\nDo whatever you want here (e.g.scraping). Pausing for 10 seconds...\n')
     time.sleep(10)
     i+=1
+
+terminate_VPN()

@@ -13,7 +13,7 @@ import EmailFunctions.readEmail as re
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.service import Service
 
-driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+#driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
 
 ## VARIABLES WITH IMPORTANT VALOURS TO THE DEVELOP OF THE APP ##
 ##------------------------------------------------------------##

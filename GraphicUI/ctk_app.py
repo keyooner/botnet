@@ -8,6 +8,11 @@ from CTkTable import *
 from PIL import Image
 # import GraphicUI.ctk_login as login_app
 import temp
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
 # import tkinter
 # from selenium import webdriver
