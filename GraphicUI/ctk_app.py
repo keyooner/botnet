@@ -311,6 +311,7 @@ class App(ctk.CTk):
         popup_comment_window = ctk.CTkToplevel()
         popup_comment_window.title("Comments window")
         popup_comment_window.geometry("250x300")
+        popup_comment_window.focus()
 
         # create scrollable frame
         self.scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window, label_text="Comments")
@@ -325,6 +326,7 @@ class App(ctk.CTk):
 
         popup_comment_window_button = ctk.CTkButton(self.scrollable_popup_frame, text='Go!')
         popup_comment_window_button.grid(row=entry_value, column=0)
+        
 
     def vpn_connect_clicked(self):
         from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
