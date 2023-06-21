@@ -166,6 +166,7 @@ class App(ctk.CTk):
         #create scrollable frame for table
         self.scrollable_table_frame = ctk.CTkScrollableFrame(self.options_frame, fg_color="transparent", label_text="Accounts")
         self.scrollable_table_frame.pack(side="top", padx=(20, 0), pady=(20, 0), fill="both", expand=True)
+        self.scrollable_table_frame.grid_rowconfigure(0, weight=0)
         self.scrollable_table_frame.grid_columnconfigure(0, weight=1)
         self.scrollable_table_frame_values = []
 
