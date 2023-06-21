@@ -5,10 +5,9 @@ settings = initialize_VPN(save=1, area_input = ['random countries 20'])
 
 initialize_VPN(stored_settings=1)
 
-for i in range(3):
+for _ in range(3):
     rotate_VPN()
     print('\nDo whatever you want here (e.g.scraping). Pausing for 10 seconds...\n')
     time.sleep(10)
-    i+=1
 
 terminate_VPN()

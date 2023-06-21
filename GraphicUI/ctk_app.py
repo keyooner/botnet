@@ -240,23 +240,12 @@ class App(ctk.CTk):
         self.twitter_checkbox_cmnt.pack(side="left", padx=(20,10), pady=(20,10))
         self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
         self.twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command = self.checkCheckbox)
+        self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command = self.twitter_checkCheckbox)
         self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
 
 #########################################################################################################################################################
 ####################################################### FUNCTIONS #######################################################################################
 #########################################################################################################################################################
-
-    def checkCheckbox(self):
-        entry_value = int(self.button_entry.get())
-        if entry_value > 0:
-
-            if  self.twitter_checkbox_cmnt.get() == 1:
-                self.twitter_popup_comment_window()
-
-            if self.twitter_checkbox_like.get() == 1:
-                print(sf.action_n_times(driver, fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(self.button_entry.get())), self.entry_twitter_url.get(), 
-                            self.entry_twitter_url.get(), 2))
                 
     def return_available_accounts_twitter(self):
         #! CAMBIAR!! POR --> EMAIL, PASSWORD
@@ -306,6 +295,17 @@ class App(ctk.CTk):
         self.button_decrease = ctk.CTkButton(container, text='-', command=lambda:decrease(self), width=2)
         self.button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
     
+    def twitter_checkCheckbox(self):
+        entry_value = int(self.button_entry.get())
+        if entry_value > 0:
+
+            if  self.twitter_checkbox_cmnt.get() == 1:
+                self.twitter_popup_comment_window()
+
+            if self.twitter_checkbox_like.get() == 1:
+                print(sf.action_n_times(driver, fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(self.button_entry.get())), self.entry_twitter_url.get(), 
+                            self.entry_twitter_url.get(), 2))
+
     def twitter_popup_comment_window(self):
         entry_value = int(self.button_entry.get())
         popup_comment_window = ctk.CTkToplevel()
@@ -318,16 +318,25 @@ class App(ctk.CTk):
         self.scrollable_popup_frame.grid_columnconfigure(0, weight=2)
         self.scrollable_frame_entries = []
         for i in range(entry_value):
-            comment_entries = ctk.CTkEntry(master=self.scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
-            comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
-            self.scrollable_frame_entries.append(comment_entries)
+            self.comment_entries = ctk.CTkEntry(master=self.scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
+            self.comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
+            setattr(self, f"comment_entries_{i}", self.comment_entries)
+            self.scrollable_frame_entries.append(self.comment_entries)
 
         popup_comment_window_button = ctk.CTkButton(self.scrollable_popup_frame, text='Go!')
         popup_comment_window_button.grid(row=entry_value, column=0)
 
     def vpn_connect_clicked(self):
-        # if connect vpn return true --> Text Disconnect and change command
-        self.vpn_connect_button.configure(text="DISCONNECT") #add: , command=self.vpn_disconnect_clicked
+        from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
+
+        if self.vpn_connect_button.cget("text") == 'CONNECT':
+            initialize_VPN(stored_settings=1)
+            rotate_VPN()
+            self.vpn_connect_button.configure(text="DISCONNECT")
+        else:
+            terminate_VPN()
+            self.vpn_connect_button.configure(text="CONNECT")
+            
 
     def verify_twitter_url(self, url):
         tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
@@ -396,6 +405,13 @@ class App(ctk.CTk):
         date_time = datetime.datetime.now()
         self.textbox.configure(state="normal")
         self.textbox.insert("0.0", f'[{date_time}] $: ' + f'{self.entry.get()} ' + self.test_return_variable() + '\n\n')
+        self.entry.delete(0, ctk.END)
+        self.textbox.configure(state="disabled")
+
+    def input_vpn_message_in_textbox(self, message):
+        date_time = datetime.datetime.now()
+        self.textbox.configure(state="normal")
+        self.textbox.insert("0.0", f'[{date_time}] $: ', message, '\n\n')
         self.entry.delete(0, ctk.END)
         self.textbox.configure(state="disabled")
 
