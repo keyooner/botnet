@@ -111,6 +111,12 @@ class App(ctk.CTk):
         #! CAMBIAR!! POR --> EMAIL, PASSWORD
         self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions Available: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Status: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
+        self.label_profile_interactions.grid(row=4, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Ip: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
+        self.label_profile_interactions.grid(row=5, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Location: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
+        self.label_profile_interactions.grid(row=6, column=2, padx=20, pady=0, sticky="")
 
         # create checkbox and switch frame
         self.image_frame = ctk.CTkFrame(self)
@@ -387,12 +393,15 @@ class App(ctk.CTk):
 
     def close_main_window(self):
         self.destroy()
-        
-    def action_logOut(self):
+    
+    def logout_user(self):
         import GraphicUI.ctk_login as login_app
-        self.close_main_window()
         fba.logOutUser()
         login_app.main_window.mainloop()
+
+    def action_logOut(self):
+        self.close_main_window()
+        self.logout_user()        
 
     def test_return_variable(self):
         return 'return variable'
