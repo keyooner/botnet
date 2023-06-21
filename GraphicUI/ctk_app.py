@@ -296,8 +296,10 @@ class App(ctk.CTk):
         self.button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
     
     def twitter_checkCheckbox(self):
-        entry_value = int(self.button_entry.get())
-        if entry_value > 0:
+        if self.twitter_url_verified(self.entry_twitter_url.get()) in [
+            'actions',
+            'follow',
+        ]:
 
             if  self.twitter_checkbox_cmnt.get() == 1:
                 self.twitter_popup_comment_window()
@@ -338,16 +340,22 @@ class App(ctk.CTk):
         else:
             terminate_VPN()
             self.vpn_connect_button.configure(text="CONNECT")
-            
-
-    def verify_twitter_url(self, url):
+    
+    def twitter_url_verified(self, url):
         tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
         follow_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}$'
         if re.match(tweet_url, url) and (int(self.button_entry.get()) > 0):
+            return "actions"
+        elif re.match(follow_url, url) and (int(self.button_entry.get()) > 0):
+            return "follow"
+
+    def verify_twitter_url(self, url):
+
+        if self.twitter_url_verified(url) == 'actions':
             self._extracted_from_verify_twitter_url_4('normal')
             self.twitter_checkbox_follow.configure(state='disabled')
             self.twitter_checkbox_follow.deselect()
-        elif re.match(follow_url, url) and (int(self.button_entry.get()) > 0):
+        elif self.twitter_url_verified(url) == 'follow':
             self.twitter_checkbox_follow.configure(state='normal')
             self._extracted_from_verify_twitter_url_4('disabled')
             self.twitter_button_action.configure(state='normal')
