@@ -393,8 +393,8 @@ class App(ctk.CTk):
         self.destroy()
         
     def action_logOut(self):
-        self.close_main_window()
         import GraphicUI.ctk_login as login_app
+        self.close_main_window()
         fba.logOutUser()
         login_app.main_window.mainloop()
 
