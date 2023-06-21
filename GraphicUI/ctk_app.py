@@ -6,7 +6,6 @@ import TwitterFunctions.seleniumFunctions as sf
 import FirebaseFunctions.firebaseAuthentication as fba
 from CTkTable import *
 from PIL import Image
-# import GraphicUI.ctk_login as login_app
 import temp
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -14,8 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
-# import tkinter
-# from selenium import webdriver
+#vpn_switch_var = ctk.StringVar(value="off") #no me funciona la variable global
 
 ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
