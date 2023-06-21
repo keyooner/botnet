@@ -113,29 +113,19 @@ class App(ctk.CTk):
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
 
         # create checkbox and switch frame
-        self.checkbox_slider_frame = ctk.CTkFrame(self)
-        self.checkbox_slider_frame.grid(row=1, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
-        # self.checkbox_1 = ctk.CTkCheckBox(master=self.checkbox_slider_frame)
-        # self.checkbox_1.grid(row=1, column=0, pady=(20, 0), padx=20, sticky="n")
-        # self.checkbox_2 = ctk.CTkCheckBox(master=self.checkbox_slider_frame)
-        # self.checkbox_2.grid(row=2, column=0, pady=(20, 0), padx=20, sticky="n")
-        # self.checkbox_3 = ctk.CTkCheckBox(master=self.checkbox_slider_frame)
-        # self.checkbox_3.grid(row=3, column=0, pady=20, padx=20, sticky="n")
-
-        # # set default values
-        # self.checkbox_3.configure(state="disabled")
-        # self.checkbox_1.select()
-        # self.appearance_mode_optionemenu.set("Dark")
-        # self.scaling_optionemenu.set("80%")
+        self.image_frame = ctk.CTkFrame(self)
+        self.image_frame.grid(row=1, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
         
         my_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/botnet_light.png"),
                                 dark_image=Image.open("GraphicUI/images/botnet_dark.png"),
                                 size=(100, 100))
 
-        image_label = ctk.CTkLabel(self.checkbox_slider_frame, image=my_image, text="")
+        image_label = ctk.CTkLabel(self.image_frame, image=my_image, text="")
         image_label.pack(anchor="center", expand=True)
 
-#! ---------------------- methods ------------------------------
+#########################################################################################################################################################
+####################################################### FUNCTIONS #######################################################################################
+#########################################################################################################################################################
 
     def open_input_dialog_event(self):
         dialog = ctk.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
@@ -181,21 +171,29 @@ class App(ctk.CTk):
         # table_values = [[1,"Paco","@pacolocao","dlkddldkld@mddd.com"]]
         data = fdb.get_values(temp.get_email(), temp.get_password())
         #header_values = ["email", "password", "user"]
-        
+
         for i, key in enumerate(data.keys()):
             account_data = data[key]
             table_values = [[account_data['email'], [account_data['password']], account_data['user']]]
-            table_accounts_available = CTkTable(self.scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover = True)
-            table_accounts_available.grid(row=i, column=0, padx=10, pady=(0,20))
+            table_accounts_available = CTkTable(self.scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover=True)
+            table_accounts_available.grid(row=i % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
             self.scrollable_table_frame_values.append(table_accounts_available)
-            
+
+        # Ajustar el tamaño del scrollable_table_frame
+        self.scrollable_table_frame.update()
+
         #create frame for the button
         button_frame = ctk.CTkFrame(self.options_frame, fg_color="transparent")
         button_frame.pack(side="top", fill="x")
 
         #create button to create account
-        self.create_account_button = ctk.CTkButton(button_frame, text="Create account")
+        self.create_account_label = ctk.CTkLabel(button_frame, text='Create Account', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        self.create_account_label.pack(padx=(10,10), pady=(10,10))
+        self.create_account_button = ctk.CTkButton(button_frame, text="Using VPN")
         self.create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
+        self.create_account_button_vpn = ctk.CTkButton(button_frame, text="Without VPN")
+        self.create_account_button_vpn.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
+
     
     def vpn_option_button_clicked(self):
         self.disable_option_button('vpn')
@@ -242,10 +240,6 @@ class App(ctk.CTk):
         self.twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
         self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command = self.twitter_checkCheckbox)
         self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
-
-#########################################################################################################################################################
-####################################################### FUNCTIONS #######################################################################################
-#########################################################################################################################################################
                 
     def return_available_accounts_twitter(self):
         #! CAMBIAR!! POR --> EMAIL, PASSWORD
