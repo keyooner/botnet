@@ -100,7 +100,7 @@ class App(ctk.CTk):
         # create profile data frame
         self.profile_frame = ctk.CTkFrame(self)
         self.profile_frame.grid(row=0, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
-        self.label_profile_data = ctk.CTkLabel(master=self.profile_frame, text="Profile Data", font=ctk.CTkFont(size=13, weight="bold"))
+        self.label_profile_data = ctk.CTkLabel(master=self.profile_frame, text="User Info", font=ctk.CTkFont(size=13, weight="bold"))
         self.label_profile_data.grid(row=0, column=2, padx=20, pady=0, sticky="")
         #! we call the function to obtain name and domain
         name, domain = splitEmail(temp.get_email())
@@ -111,7 +111,7 @@ class App(ctk.CTk):
         #! CAMBIAR!! POR --> EMAIL, PASSWORD
         self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions Available: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Status: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Vpn Status: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
         self.label_profile_interactions.grid(row=4, column=2, padx=20, pady=0, sticky="")
         self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Ip: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
         self.label_profile_interactions.grid(row=5, column=2, padx=20, pady=0, sticky="")
@@ -193,12 +193,8 @@ class App(ctk.CTk):
         button_frame.pack(side="top", fill="x")
 
         #create button to create account
-        self.create_account_label = ctk.CTkLabel(button_frame, text='Create Account', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.create_account_label.pack(padx=(10,10), pady=(10,10))
-        self.create_account_button = ctk.CTkButton(button_frame, text="Using VPN")
+        self.create_account_button = ctk.CTkButton(button_frame, text="Create Account")
         self.create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
-        self.create_account_button_vpn = ctk.CTkButton(button_frame, text="Without VPN")
-        self.create_account_button_vpn.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
 
     
     def vpn_option_button_clicked(self):
@@ -209,8 +205,11 @@ class App(ctk.CTk):
         self.vpn_label_option = ctk.CTkLabel(vpn_container_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
         self.vpn_label_option.pack(padx=(10,10), pady=(10,10))
 
-        self.vpn_connect_button = ctk.CTkButton(self.options_frame, text="CONNECT", command=self.vpn_connect_clicked)
-        self.vpn_connect_button.pack(padx=(20, 10), pady=(10, 10), fill="both")
+        self.vpn_switch_label = ctk.CTkLabel(master=self.options_frame, text="Connect or disconnect vpn")
+        self.vpn_switch_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
+        self.vpn_switch_var = ctk.StringVar(value="off")
+        self.vpn_switch = ctk.CTkSwitch(master=self.options_frame, text="Vpn On/Off", command=self.vpn_connect_clicked, variable=self.vpn_switch_var, onvalue='on', offvalue='off')
+        self.vpn_switch.pack(side="right", padx=(20, 10), pady=(10, 10), fill="both", expand=True)
 
     def twitter_option_button_clicked(self):
         
@@ -333,13 +332,11 @@ class App(ctk.CTk):
     def vpn_connect_clicked(self):
         from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
 
-        if self.vpn_connect_button.cget("text") == 'CONNECT':
+        if self.vpn_switch_var.get() == 'on':
             initialize_VPN(stored_settings=1)
             rotate_VPN()
-            self.vpn_connect_button.configure(text="DISCONNECT")
         else:
             terminate_VPN()
-            self.vpn_connect_button.configure(text="CONNECT")
     
     def twitter_url_verified(self, url):
         tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
