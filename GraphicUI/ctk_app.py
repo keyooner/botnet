@@ -13,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
-#vpn_switch_var = ctk.StringVar(value="off") #no me funciona la variable global
+#vpn_switch_var = ctk.StringVar(value="off") #no me funciona la variable
 
 ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -164,26 +164,26 @@ class App(ctk.CTk):
         self.disable_option_button('accounts')
 
         #create scrollable frame for table
-        self.scrollable_table_frame = ctk.CTkScrollableFrame(self.options_frame, fg_color="transparent", label_text=
-                                                            #f"\n╔════════╗\n║       Accounts:       ║\n╚════════╝\n\n╔════════════════════════════════════════╗\n║ \t Email \t\t ║ \t Password \t ║ \t Username \t  ║\n╚════════════════════════════════════════╝")
-                                                            f"\nAccounts:\n\n╔════════════════════════════════════════╗\n║ \t Email \t\t ║ \t Password \t ║ \t Username \t  ║\n╚════════════════════════════════════════╝")
+        self.scrollable_table_frame = ctk.CTkScrollableFrame(self.options_frame, fg_color="transparent", label_text="Accounts")
         self.scrollable_table_frame.pack(side="top", padx=(20, 0), pady=(20, 0), fill="both", expand=True)
         self.scrollable_table_frame.grid_columnconfigure(0, weight=1)
         self.scrollable_table_frame_values = []
 
         #accounts available
-        # table_values = [[1,"Paco","@pacolocao","dlkddldkld@mddd.com"]]
         data = fdb.get_values(temp.get_email(), temp.get_password())
-        #header_values = ["email", "password", "user"]
+        header_values = [['             EMAIL            ', ' PASSWORD ', '      USERNAME      ']]
+        header_table = CTkTable(self.scrollable_table_frame, row=1, column=3, values=header_values, header_color="#8370F7", hover=True)
+        header_table.grid(row=0 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
+        
 
         for i, key in enumerate(data.keys()):
             account_data = data[key]
             table_values = [[account_data['email'], [account_data['password']], account_data['user']]]
             table_accounts_available = CTkTable(self.scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover=True)
-            table_accounts_available.grid(row=i % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
+            table_accounts_available.grid(row=i+1 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
             self.scrollable_table_frame_values.append(table_accounts_available)
 
-        # Ajustar el tamaño del scrollable_table_frame
+        # Adjust scrollable size
         self.scrollable_table_frame.update()
 
         #create frame for the button
