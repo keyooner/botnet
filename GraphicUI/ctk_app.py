@@ -11,7 +11,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
+# driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
 #vpn_switch_var = ctk.StringVar(value="off") #no me funciona la variable
 
@@ -21,6 +21,9 @@ ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dar
 def splitEmail(email):
     name, domain = email.split("@")
     return name, domain
+
+def get_driver():
+    return webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
 class App(ctk.CTk):
     def __init__(self):
@@ -106,7 +109,6 @@ class App(ctk.CTk):
         self.label_profile_user.grid(row=1, column=2, padx=20, pady=0, sticky="")
         self.label_profile_name = ctk.CTkLabel(master=self.profile_frame, text=f"Domain: {domain}")
         self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
-        #! CAMBIAR!! POR --> EMAIL, PASSWORD
         self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions Available: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
         self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Vpn Status: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
@@ -303,7 +305,7 @@ class App(ctk.CTk):
                 self.twitter_popup_comment_window()
 
             if self.twitter_checkbox_like.get() == 1:
-                print(sf.action_n_times(driver, fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(self.button_entry.get())), self.entry_twitter_url.get(), 
+                print(sf.action_n_times(get_driver(), fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(self.button_entry.get())), self.entry_twitter_url.get(), 
                             self.entry_twitter_url.get(), 2))
 
     def twitter_popup_comment_window(self):

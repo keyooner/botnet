@@ -10,3 +10,32 @@ Read port: 55031
 1687190303254	Marionette	INFO	Stopped listening on port 55031
 Dynamically enable window occlusion 1
 JavaScript error: chrome://remote/content/marionette/cert.sys.mjs, line 51: NS_ERROR_NOT_AVAILABLE: Component returned failure code: 0x80040111 (NS_ERROR_NOT_AVAILABLE) [nsICertOverrideService.setDisableAllSecurityChecksAndLetAttackersInterceptMyData]
+1687282924936	geckodriver	INFO	Listening on 127.0.0.1:49737
+1687282927958	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\rust_mozprofilegyKmOy"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1687282928895	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1687282928909	Marionette	INFO	Listening on port 49747
+Read port: 49747
+1687282929646	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1687282996224	geckodriver	INFO	Listening on 127.0.0.1:49813
+1687282999284	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\rust_mozprofileSpzQDe"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1687283000099	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1687283000108	Marionette	INFO	Listening on port 49829
+Read port: 49829
+1687283000510	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1687283233129	geckodriver	INFO	Listening on 127.0.0.1:50089
+1687283236150	mozrunner::runner	INFO	Running command: "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe" "--marionette" "-no-remote" "-profile" "C:\\Users\\DANIEL~1\\AppData\\Local\\Temp\\rust_mozprofileJXcLjJ"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1687283236756	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1687283236768	Marionette	INFO	Listening on port 50101
+Read port: 50101
+1687283237493	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1687283273871	Marionette	INFO	Stopped listening on port 50101
+Dynamically enable window occlusion 1

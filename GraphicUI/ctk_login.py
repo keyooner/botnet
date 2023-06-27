@@ -5,11 +5,25 @@ import tkinter as tk
 import FirebaseFunctions.firebaseAuthentication as fba
 import GraphicUI.ctk_app as gui_app
 import temp
+import tkinter as tk
+from tkinter import ttk
+
+def togglePasswordVisibility():
+    if show_password.get():
+        password_input.configure(show='')
+    else:
+        password_input.configure(show='*')
 
 def createWindowRegister():
     def register ():
+        
         email = username_input_reg.get()
         password = password_input_reg.get()
+        password2 = password_input_reg2.get()
+        
+        if password != password2:
+            tkmb.showerror(title = 'Register failed', message = "Passwords don't match!")
+        
         log, verify = fba.createUser(email, password)
         
         if verify == True:
@@ -39,6 +53,14 @@ def createWindowRegister():
     
     def firstPriority():
         new_window.attributes('-topmost', 1)
+    
+    def togglePasswordVisibilityForRegister():
+        if show_password.get():
+            password_input_reg.configure(show='')
+            password_input_reg2.configure(show='')
+        else:
+            password_input_reg.configure(show='*')
+            password_input_reg2.configure(show='*')
             
     new_window = ctk.CTkToplevel(main_window)
     # Deshabilitar el botón de maximizar
@@ -70,7 +92,14 @@ def createWindowRegister():
 
     password_input_reg = ctk.CTkEntry(register_frame, placeholder_text = 'Password', show = '*')
     password_input_reg.pack(pady = 12, padx = 10)
-
+    
+    password_input_reg2 = ctk.CTkEntry(register_frame, placeholder_text = 'Confirm Password', show = '*')
+    password_input_reg2.pack(pady = 12, padx = 10)
+    
+    show_password = ctk.BooleanVar()
+    show_password_button = ctk.CTkCheckBox(register_frame, text="Mostrar contraseñas", variable=show_password, command=togglePasswordVisibilityForRegister)
+    show_password_button.pack()
+    
     # Create a register account button
     register_acc_button = ctk.CTkButton(register_frame, text = 'Register', command = register)
     register_acc_button .pack(pady = 12, padx = 10)
@@ -238,6 +267,10 @@ username_input.pack(pady = 12, padx = 10)
 
 password_input = ctk.CTkEntry(login_frame, placeholder_text = 'Password', show = '*')
 password_input.pack(pady = 12, padx = 10)
+
+show_password = ctk.BooleanVar()
+show_password_button = ctk.CTkCheckBox(login_frame, text="Mostrar contraseña", variable=show_password, command=togglePasswordVisibility)
+show_password_button.pack()
 
 # Create a recover password button
 recover_button = ctk.CTkButton(login_frame, text = 'Recover Password', command = createWindowRecover)
