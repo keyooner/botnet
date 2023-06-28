@@ -9,6 +9,7 @@ from selenium.webdriver.common.alert import Alert
 from selenium.common.exceptions import TimeoutException
 import EmailFunctions.createEmail as ce
 import FirebaseFunctions.firebaseDatabase as fdb
+import RandomProfile.randomProfileTwitter as rpt
 from time import sleep
 import re
 import EmailFunctions.readEmail as re
@@ -320,6 +321,12 @@ def registerUserTwitter(driver, email, password):
     step8SkipNotifications(driver)
     
     step9CreateUserTwitter(driver)
+    
+    verifyIsAccountLocked(driver)
+    
+    # Testing actions
+    
+    step10ChangeImageProfile(driver)
     # Introduzco la contraseña -> /html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[2]/div/label/div/div[2]/div[1]/input
     # Botón siguiente -> /html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div/div
     # Foto descartar por ahora -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div
@@ -444,33 +451,62 @@ def step9CreateUserTwitter(driver):
         ("We pick 3 random theme", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[3]/div/div/div/div/div/div/div", True, False, None),
         ("Button next 1", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div", True, False, None),
         ("Button next 2", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div", True, False, None),
-        ("Follow random user", driver, 2, " /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/section/div/div/div/div/div[3]/div/div/div/div/div[2]/div[1]/div[2]/div/div", True, False, None),
+        ("Follow random user", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/section/div/div/div/div/div[3]/div/div/div/div/div[2]/div[1]/div[2]/div/div", True, False, None),
+        ("Click finish creation", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div", True, False, None),
     ]
     
     for action in actions:
         twitter_actions(*action)
     
     return "Step 9! Create User! Ok!"
-    # /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[1]/div/div/div/div/div/div/div
-    # /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[2]/div/div/div/div/div/div/div
-    # /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[3]/div/div/div/div/div/div/div
-    # botón siguiente -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div
-    # botón siguiente -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div
-    # Seguir uno random -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/section/div/div/div/div/div[3]/div/div/div/div/div[2]/div[1]/div[2]/div/div
+
+def step10ChangeImageProfile(driver):
+    actions = [
+        ("Go profile", driver, 2, "/html/body/div[1]/div/div/div[2]/header/div/div/div/div[1]/div[2]/nav/a[8]/div", True, False, None),
+        ("Setup profile", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div[2]/div[1]/div[2]/a/div", True, False, None),
+        ("Insert photo", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div/input", True, True, rpt.randomImage()),
+    ]
     
-# def step_create_user(driver):
+    for action in actions:
+        twitter_actions(*action)
     
-#     if try_locked(driver):
-#         continue_creating_user(driver, True)
+    sleep(1)
     
-#     skipImage(driver)
+    actions2 = [
+        ("Button next", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div", True, False, None),
+        ("Skip pick header", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div", True, False, None),
+        ("Skip insert bio", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div", True, False, None),
+        ("Skip pick location", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div", True, False, None),
+        ("See profile", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div/div/div[2]/div[2]/div", True, False, None),
+    ]
     
-#     if try_locked(driver):
-#         continue_creating_user(driver, True)
+    for action2 in actions2:
+        twitter_actions(*action2)
+    # Go to profile -> /html/body/div[1]/div/div/div[2]/header/div/div/div/div[1]/div[2]/nav/a[8]/div
+    # Set up profile -> /html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div[2]/div[1]/div[2]/a/div
+    # insert route photo -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div/input
+    # sleep(1)
+    # Botón siguiente -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div
+    # skip pick a header -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div
+    # skip bio -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div
+    # skip location -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div
+    # see profile -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div/div/div[2]/div[2]/div
     
-#     continue_creating_user(driver, False)
     
-#     return "Finish creation user"
+# Function that try if the account is locked by twitter
+def verifyIsAccountLocked(driver):
+    print("Check 1")
+    if check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
+        print("Tu cuenta está bloqueada")
+        twitter_actions("Unlock button clicked!", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
+        while True:
+            print("Autentica la cuenta")
+            if check_account_status(driver, 2, "/html/body/div[2]/div/div[1]") == True:
+                
+                twitter_actions("Continue to Twitter", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
+                print("Cuenta autenticada")
+                return True
+    return False
 
 def check_authetication_step(driver, type, element):
     
@@ -484,20 +520,18 @@ def check_authetication_step(driver, type, element):
         return False
 
 # Function that try if the account is locked by twitter
-def try_locked(driver):
-    
+def verifyIsAccountLocked(driver):
+    print("Check 1")
     if check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
-        
+        print("Tu cuenta está bloqueada")
         twitter_actions("Unlock button clicked!", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
-        
         while True:
-            
+            print("Autentica la cuenta")
             if check_account_status(driver, 2, "/html/body/div[2]/div/div[1]") == True:
                 
                 twitter_actions("Continue to Twitter", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
-                
+                print("Cuenta autenticada")
                 return True
-        
     return False
 
 ######################### HERE ARE THE FUNCTIONS FOR THE GUI OF THE APP #########################
@@ -792,6 +826,7 @@ def check_account_status(driver, type, element, locked_text="Your account has be
     
     if action != "Find elements! OK!":
         return False
+    
     
     div_action = WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((selector, element))
