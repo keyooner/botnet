@@ -10,6 +10,8 @@ import temp
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import sys
+import io
 
 # driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
@@ -111,12 +113,12 @@ class App(ctk.CTk):
         self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
         self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions Available: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Vpn Status: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
-        self.label_profile_interactions.grid(row=4, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Ip: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
-        self.label_profile_interactions.grid(row=5, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Location: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
-        self.label_profile_interactions.grid(row=6, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_vpn_status = ctk.CTkLabel(master=self.profile_frame, text="VPN Status: Disconnected")
+        self.label_profile_vpn_status.grid(row=4, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_vpn_location = ctk.CTkLabel(master=self.profile_frame, text="")
+        self.label_profile_vpn_location.grid(row=5, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_vpn_ip = ctk.CTkLabel(master=self.profile_frame, text="")
+        self.label_profile_vpn_ip.grid(row=6, column=2, padx=20, pady=0, sticky="")
 
         # create checkbox and switch frame
         self.image_frame = ctk.CTkFrame(self)
@@ -334,10 +336,37 @@ class App(ctk.CTk):
         from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
 
         if self.vpn_switch_var.get() == 'on':
+            # Guarda la salida estándar actual
+            stdout = sys.stdout
+
+            # Crea un objeto io.StringIO para redirigir la salida
+            captura_salida = io.StringIO()
+            sys.stdout = captura_salida
+
             initialize_VPN(stored_settings=1)
             rotate_VPN()
+            sys.stdout = stdout
+            self.vpn_profile_labels('on')
         else:
             terminate_VPN()
+            self.vpn_profile_labels('off')
+
+        # Obtiene la salida capturada en una variable
+        salida_capturada = captura_salida.getvalue()
+
+        # Divide la salida capturada en líneas
+        lineas = salida_capturada.splitlines()
+
+        # Imprime cada línea por separado
+        print("Salida capturada:")
+        for linea in lineas:
+            print(linea)
+    
+    def vpn_profile_labels(self, status):
+        if status == 'on':
+            self.label_profile_vpn_status.configure(text="VPN Status: Connected")
+        else:
+            self.label_profile_vpn_status.configure(text="VPN Status: Disconnected")
     
     def twitter_url_verified(self, url):
         tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
