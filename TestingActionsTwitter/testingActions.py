@@ -19,11 +19,11 @@ url = "https://twitter.com/IbaiLlanos"
 # function.step2CreateUserTwitter(driver)
 # function.step3CreateUserTwitter(driver)
 
-# print(function.registerUserTwitter(driver, "danifdezloz@gmail.com", "Dani5Fdez"))
+function.registerUserTwitter(driver, "danifdezloz@gmail.com", "Dani5Fdez")
 
-print(function.loginUserTwitter(driver, email, password, user))
-print(function.verifyIsAccountLocked(driver))
-print(function.step10ChangeImageProfile(driver))
+# print(function.loginUserTwitter(driver, email, password, user))
+# print(function.verifyIsAccountLocked(driver))
+# print(function.step10ChangeImageProfile(driver))
 # function.acceptCookies(driver)
 # print(function.like_tweet(driver, url, url))
 # print(function.retweet_tweet(driver, url, url))

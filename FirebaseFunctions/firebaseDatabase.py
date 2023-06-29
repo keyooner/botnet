@@ -18,7 +18,8 @@ def getLastValue(email, password):
         try:
                 snapshot = db.child("created_users").child(user["localId"]).get(token = user['idToken']).val()
                 ids = tuple(id_.replace('ID-', '') for id_ in snapshot.keys())
-                last_id = int(ids[-1])
+                sorted_ids = sorted(ids, key=lambda x: int(x))
+                last_id = int(sorted_ids[-1])
                 return last_id + 1
         except:
                 return 1
@@ -210,3 +211,6 @@ def updateDatabase(email, password):
         loadValuesInUser(email, password, (remove_duplicates(reorder_ids(get_values(email, password)))))
         
         return "Database updated!"
+
+
+print(getLastValue("danifdezloz@gmail.com", "Dani5Fdez"))

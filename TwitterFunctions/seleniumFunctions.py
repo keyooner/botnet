@@ -8,6 +8,7 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.alert import Alert
 from selenium.common.exceptions import TimeoutException
 import EmailFunctions.createEmail as ce
+from selenium.common.exceptions import WebDriverException as exceptions
 import FirebaseFunctions.firebaseDatabase as fdb
 import RandomProfile.randomProfileTwitter as rpt
 from time import sleep
@@ -285,62 +286,85 @@ def loginUserTwitter(driver, email, password, user):
     return "Login User! Ok!"
 
 def registerUserTwitter(driver, email, password):
+    try:
+        data = ce.generateProfile()
+        
+        email_twitter = data["email"]
+        password_twitter = data["password"]
+        user_twitter = data["user"]
+        month = data["month"]
+        day = data["day"]
+        year = data["year"]
+        name = data ["name"]
+        surname = data["surname"]
+        profile = f"{name} {surname}"
+        
+        ce.createMail(data)
+        
+        step1CreateUserTwitter(driver, email_twitter, profile, year, month, day)
+        
+        step2CreateUserTwitter(driver)
+        
+        fdb.loadValues(email, password, data)
+        
+        step3CreateUserTwitter(driver)
+        
+        stepVerifyCreateUserTwitter(driver)
+        
+        step4CreateUserTwitter(driver, email_twitter, password_twitter)
+        
+        step5CreateUserTwitter(driver, password_twitter)
+        
+        step6DiscardImageProfile(driver)
+        
+        step7IntroduceUSername(driver, user_twitter)
+        
+        step8SkipNotifications(driver)
+        
+        sleep(300)
+        
+        step9CreateUserTwitter(driver)
+        
+        verifyIsAccountLocked(driver)
+        
+        step10ChangeImageProfile(driver)
+        
+        print("Create User! Ok!")
+        
+        print("Testing created account!")
+        
+        print("Testing follow user")
+        verifyIsAccountLocked(driver)
+        follow_user(driver, "https://twitter.com/TFM_Botnet_", "https://twitter.com/TFM_Botnet_")
+        
+        print("Testing like button")
+        verifyIsAccountLocked(driver)
+        like_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120")
+        
+        print("Testing retweet button")
+        verifyIsAccountLocked(driver)
+        retweet_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120")
+        
+        print("Testing comment button")
+        verifyIsAccountLocked(driver)
+        comment_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "Checked!", user_twitter)
+        
+        print("Everything tested!")
+        
+        return "Create User! Ok!"
+        
+    except exceptions as e:
+        if "not connected to DevTools" in str(e):
+            print("Deleting data created...")
+            ce.deleteMail(email_twitter)
+            fdb.deleteValues(email, password)
+            return "Ups! Seem you close the page before finishing the process"
     
-    data = ce.generateProfile()
-    
-    email_twitter = data["email"]
-    password_twitter = data["password"]
-    user_twitter = data["user"]
-    month = data["month"]
-    day = data["day"]
-    year = data["year"]
-    name = data ["name"]
-    surname = data["surname"]
-    profile = f"{name} {surname}"
-    
-    ce.createMail(data)
-    
-    step1CreateUserTwitter(driver, email_twitter, profile, year, month, day)
-    
-    step2CreateUserTwitter(driver)
-    
-    fdb.loadValues(email, password, data)
-    
-    print(step3CreateUserTwitter(driver))
-    
-    print(stepVerifyCreateUserTwitter(driver))
-    
-    step4CreateUserTwitter(driver, email_twitter, password_twitter)
-    
-    step5CreateUserTwitter(driver, password_twitter)
-    
-    step6DiscardImageProfile(driver)
-    
-    step7IntroduceUSername(driver, user_twitter)
-    
-    step8SkipNotifications(driver)
-    
-    step9CreateUserTwitter(driver)
-    
-    verifyIsAccountLocked(driver)
-    
-    # Testing actions
-    
-    step10ChangeImageProfile(driver)
-    # Introduzco la contraseña -> /html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[2]/div/label/div/div[2]/div[1]/input
-    # Botón siguiente -> /html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div/div
-    # Foto descartar por ahora -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div
-    # Nombre de usuario (clear e input)-> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input 
-    # Botón siguiente -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div
-    # Descartar notificaciones botón-> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div/div/div[2]/div[2]/div[2]/div
-    # Ver en twitter ->
-    # /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[1]/div/div/div/div/div/div/div
-    # /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[2]/div/div/div/div/div/div/div
-    # /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[3]/div/div/div/div/div/div/div
-    # botón siguiente -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div[2]/div
-    # botón siguiente -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div
-    # Seguir uno random -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/section/div/div/div/div/div[3]/div/div/div/div/div[2]/div[1]/div[2]/div/div
-    sleep(300)
+    except KeyboardInterrupt as e:
+        print("Deleting data created...")
+        ce.deleteMail(email_twitter)
+        fdb.deleteValues(email, password)
+        return "Ups! Seem you close the page before finishing the process"
 
 ## --------------------------------------------END-------------------------------------------- ##
 #################################################################################################
@@ -413,6 +437,7 @@ def step5CreateUserTwitter(driver, password):
         if action != "Find elements! OK!":
             return False
         split_word_clear(password, driver, div, selector, "/html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[2]/div/label/div/div[2]/div[1]/input")
+        # /html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/div[1]/div/h1
         sleep(1)
         twitter_actions("Insert password button!", driver, 2, "/html/body/div/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div/div", True, False, None)
         return "Step 5! Create User! Ok!"
