@@ -128,7 +128,6 @@ def get_values_unlocked(email, password):
                 value = item.val()
                 if value.get('state') == 'unlocked':
                         unlocked_values[key] = value
-    
         return len(unlocked_values)
 
 def get_values_for_actions(email, password, n_times: int):
@@ -211,6 +210,3 @@ def updateDatabase(email, password):
         loadValuesInUser(email, password, (remove_duplicates(reorder_ids(get_values(email, password)))))
         
         return "Database updated!"
-
-
-print(getLastValue("danifdezloz@gmail.com", "Dani5Fdez"))

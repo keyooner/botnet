@@ -63,4 +63,7 @@ def randomImage():
     imagen_aleatoria = random.choice(archivos_imagenes)
 
     # Ruta completa de la imagen seleccionada
-    return os.path.join(ruta, imagen_aleatoria)
+    return os.path.normpath(os.path.join(os.getcwd(), ruta, imagen_aleatoria))
+
+
+print(randomImage())
