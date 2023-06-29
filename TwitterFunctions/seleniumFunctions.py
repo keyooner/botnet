@@ -113,10 +113,10 @@ action_mapping = {
 def follow_user(driver, url, expected_url):
     try:
         go_page("Go to Twitter User Page", driver, url, expected_url)
-        twitter_actions("Check follow button", driver, 2, "//div[@id='react-root']/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div/div/div[2]/div[3]/div/div/div/span/span", False, False, None)
+        twitter_actions("Check follow button", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", False, False, None)
         
         # Get the color of the element and rgb from rgba
-        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
+        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
 
         # Get the RGB values
         r1, g1, b1, a1 = get_rgba_value(color)
@@ -127,9 +127,9 @@ def follow_user(driver, url, expected_url):
         if check != "Ok!":
             raise Exception("Follow user! Fail because you already follow this user!")
         
-        twitter_actions("Follow user", driver, 2, "//div[@id='react-root']/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div/div/div[2]/div[3]/div/div/div/span/span", True, False, None)
+        twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", True, False, None)
         
-        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
+        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
 
         # Get the RGB values
         r1, g1, b1, a1 = get_rgba_value(color)
@@ -209,11 +209,12 @@ def retweet_tweet(driver, url, expected_url):
 def like_tweet(driver, url, expected_url):
     try:
         go_page("Go to tweet", driver, url, expected_url)
-        twitter_actions("Get element for Like tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]", False, False, None)
+        twitter_actions("Get element for Like tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div/div/div", False, False, None)
 
         # Get the color of the element
-        color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div/div")
+        color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div")
         # Get the RGB values
+        print(color)
         r1, g1, b1, a1 = get_rgba_value(color)
         r2, g2, b2, a2 = get_rgba_value(red_color_like_css)
         
@@ -222,10 +223,11 @@ def like_tweet(driver, url, expected_url):
         if check != "Ok!":
             raise Exception("Like Tweet! Fail because you already like this tweet!")
         
-        twitter_actions("Liking Tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]", True, False, None)
+        twitter_actions("Liking Tweet", driver, 2, "//html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]", True, False, None)
 
         # Get the color of the element
-        color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div/div")
+        color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div")
+        print(color)
         # Get the RGB values
         r1, g1, b1, a1 = get_rgba_value(color)
         r2, g2, b2, a2 = get_rgba_value(red_color_like_css)
@@ -321,13 +323,11 @@ def registerUserTwitter(driver, email, password):
         
         step8SkipNotifications(driver)
         
-        sleep(300)
-        
-        step9CreateUserTwitter(driver)
+        print(step9CreateUserTwitter(driver))
         
         verifyIsAccountLocked(driver)
         
-        step10ChangeImageProfile(driver)
+        print(step10ChangeImageProfile(driver))
         
         print("Create User! Ok!")
         
@@ -471,6 +471,8 @@ def step8SkipNotifications(driver):
 
 def step9CreateUserTwitter(driver):
     actions = [
+        ("Language spoken", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div/label[2]/div[2]/label/div/div/input", True, False, None),
+        ("Button next language", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div", True, False, None),
         ("We pick 1 random theme", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[1]/div/div/div/div/div/div/div", True, False, None),
         ("We pick 2 random theme", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[2]/div/div/div/div/div/div/div", True, False, None),
         ("We pick 3 random theme", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/section/div/div/div/div/div[3]/div/div/div/li[3]/div/div/div/div/div/div/div", True, False, None),
@@ -489,7 +491,8 @@ def step10ChangeImageProfile(driver):
     actions = [
         ("Go profile", driver, 2, "/html/body/div[1]/div/div/div[2]/header/div/div/div/div[1]/div[2]/nav/a[8]/div", True, False, None),
         ("Setup profile", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div[2]/div[1]/div[2]/a/div", True, False, None),
-        ("Insert photo", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div/input", True, True, rpt.randomImage()),
+        ("Insert photo", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div/input", False, True, rpt.randomImage(), False),
+        ("Apply photo", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div[2]/div/div/div/div[1]/div/div/div/div/div/div[3]/div", True, False, None),
     ]
     
     for action in actions:
@@ -791,8 +794,8 @@ def insertCodeSuspicious(driver, email, password):
         sleep(1)
         
     actions =[
-        ("Insert code", driver, 2, "//*[@id='layers']/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input", True, True, code),
-        ("Press button", driver, 2, "//*[@id='layers']/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div", True, False, None),
+        ("Insert code", driver, 2, "/html/body/div[1]/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input", True, True, code),
+        ("Press button", driver, 2, "/html/body/div[1]/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div", True, False, None),
     ]
     
     for action in actions:
