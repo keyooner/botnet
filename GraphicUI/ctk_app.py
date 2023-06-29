@@ -10,8 +10,10 @@ import temp
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-import sys
 import io
+import re
+import sys
+
 
 # driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
@@ -113,11 +115,11 @@ class App(ctk.CTk):
         self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
         self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions Available: {fdb.get_values_unlocked(temp.get_email(), temp.get_password())}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_status = ctk.CTkLabel(master=self.profile_frame, text="VPN Status: Disconnected")
+        self.label_profile_vpn_status = ctk.CTkLabel(master=self.profile_frame, text=temp.get_vpn_switch_status())
         self.label_profile_vpn_status.grid(row=4, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_location = ctk.CTkLabel(master=self.profile_frame, text="")
+        self.label_profile_vpn_location = ctk.CTkLabel(master=self.profile_frame, text=temp.get_vpn_switch_location())
         self.label_profile_vpn_location.grid(row=5, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_ip = ctk.CTkLabel(master=self.profile_frame, text="")
+        self.label_profile_vpn_ip = ctk.CTkLabel(master=self.profile_frame, text=temp.get_vpn_switch_ip())
         self.label_profile_vpn_ip.grid(row=6, column=2, padx=20, pady=0, sticky="")
 
         # create checkbox and switch frame
@@ -198,6 +200,8 @@ class App(ctk.CTk):
         #create button to create account
         self.create_account_button = ctk.CTkButton(button_frame, text="Create Account")
         self.create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
+        self.create_unlock_button = ctk.CTkButton(button_frame, text="Unlock Account/s")
+        self.create_unlock_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
 
     
     def vpn_option_button_clicked(self):
@@ -205,14 +209,30 @@ class App(ctk.CTk):
 
         vpn_container_frame = ctk.CTkFrame(self.options_frame, fg_color="transparent")
         vpn_container_frame.pack(fill="x", expand=True)
+
         self.vpn_label_option = ctk.CTkLabel(vpn_container_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
         self.vpn_label_option.pack(padx=(10,10), pady=(10,10))
 
-        self.vpn_switch_label = ctk.CTkLabel(master=self.options_frame, text="Connect or disconnect vpn")
+        self.vpn_switch_label = ctk.CTkLabel(master=vpn_container_frame, text="Do you want to use VPN?")
         self.vpn_switch_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
-        self.vpn_switch_var = ctk.StringVar(value="off")
-        self.vpn_switch = ctk.CTkSwitch(master=self.options_frame, text="Vpn On/Off", command=self.vpn_connect_clicked, variable=self.vpn_switch_var, onvalue='on', offvalue='off')
-        self.vpn_switch.pack(side="right", padx=(20, 10), pady=(10, 10), fill="both", expand=True)
+
+        self.vpn_switch_var = ctk.StringVar(value=temp.get_vpn_switch_status_value())
+        self.vpn_switch = ctk.CTkSwitch(master=vpn_container_frame, text="Vpn On/Off", command=self.vpn_connect_clicked, variable=self.vpn_switch_var, onvalue='on', offvalue='off')
+        self.vpn_switch.pack(side="left", padx=(20, 10), pady=(10, 10), fill="both", expand=True)
+
+        vpn_container_frame_2 = ctk.CTkFrame(self.options_frame, fg_color="transparent")
+        vpn_container_frame_2.pack(fill="x", expand=True)
+
+        self.vpn_switch_status_label = ctk.CTkLabel(vpn_container_frame_2, text=temp.get_vpn_switch_status(), justify='center')
+        self.vpn_switch_status_label.pack(padx=(10,10), pady=(10,10))
+
+        self.vpn_switch_location_label = ctk.CTkLabel(master=self.options_frame, text=temp.get_vpn_switch_location())
+        self.vpn_switch_location_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
+
+        self.vpn_switch_ip_label = ctk.CTkLabel(master=self.options_frame, text=temp.get_vpn_switch_ip())
+        self.vpn_switch_ip_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
+
+
 
     def twitter_option_button_clicked(self):
         
@@ -334,40 +354,42 @@ class App(ctk.CTk):
 
     def vpn_connect_clicked(self):
         from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
-
+        temp.set_vpn_switch_status_value('on')
+        temp.set_vpn_switch_status('Connected')
         if self.vpn_switch_var.get() == 'on':
-            # Guarda la salida estándar actual
             stdout = sys.stdout
-
-            # Crea un objeto io.StringIO para redirigir la salida
-            captura_salida = io.StringIO()
-            sys.stdout = captura_salida
-
+            exit_prints = io.StringIO()
+            sys.stdout = exit_prints
             initialize_VPN(stored_settings=1)
             rotate_VPN()
             sys.stdout = stdout
-            self.vpn_profile_labels('on')
+            prints_exits = exit_prints.getvalue()
+            vpn_location = re.search(r'Connecting you to\s*(.*)', prints_exits)
+            vpn_ip = re.search(r'your new ip-address is:\s*(.*)', prints_exits)
+            self.vpn_labels_on(vpn_location.group(1), vpn_ip.group(1))
         else:
             terminate_VPN()
-            self.vpn_profile_labels('off')
+            temp.set_vpn_switch_status_value('off')
 
-        # Obtiene la salida capturada en una variable
-        salida_capturada = captura_salida.getvalue()
-
-        # Divide la salida capturada en líneas
-        lineas = salida_capturada.splitlines()
-
-        # Imprime cada línea por separado
-        print("Salida capturada:")
-        for linea in lineas:
-            print(linea)
+    def vpn_labels_on(self, vpn_location, vpn_ip):
+        temp.set_vpn_switch_location(vpn_location)
+        temp.set_vpn_switch_ip(vpn_ip)
+        self.label_profile_vpn_status.configure(text=temp.get_vpn_switch_status())
+        self.vpn_switch_status_label.configure(text=temp.get_vpn_switch_status())
+        self.label_profile_vpn_location.configure(text=temp.get_vpn_switch_location())
+        self.vpn_switch_location_label.configure(text=temp.get_vpn_switch_location())
+        self.label_profile_vpn_ip.configure(text=f"{temp.get_vpn_switch_ip()}")
+        self.vpn_switch_ip_label.configure(text=temp.get_vpn_switch_ip())
     
-    def vpn_profile_labels(self, status):
-        if status == 'on':
-            self.label_profile_vpn_status.configure(text="VPN Status: Connected")
-        else:
-            self.label_profile_vpn_status.configure(text="VPN Status: Disconnected")
-    
+    def vpn_labels_off(self):
+        temp.set_vpn_switch_status("Disconnected")
+        self.label_profile_vpn_status.configure(text=temp.get_vpn_switch_status())
+        self.vpn_switch_status_label.configure(text=temp.get_vpn_switch_status())
+        self.label_profile_vpn_location.configure(text=temp.get_vpn_switch_location())
+        self.vpn_switch_location_label.configure(text=temp.get_vpn_switch_location())
+        self.label_profile_vpn_ip.configure(text=temp.get_vpn_switch_ip())
+        self.vpn_switch_ip_label.configure(text=temp.get_vpn_switch_ip())
+        
     def twitter_url_verified(self, url):
         tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
         follow_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}$'
@@ -422,9 +444,6 @@ class App(ctk.CTk):
         #button option selected
         self.logout_button_yes = ctk.CTkButton(logout_container_frame, text="Yes", anchor='center', command=self.action_logOut)
         self.logout_button_yes.pack(side="top", padx=10, pady=10)
-
-        self.logout_button_no = ctk.CTkButton(logout_container_frame, text="No", anchor='center')
-        self.logout_button_no.pack(side="top", padx=10, pady=10)
 
     def close_main_window(self):
         self.destroy()
