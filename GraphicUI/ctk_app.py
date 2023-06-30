@@ -440,6 +440,7 @@ class App(ctk.CTk):
             self._extracted_from_verify_twitter_url_4('normal')
             self.twitter_checkbox_follow.configure(state='disabled')
             self.twitter_checkbox_follow.deselect()
+            self.entry_twitter_url.configure(border_color="green")
             temp.set_twitter_actions(1)
         elif self.twitter_url_verified(url) == 'follow':
             self.twitter_checkbox_follow.configure(state='normal')
@@ -448,6 +449,7 @@ class App(ctk.CTk):
             self.twitter_checkbox_like.deselect()
             self.twitter_checkbox_rt.deselect()
             self.twitter_checkbox_cmnt.deselect()
+            self.entry_twitter_url.configure(border_color="green")
             temp.set_twitter_follow(1)
         else:
             self._extracted_from_verify_twitter_url_4('disabled')
