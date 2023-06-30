@@ -64,6 +64,3 @@ def randomImage():
 
     # Ruta completa de la imagen seleccionada
     return os.path.normpath(os.path.join(os.getcwd(), ruta, imagen_aleatoria))
-
-
-print(randomImage())

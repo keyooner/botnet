@@ -41,6 +41,7 @@ from selenium.webdriver.firefox.service import Service
 ################################################################
 
 red_color_like_css = "rgba(249, 24, 128, 1)"
+# red_color_like_css = "rgba(248, 24, 128, 1)"
 green_color_retweet_css = "rgba(0, 186, 124, 1)"
 black_color_follow_rgba_css = "rgba(0, 0, 0, 0)"
 url_login = "https://twitter.com/i/flow/login"
@@ -152,26 +153,35 @@ def comment_tweet(driver, url, expected_url, comment, user):
     try:
         
         go_page("Go to tweet", driver, url, expected_url)
-        
+
         if get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
             raise Exception("Comment Tweet! Fail because you already comment this tweet!")
-        
-        twitter_actions("Check and click Comment tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[1]", True, False, None)
-        twitter_actions("Click and send Comment tweet", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[3]/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/div/div/div/div/div/div/div/div/div/label/div[1]/div/div/div/div/div/div[2]/div/div/div/div", True, True, comment, False, False)
-        print(twitter_actions("Click reply!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[3]/div[2]/div[2]/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]", True, False, None))
-        # twitter_actions("Got it! Click!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div", True, False, None)
-        sleep(2)
-        
-        if get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
-            return "Comment Twitter! Ok!"
-        
-        return "Something has failed! Retry!"
-    
-    except TimeoutException:
-        return "Retweet Twitter! Time Error!"
 
+        return go_comment(
+            driver, comment, user, "Something has failed! Retry!"
+        )
+    except TimeoutException:
+        return go_comment(
+            driver, comment, user, "Comment Twitter! Time Error!"
+        )
     except Exception as e:
         return f"{e}"
+
+
+# TODO Rename this here and in `comment_tweet`
+def go_comment(driver, comment, user, arg3):
+    twitter_actions("Check and click Comment tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[1]/div", True, False, None)
+    twitter_actions("Click and send Comment tweet", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[3]/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/div/div/div/div/div/div/div/div/div/label/div[1]/div/div/div/div/div/div[2]/div/div/div/div", True, True, comment, False, False)
+    print(twitter_actions("Click reply!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[3]/div[2]/div[2]/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]", True, False, None))
+    # twitter_actions("Got it! Click!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div", True, False, None)
+    sleep(2)
+
+    if get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
+        if unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
+                twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div/div", True, False, None)
+        return "Comment Twitter! Ok!"
+        
+    return arg3
 
 def retweet_tweet(driver, url, expected_url):
     try:
@@ -191,11 +201,15 @@ def retweet_tweet(driver, url, expected_url):
         print(twitter_actions("Retweet Tweet Click", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]", True, False, None))
         print(twitter_actions("Choose Retweet Option Tweet Click", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div[2]/div/div[3]/div/div/div/div", True, False, None))
         
+        sleep(1)
+        
         color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]/div/div")
         # Get the RGB values
         r1, g1, b1, a1 = get_rgba_value(color)
         check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
         if check != "Ok!":
+            if unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
+                twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div/div", True, False, None)
             return "Retweet Twitter! Ok!"
         
         return "Something has failed! Retry!"
@@ -209,25 +223,28 @@ def retweet_tweet(driver, url, expected_url):
 def like_tweet(driver, url, expected_url):
     try:
         go_page("Go to tweet", driver, url, expected_url)
-        twitter_actions("Get element for Like tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div/div/div", False, False, None)
-
+        twitter_actions("Get element for Like tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div", False, False, None)
+        
         # Get the color of the element
         color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div")
+        
+        if color == "Fail! We didn't find the element!":
+            color = get_color(driver, 1, ".r-1bwzh9t")
+            
         # Get the RGB values
-        print(color)
         r1, g1, b1, a1 = get_rgba_value(color)
         r2, g2, b2, a2 = get_rgba_value(red_color_like_css)
-        
+
         check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
         
         if check != "Ok!":
             raise Exception("Like Tweet! Fail because you already like this tweet!")
         
-        twitter_actions("Liking Tweet", driver, 2, "//html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]", True, False, None)
-
+        twitter_actions("Liking Tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[5]/div/div[3]", True, False, None)
+        sleep(1)
         # Get the color of the element
         color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div")
-        print(color)
+        
         # Get the RGB values
         r1, g1, b1, a1 = get_rgba_value(color)
         r2, g2, b2, a2 = get_rgba_value(red_color_like_css)
@@ -235,6 +252,8 @@ def like_tweet(driver, url, expected_url):
         check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
         
         if check != "Ok!":
+            if unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
+                twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div/div", True, False, None)
             return "Like Twitter! Ok!"
         else:
             return "Something has failed! Retry!"
@@ -742,6 +761,21 @@ def get_login_locked(driver, type, element):
     if div_action.text in [
         "Introduce tu número de teléfono o nombre de usuario",
         "Enter your phone number or username",
+    ]:
+        return True
+    return False
+
+def unlock_more(driver, type, element):
+    selector = get_type_selector(type)
+    try: 
+        div_action = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((selector, element))
+        )
+    except TimeoutException:
+        return False
+    
+    if div_action.text in [
+        "Unlock more on Twitter",
     ]:
         return True
     return False
