@@ -254,7 +254,6 @@ class App(ctk.CTk):
             self.twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
             temp.set_twitter_url(None)
         else:
-            print(temp.get_twitter_url())
             twitter_url_input_variable = ctk.StringVar()
             twitter_url_input_variable.set(temp.get_twitter_url())
             twitter_placeholder_url_input_variable = ctk.StringVar()
@@ -433,7 +432,6 @@ class App(ctk.CTk):
             self.twitter_checkbox_cmnt.deselect()
             self.twitter_checkbox_follow.configure(state='disabled')
             self.twitter_checkbox_follow.deselect()
-        print(f"set twitter url:{self.entry_twitter_url.get()}----")
         if not self.entry_twitter_url.get():
             temp.set_twitter_url(None)
         else:
