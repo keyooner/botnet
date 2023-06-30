@@ -249,9 +249,20 @@ class App(ctk.CTk):
         urls_container_frame.pack(fill="x")
         
         # create entry urls
-        self.entry_twitter_url = ctk.CTkEntry(urls_container_frame, placeholder_text="Entry your twitter url here")
+        if temp.get_twitter_url() == None:
+            self.entry_twitter_url = ctk.CTkEntry(urls_container_frame, placeholder_text="Entry your twitter url here")
+            self.twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
+            temp.set_twitter_url(None)
+        else:
+            print(temp.get_twitter_url())
+            twitter_url_input_variable = ctk.StringVar()
+            twitter_url_input_variable.set(temp.get_twitter_url())
+            twitter_placeholder_url_input_variable = ctk.StringVar()
+            twitter_placeholder_url_input_variable.set("Entry your twitter url here")
+            self.entry_twitter_url = ctk.CTkEntry(urls_container_frame, textvariable=twitter_url_input_variable, placeholder_text=twitter_placeholder_url_input_variable)
+            self.twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
+        
         self.entry_twitter_url.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
-        self.twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
         self.twitter_url_button.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
 
         # create checkboxes
@@ -308,7 +319,11 @@ class App(ctk.CTk):
         self.twitter_label_interactions.pack(side="left", padx=5, pady=5, anchor="center")
 
         self.button_entry = ctk.CTkEntry(container, width=30, validate="key", validatecommand=(validate_command, "%P"))
-        self.button_entry.insert(0, "0")
+        if fdb.get_values_unlocked(temp.get_email(), temp.get_password()) < 1:
+            self.button_entry.insert(0, "0")
+        else:
+            self.button_entry.insert(1, "1")
+
         self.button_entry.pack(side="left", padx=5, pady=5, anchor="center")
 
         self.button_increase = ctk.CTkButton(container, text='+', command=lambda:increase(self), width=2)
@@ -418,6 +433,11 @@ class App(ctk.CTk):
             self.twitter_checkbox_cmnt.deselect()
             self.twitter_checkbox_follow.configure(state='disabled')
             self.twitter_checkbox_follow.deselect()
+        print(f"set twitter url:{self.entry_twitter_url.get()}----")
+        if not self.entry_twitter_url.get():
+            temp.set_twitter_url(None)
+        else:
+            temp.set_twitter_url(self.entry_twitter_url.get())
 
     # TODO Rename this here and in `verify_twitter_url`
     def _extracted_from_verify_twitter_url_4(self, state):
