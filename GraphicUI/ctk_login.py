@@ -1,12 +1,9 @@
 import customtkinter as ctk 
 import tkinter.messagebox as tkmb
 import re
-import tkinter as tk
 import FirebaseFunctions.firebaseAuthentication as fba
 import GraphicUI.ctk_app as gui_app
 import temp
-import tkinter as tk
-from tkinter import ttk
 
 def togglePasswordVisibility():
     if show_password.get():
@@ -274,11 +271,11 @@ show_password_button.pack()
 
 # Create a recover password button
 recover_button = ctk.CTkButton(login_frame, text = 'Recover Password', command = createWindowRecover)
-recover_button.pack(side= tk.TOP, pady = 10, padx = 10)
+recover_button.pack(side= 'top', pady = 10, padx = 10)
 
 # Create a login button
 login_button = ctk.CTkButton(login_frame, text = 'Login', command = login)
-login_button.pack(side=tk.LEFT, pady = 0, padx = 10)
+login_button.pack(side='left', pady = 0, padx = 10)
 
 def checkRequisitesLogin():
         regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -301,7 +298,7 @@ password_input.bind("<Return>", bindButtonEnterLogin)
 
 # Create a register button
 register_button = ctk.CTkButton(login_frame, text = 'Register', command = createWindowRegister)
-register_button.pack(side=tk.RIGHT, pady = 0, padx = 10)
+register_button.pack(side='right', pady = 0, padx = 10)
 
 # Launch main window tkinter app
 main_window.mainloop()
