@@ -1,18 +1,18 @@
+import io
+import re
+import sys
+import temp
 import datetime
 import customtkinter as ctk
-import re
 import FirebaseFunctions.firebaseDatabase as fdb
 import TwitterFunctions.seleniumFunctions as sf
 import FirebaseFunctions.firebaseAuthentication as fba
 from CTkTable import *
 from PIL import Image
-import temp
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-import io
-import re
-import sys
+
 
 
 # driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
@@ -232,8 +232,6 @@ class App(ctk.CTk):
         self.vpn_switch_ip_label = ctk.CTkLabel(master=self.options_frame, text=temp.get_vpn_ip())
         self.vpn_switch_ip_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
 
-
-
     def twitter_option_button_clicked(self):
         
         self.disable_option_button('twitter')
@@ -268,15 +266,33 @@ class App(ctk.CTk):
         checkbox_container_frame = ctk.CTkFrame(self.options_frame)
         checkbox_container_frame.pack(fill="x")
 
-        self.twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='disabled')
+        if temp.get_twitter_actions() == None:
+            self.twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='disabled')
+            self.twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='disabled')
+            self.twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='disabled')
+            temp.set_twitter_actions(None)
+        else:
+            self.twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='normal')
+            self.twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='normal')
+            self.twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='normal')
+
         self.twitter_checkbox_like.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='disabled')
         self.twitter_checkbox_rt.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='disabled')
         self.twitter_checkbox_cmnt.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
+
+
+        if temp.get_twitter_follow() == None:
+            self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
+            temp.set_twitter_follow(None)
+        else:
+            self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='normal')
+
+        if ((temp.get_twitter_actions()) == None) and ((temp.get_twitter_follow()) == None):
+            self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command = self.twitter_checkCheckbox)
+        else:
+            self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command = self.twitter_checkCheckbox)
+
         self.twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command = self.twitter_checkCheckbox)
         self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
                 
     def return_available_accounts_twitter(self):
@@ -318,10 +334,6 @@ class App(ctk.CTk):
         self.twitter_label_interactions.pack(side="left", padx=5, pady=5, anchor="center")
 
         self.button_entry = ctk.CTkEntry(container, width=30, validate="key", validatecommand=(validate_command, "%P"))
-        if fdb.get_values_unlocked(temp.get_email(), temp.get_password()) < 1:
-            self.button_entry.insert(0, "0")
-        else:
-            self.button_entry.insert(1, "1")
 
         self.button_entry.pack(side="left", padx=5, pady=5, anchor="center")
 
@@ -330,6 +342,16 @@ class App(ctk.CTk):
 
         self.button_decrease = ctk.CTkButton(container, text='-', command=lambda:decrease(self), width=2)
         self.button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
+
+        if fdb.get_values_unlocked(temp.get_email(), temp.get_password()) < 1:
+            self.button_entry.configure(state="disabled")
+            self.button_increase.configure(state="disabled")
+            self.button_decrease.configure(state="disabled")
+        else:
+            if temp.get_twitter_interactions() != None:
+                self.button_entry.insert(temp.get_twitter_interactions(), f"{temp.get_twitter_interactions()}")
+            else:
+                self.button_entry.insert(1, "1")
     
     def twitter_checkCheckbox(self):
         if self.twitter_url_verified(self.entry_twitter_url.get()) in [
@@ -418,6 +440,7 @@ class App(ctk.CTk):
             self._extracted_from_verify_twitter_url_4('normal')
             self.twitter_checkbox_follow.configure(state='disabled')
             self.twitter_checkbox_follow.deselect()
+            temp.set_twitter_actions(1)
         elif self.twitter_url_verified(url) == 'follow':
             self.twitter_checkbox_follow.configure(state='normal')
             self._extracted_from_verify_twitter_url_4('disabled')
@@ -425,6 +448,7 @@ class App(ctk.CTk):
             self.twitter_checkbox_like.deselect()
             self.twitter_checkbox_rt.deselect()
             self.twitter_checkbox_cmnt.deselect()
+            temp.set_twitter_follow(1)
         else:
             self._extracted_from_verify_twitter_url_4('disabled')
             self.twitter_checkbox_like.deselect()
@@ -432,10 +456,16 @@ class App(ctk.CTk):
             self.twitter_checkbox_cmnt.deselect()
             self.twitter_checkbox_follow.configure(state='disabled')
             self.twitter_checkbox_follow.deselect()
+            self.entry_twitter_url.configure(border_color="red")
+            temp.set_twitter_actions(None)
+            temp.set_twitter_follow(None)
         if not self.entry_twitter_url.get():
             temp.set_twitter_url(None)
         else:
             temp.set_twitter_url(self.entry_twitter_url.get())
+        temp.set_twitter_interactions(self.button_entry.get())
+
+        
 
     # TODO Rename this here and in `verify_twitter_url`
     def _extracted_from_verify_twitter_url_4(self, state):
