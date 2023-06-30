@@ -7,6 +7,7 @@ import customtkinter as ctk
 import FirebaseFunctions.firebaseDatabase as fdb
 import TwitterFunctions.seleniumFunctions as sf
 import FirebaseFunctions.firebaseAuthentication as fba
+import ctk_app_functions as ctkfun
 from CTkTable import *
 from PIL import Image
 from selenium import webdriver
@@ -99,7 +100,7 @@ class App(ctk.CTk):
         # create main entry and button
         self.entry = ctk.CTkEntry(self, placeholder_text="Entry your text here")
         self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
-        self.entry_button = ctk.CTkButton(master=self, fg_color="transparent", text="Send", border_width=2, text_color=("gray10", "#DCE4EE"), command=self.input_message_in_textbox)
+        self.entry_button = ctk.CTkButton(master=self, fg_color="transparent", text="Send", border_width=2, text_color=("gray10", "#DCE4EE"), command=lambda: ctkfun.input_message_in_textbox(self.textbox, self.entry))
         self.entry_button.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
 
         # create profile data frame
@@ -506,16 +507,6 @@ class App(ctk.CTk):
     def action_logOut(self):
         self.close_main_window()
         self.logout_user()        
-
-    def test_return_variable(self):
-        return 'return variable'
-    
-    def input_message_in_textbox(self):
-        date_time = datetime.datetime.now()
-        self.textbox.configure(state="normal")
-        self.textbox.insert("0.0", f'[{date_time}] $: ' + f'{self.entry.get()} ' + self.test_return_variable() + '\n\n')
-        self.entry.delete(0, ctk.END)
-        self.textbox.configure(state="disabled")
 
     def input_vpn_message_in_textbox(self, message):
         date_time = datetime.datetime.now()
