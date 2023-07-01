@@ -78,12 +78,6 @@ class App(ctk.CTk):
         self.textbox_frame.columnconfigure(0, weight=1)
         self.textbox_frame.rowconfigure(0, weight=1)
 
-        # create main entry and button
-        self.entry = ctk.CTkEntry(self, placeholder_text="Entry your text here")
-        self.entry.grid(row=3, column=1, columnspan=2, padx=(20, 0), pady=(20, 20), sticky="nsew")
-        self.entry_button = ctk.CTkButton(master=self, fg_color="transparent", text="Send", border_width=2, text_color=("gray10", "#DCE4EE"), command=lambda: ctkfun.input_message_in_textbox(self.textbox, self.entry))
-        self.entry_button.grid(row=3, column=3, padx=(20, 20), pady=(20, 20), sticky="nsew")
-
         # create profile data frame
         self.profile_frame = ctk.CTkFrame(self)
         self.profile_frame.grid(row=0, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
