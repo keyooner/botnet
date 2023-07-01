@@ -4,10 +4,19 @@ import sys
 import temp
 import datetime
 import customtkinter as ctk
+import TwitterFunctions.seleniumFunctions as sf
 import FirebaseFunctions.firebaseDatabase as fdb
 import FirebaseFunctions.firebaseAuthentication as fba
 from CTkTable import *
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from nordvpn_switcher import initialize_VPN, rotate_VPN, terminate_VPN
+
+################################################ DRIVER ##################################################
+
+def get_driver():
+        return webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
 ############################################### TEXTBOX ##################################################
 
@@ -155,9 +164,53 @@ def vpn_labels_off(label_profile_vpn_status,
         label_profile_vpn_ip.configure(text=temp.get_vpn_ip())
         vpn_switch_ip_label.configure(text=temp.get_vpn_ip())
 
-############################################### LOGOUT ##################################################
+############################################### TWITTER ##################################################
 
-def logout_option_content(options_frame, action_logOut):
+def twitter_url_check(url, button_entry):
+        tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
+        follow_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}$'
+        if re.match(tweet_url, url) and (int(button_entry.get()) > 0):
+                return "actions"
+        elif re.match(follow_url, url) and (int(button_entry.get()) > 0):
+                return "follow"
+        
+def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window, twitter_checkbox_like):
+        if twitter_url_check(entry_twitter_url.get(), button_entry) in ['actions','follow',]:
+
+                if  twitter_checkbox_cmnt.get() == 1:
+                        twitter_popup_comment_window()
+
+                if twitter_checkbox_like.get() == 1:
+                        print(sf.action_n_times(get_driver(), fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get())), entry_twitter_url.get(), 
+                                entry_twitter_url.get(), 2))
+
+def return_available_accounts_twitter():
+        return fdb.get_values_unlocked(temp.get_email(), temp.get_password())
+
+def twitter_popup_comment_window(button_entry, instance):
+        entry_value = int(button_entry.get())
+        popup_comment_window = ctk.CTkToplevel()
+        popup_comment_window.title("Comments window")
+        popup_comment_window.geometry("250x300")
+        popup_comment_window.focus()
+
+        # create scrollable frame
+        scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window, label_text="Comments")
+        scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        scrollable_popup_frame.grid_columnconfigure(0, weight=2)
+        scrollable_frame_entries = []
+        for i in range(entry_value):
+                comment_entries = ctk.CTkEntry(master=scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
+                comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
+                setattr(instance, f"comment_entries_{i}", comment_entries)
+                scrollable_frame_entries.append(comment_entries)
+
+        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!')
+        popup_comment_window_button.grid(row=entry_value, column=0)
+
+################################################ LOGOUT ##################################################
+
+def logout_option_content(options_frame, instance):
         #create logout container frame
         logout_container_frame = ctk.CTkFrame(options_frame)
         logout_container_frame.pack(fill="both", expand=True)
@@ -170,13 +223,20 @@ def logout_option_content(options_frame, action_logOut):
         logout_label_quest.pack(padx=(20, 10), pady=(10, 10))
 
         #button option selected
-        logout_button_yes = ctk.CTkButton(logout_container_frame, text="Yes", anchor='center', command=action_logOut)
+        logout_button_yes = ctk.CTkButton(logout_container_frame, text="Yes", anchor='center', command=lambda: action_logOut(instance))
         logout_button_yes.pack(side="top", padx=10, pady=10)
 
 def logout_user():
         import GraphicUI.ctk_login as login_app
         fba.logOutUser()
         login_app.main_window.mainloop() 
+
+def close_main_window(instance):
+        instance.destroy()
+
+def action_logOut(instance):
+        close_main_window(instance)
+        logout_user()  
 
 ############################################### DISABLE BUTTONS ##################################################
 
