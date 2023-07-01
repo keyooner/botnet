@@ -35,9 +35,16 @@ def vpn_connect_clicked(vpn_switch_var, label_profile_vpn_status,
                 prints_exits = exit_prints.getvalue()
                 vpn_location = re.search(r'Connecting you to\s*(.*)', prints_exits)
                 vpn_ip = re.search(r'your new ip-address is:\s*(.*)', prints_exits)
-                vpn_labels_on(vpn_location.group(1), vpn_ip.group(1),
-                        label_profile_vpn_status, vpn_switch_status_label, label_profile_vpn_location, 
-                        vpn_switch_location_label, label_profile_vpn_ip, vpn_switch_ip_label)
+                vpn_labels_on(
+                        vpn_location[1],
+                        vpn_ip[1],
+                        label_profile_vpn_status,
+                        vpn_switch_status_label,
+                        label_profile_vpn_location,
+                        vpn_switch_location_label,
+                        label_profile_vpn_ip,
+                        vpn_switch_ip_label,
+                )
         else:
                 terminate_VPN()
                 temp.set_vpn_mode('off')
