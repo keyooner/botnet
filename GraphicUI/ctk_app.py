@@ -1,6 +1,4 @@
-import io
 import re
-import sys
 import temp
 import datetime
 import customtkinter as ctk
@@ -218,7 +216,12 @@ class App(ctk.CTk):
         self.vpn_switch_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
 
         self.vpn_switch_var = ctk.StringVar(value=temp.get_vpn_mode())
-        self.vpn_switch = ctk.CTkSwitch(master=vpn_container_frame, text="Vpn On/Off", command=self.vpn_connect_clicked, variable=self.vpn_switch_var, onvalue='on', offvalue='off')
+        self.vpn_switch = ctk.CTkSwitch(master=vpn_container_frame, 
+                                        text="Vpn On/Off", 
+                                        command=lambda: ctkfun.vpn_connect_clicked(self.vpn_switch_var, self.label_profile_vpn_status, 
+                                        self.vpn_switch_status_label, self.label_profile_vpn_location, self.vpn_switch_location_label, 
+                                        self.label_profile_vpn_ip, self.vpn_switch_ip_label), 
+                                        variable=self.vpn_switch_var, onvalue='on', offvalue='off')
         self.vpn_switch.pack(side="left", padx=(20, 10), pady=(10, 10), fill="both", expand=True)
 
         vpn_container_frame_2 = ctk.CTkFrame(self.options_frame, fg_color="transparent")
@@ -389,43 +392,7 @@ class App(ctk.CTk):
         popup_comment_window_button.grid(row=entry_value, column=0)
         
 
-    def vpn_connect_clicked(self):
-        from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
-        temp.set_vpn_mode('on')
-        temp.set_vpn_status('Connected')
-        if self.vpn_switch_var.get() == 'on':
-            stdout = sys.stdout
-            exit_prints = io.StringIO()
-            sys.stdout = exit_prints
-            initialize_VPN(stored_settings=1)
-            rotate_VPN()
-            sys.stdout = stdout
-            prints_exits = exit_prints.getvalue()
-            vpn_location = re.search(r'Connecting you to\s*(.*)', prints_exits)
-            vpn_ip = re.search(r'your new ip-address is:\s*(.*)', prints_exits)
-            self.vpn_labels_on(vpn_location.group(1), vpn_ip.group(1))
-        else:
-            terminate_VPN()
-            temp.set_vpn_mode('off')
-
-    def vpn_labels_on(self, vpn_location, vpn_ip):
-        temp.set_vpn_location(vpn_location)
-        temp.set_vpn_ip(vpn_ip)
-        self.label_profile_vpn_status.configure(text=temp.get_vpn_status())
-        self.vpn_switch_status_label.configure(text=temp.get_vpn_status())
-        self.label_profile_vpn_location.configure(text=temp.get_vpn_location())
-        self.vpn_switch_location_label.configure(text=temp.get_vpn_location())
-        self.label_profile_vpn_ip.configure(text=f"{temp.get_vpn_ip()}")
-        self.vpn_switch_ip_label.configure(text=temp.get_vpn_ip())
     
-    def vpn_labels_off(self):
-        temp.set_vpn_status("Disconnected")
-        self.label_profile_vpn_status.configure(text=temp.get_vpn_status())
-        self.vpn_switch_status_label.configure(text=temp.get_vpn_status())
-        self.label_profile_vpn_location.configure(text=temp.get_vpn_location())
-        self.vpn_switch_location_label.configure(text=temp.get_vpn_location())
-        self.label_profile_vpn_ip.configure(text=temp.get_vpn_ip())
-        self.vpn_switch_ip_label.configure(text=temp.get_vpn_ip())
         
     def twitter_url_verified(self, url):
         tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
