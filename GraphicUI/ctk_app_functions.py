@@ -177,7 +177,7 @@ def vpn_connect_clicked(vpn_switch_var, label_profile_vpn_status,
                 rotate_VPN()
                 sys.stdout = stdout
                 prints_exits = exit_prints.getvalue()
-                vpn_location = re.search(r'Connecting you to\s*(.*)', prints_exits)
+                vpn_location = re.search(r'Connecting you to\s*(.*?)\s*\.{3}', prints_exits)
                 vpn_ip = re.search(r'your new ip-address is:\s*(.*)', prints_exits)
                 vpn_labels_on(
                         vpn_location[1],
