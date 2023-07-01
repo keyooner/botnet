@@ -42,6 +42,35 @@ def loadValues(email, password, data: dict):
 
         db.child("created_users").child(email_local).child(f"ID-{id}").set(data, token)
 
+def updateValues(email, password, email_find, update_state):
+        
+        firebase = fa.initializeApp()
+        
+        db = firebase.database()
+        
+        auth = firebase.auth()
+        
+        user = auth.sign_in_with_email_and_password(email = email, password = password)
+        
+        email_local = user['localId']
+        token =  user['idToken']
+        
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("created_users").child(email_local).get(token)
+        
+        # Creamos un diccionario para almacenar los valores
+        values = {}
+        for item in data.each():
+                key = item.key()
+                value = item.val()
+                values[key] = value
+        
+        id = find_id_by_email(email_find, values)
+        
+        db.child("created_users").child(email_local).child(id).update({"state": update_state}, token)
+        
+        return f"{id}: has been updated!"
+
 def deleteValues(email, password):
         # We try to initialize app
         firebase = fa.initializeApp()
@@ -128,7 +157,11 @@ def get_values_unlocked(email, password):
                 value = item.val()
                 if value.get('state') == 'unlocked':
                         unlocked_values[key] = value
-        return len(unlocked_values)
+
+        if len(unlocked_values) == 0:
+                return 0
+        else:
+                return len(unlocked_values)
 
 def get_values_for_actions(email, password, n_times: int):
         # Intentamos inicializar la aplicación
@@ -210,3 +243,47 @@ def updateDatabase(email, password):
         loadValuesInUser(email, password, (remove_duplicates(reorder_ids(get_values(email, password)))))
         
         return "Database updated!"
+
+def find_id_by_email(email, data):
+        for id_, values in data.items():
+                if values["email"] == email:
+                        return id_
+        return None
+
+# upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez",reorder_ids(get_values("danifdezloz@gmail.com", "Dani5Fdez")))
+
+def loadValuesActionsTwitter(email, password, url, data: dict, user_twitter):
+        # We try to initialize app
+        firebase = fa.initializeApp()
+
+        db = firebase.database()
+
+        # Get a reference to the auth service
+        auth = firebase.auth()
+        # We try to sign in if this fails, throw exception
+        user = auth.sign_in_with_email_and_password(email = email, password = password)
+
+        email_local = user['localId']
+        token =  user['idToken']
+
+        id = getLastValue(email, password)
+
+        db.child("action_users").child(email_local).child(url).child(user_twitter).set(data, token)
+
+def loadValuesFollow(email, password, url, data: dict, user_twitter):
+        # We try to initialize app
+        firebase = fa.initializeApp()
+
+        db = firebase.database()
+
+        # Get a reference to the auth service
+        auth = firebase.auth()
+        # We try to sign in if this fails, throw exception
+        user = auth.sign_in_with_email_and_password(email = email, password = password)
+
+        email_local = user['localId']
+        token =  user['idToken']
+
+        id = getLastValue(email, password)
+
+        db.child("follow_users").child(email_local).child(url).child(user_twitter).set(data, token)

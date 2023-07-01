@@ -17,19 +17,19 @@ def generateProfile():
     year = str(rpf.random_year())
     user = rpf.randomUser(name, surname, day, month, year)
 
-    print("==== PROFILE CREATED ====\n")
-    print(  f"\nThe user has been created with the following parameters:\n"
-            f"email: {email}\n"
-            f"password: {password}\n"
-            f"gender: {gender}\n"
-            f"name: {name}\n"
-            f"surname: {surname}\n"
-            f"day: {day}\n"
-            f"month: {month}\n"
-            f"year: {year}\n"
-            f"user: {user}\n"
-            f"state: unlocked\n")
-    print("==== END PROFILE CREATED ==== \n")
+    # print("==== PROFILE CREATED ====\n")
+    # print(  f"\nThe user has been created with the following parameters:\n"
+    #         f"email: {email}\n"
+    #         f"password: {password}\n"
+    #         f"gender: {gender}\n"
+    #         f"name: {name}\n"
+    #         f"surname: {surname}\n"
+    #         f"day: {day}\n"
+    #         f"month: {month}\n"
+    #         f"year: {year}\n"
+    #         f"user: {user}\n"
+    #         f"state: unlocked\n")
+    # print("==== END PROFILE CREATED ==== \n")
 
     return {"email": email,
             "password": password,
@@ -110,11 +110,11 @@ def createMail(data):
 
     # Variable que contiene la url para generar usuarios
     url = CPANEL_BASE_URL + endpoint
-    print(f"URL: {url}")
+    # print(f"URL: {url}")
     resultado = get(url=url, headers=encabezado, params=parameters, verify=True)
-    print(" ==== Código web ==== ")
-    print(resultado.text)
-    print(" ==== Fin código web ==== ")
+    # print(" ==== Código web ==== ")
+    # print(resultado.text)
+    # print(" ==== Fin código web ==== ")
 
     # Obtenemos el código 200 OK aunque la petición ha sido denegada. Comprobar ['errores']
     if resultado.status_code != 200:
@@ -132,14 +132,14 @@ def createMail(data):
     metadata = respuesta.get("metadata")
 
     # Imprimimos los codigo respuesta
-    print(f"Código de estado de respuesta: {resultado.status_code}")
+    # print(f"Código de estado de respuesta: {resultado.status_code}")
 
     # Si el estado es 0 -> Fail, si es 1 -> Éxito
     if estado == 0:
         print("¡Error! Revisa los errores")
     elif estado == 1:
         print("¡Éxito!")
-    print(f"Estado: {estado}")
+    # print(f"Estado: {estado}")
 
     # Datos está vacio si falla. Contiene usuario+dominio en éxito
     if datos:

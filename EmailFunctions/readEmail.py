@@ -12,31 +12,32 @@ def readMail(username, password):
 
     with MailBox(imap_server, port=993).login(username, password, "INBOX") as mailbox:
         for msg in mailbox.fetch(criteria="ALL"):
-            print(f"===== MESSAGE ID: {msg.uid} =====")
-            print(f"From: {msg.from_}")
-            print(f"To: {msg.to}")
-            print(f'Bcc: {msg.bcc}')
-            print(f"Date: {msg.date}")
-            print(f'Subject: {msg.subject}')
-            print(f"Body: \n{msg.text}")
-
+            # print(f"===== MESSAGE ID: {msg.uid} =====")
+            # print(f"From: {msg.from_}")
+            # print(f"To: {msg.to}")
+            # print(f'Bcc: {msg.bcc}')
+            # print(f"Date: {msg.date}")
+            # print(f'Subject: {msg.subject}')
+            # print(f"Body: \n{msg.text}")
+            return "Mail was readed!"
+        
 def readMailTwitter(username, password):
     # Use your IMAP server for Mail
     imap_server = "mail.raptoragency.es"
     with MailBox(imap_server, port=993).login(username, password, "INBOX") as mailbox:
         for msg in mailbox.fetch(criteria="ALL"):
             if msg.uid == 2 or msg.from_ == "info@twitter.com":
-                print(f"===== MESSAGE ID: {msg.uid} =====")
-                print(f"From: {msg.from_}")
-                print(f"To: {msg.to}")
-                print(f'Bcc: {msg.bcc}')
-                print(f"Date: {msg.date}")
-                print(f'Subject: {msg.subject}')
-                print(f"Body: \n{msg.text}")
+                # print(f"===== MESSAGE ID: {msg.uid} =====")
+                # print(f"From: {msg.from_}")
+                # print(f"To: {msg.to}")
+                # print(f'Bcc: {msg.bcc}')
+                # print(f"Date: {msg.date}")
+                # print(f'Subject: {msg.subject}')
+                # print(f"Body: \n{msg.text}")
 
                 if match := re.search(r'\d+', msg.subject):
-                    print("Código recibido... es:\n")
-                    print(match.group())
+                    # print("Código recibido... es:\n")
+                    # print(match.group())
                     return match.group()
 
 
@@ -48,13 +49,14 @@ def readMailSuspiciousActivity(username, password):
         for msg in reversed(messages):
             if ("Your Twitter confirmation code is" in msg.subject
                 and (datetime.datetime.now(datetime.timezone.utc) - msg.date).total_seconds() <= 1200):
-                print(f"===== MESSAGE ID: {msg.uid} =====")
-                print(f"From: {msg.from_}")
-                print(f"To: {msg.to}")
-                print(f'Bcc: {msg.bcc}')
-                print(f"Date: {msg.date}")
-                print(f'Subject: {msg.subject}')
-                print(f"Body: \n{msg.text}")
+                
+                # print(f"===== MESSAGE ID: {msg.uid} =====")
+                # print(f"From: {msg.from_}")
+                # print(f"To: {msg.to}")
+                # print(f'Bcc: {msg.bcc}')
+                # print(f"Date: {msg.date}")
+                # print(f'Subject: {msg.subject}')
+                # print(f"Body: \n{msg.text}")
 
                 if code_match := re.search(r'is\s(\w+)$', msg.subject):
                     return code_match[1]

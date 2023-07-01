@@ -12,12 +12,11 @@ from selenium.common.exceptions import WebDriverException as exceptions
 import FirebaseFunctions.firebaseDatabase as fdb
 import RandomProfile.randomProfileTwitter as rpt
 from time import sleep
+import temp
 import re
 import EmailFunctions.readEmail as re
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.service import Service
-
-#driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
 
 ## VARIABLES WITH IMPORTANT VALOURS TO THE DEVELOP OF THE APP ##
 ##------------------------------------------------------------##
@@ -59,334 +58,6 @@ action_mapping = {
     3: "Comment",
     4: "Follow"
 }
-
-##------------------------------------------------------------##
-################################################################
-
-############# HERE ARE THE FUNCTIONS IN RELATION WITH THE FINAL ACTIONS FOR TWITTER #############
-## --------------------------------------------------------------------------------------------##
-            #! follow_user --> will follow the user in the url fiven
-            #? If you are already following the user, it will indicate that 
-            #? you cannot follow them again.
-            #! Params -> driver, url, expeteced_url
-                # driver -> use the web browser
-                # url -> url given 
-                # expected_ulr -> check if the url doesn't redirect
-## --------------------------------------------------------------------------------------------##
-            #! comment_tweet --> will comment the tweet passed in the url given
-            #? If you alredy commented on the tweet, it will indicate 
-            #? that the comment has already been made
-            #! Params -> driver, url, expected_url, comment, user
-                # driver -> use the web browser
-                # url -> url given 
-                # expected_ulr -> check if the url doesn't redirect
-                # comment -> the text that you are going to comment
-                # user -> we need user to check if you has already commented
-## --------------------------------------------------------------------------------------------##
-            #! retweet_tweet --> will retweet the tweet passed in the url given
-            #? If you alredy retweeted on the tweet, it will indicate 
-            #? that the retweet has already been made
-            #! Params -> driver, url, expected_url
-                # driver -> use the web browser
-                # url -> url given 
-                # expected_ulr -> check if the url doesn't redirect            
-## --------------------------------------------------------------------------------------------##
-            #! like_tweet --> will like the tweet passed in the url given
-            #? If you alredy liked on the tweet, it will indicate 
-            #? that the like has already been made
-            #! Params -> driver, url, expected_url
-                # driver -> use the web browser
-                # url -> url given 
-                # expected_ulr -> check if the url doesn't redirect
-## --------------------------------------------------------------------------------------------##
-            #! loginUserTwitter --> will login into twitter
-            #? Make al the steps to login into the account and check if twitter suspects of
-            #? the account to insert the user and continue the login
-            #! Params -> driver, email, password, user
-                # driver -> use the web browser
-                # email -> email of the account created
-                # password -> password of the account created
-                # user -> we need user if the account is under suspect
-## --------------------------------------------------------------------------------------------##
-#################################################################################################
-                            
-# Function to follow a user in twitter
-def follow_user(driver, url, expected_url):
-    try:
-        go_page("Go to Twitter User Page", driver, url, expected_url)
-        twitter_actions("Check follow button", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", False, False, None)
-        
-        # Get the color of the element and rgb from rgba
-        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
-
-        # Get the RGB values
-        r1, g1, b1, a1 = get_rgba_value(color)
-        r2, g2, b2, a2 = get_rgba_value(black_color_follow_rgba_css)
-        
-        check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
-        
-        if check != "Ok!":
-            raise Exception("Follow user! Fail because you already follow this user!")
-        
-        twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", True, False, None)
-        
-        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
-
-        # Get the RGB values
-        r1, g1, b1, a1 = get_rgba_value(color)
-        check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
-        
-        if check != "Ok!":
-            return "Follow User Twitter! Ok!"
-        
-        return "Something has failed! Retry!"
-    
-    except TimeoutException:
-        return "Follow User Twitter! Time Error!"
-
-    except Exception as e:
-        return f"{e}"
-    
-    
-# Function to comment a tweet 
-def comment_tweet(driver, url, expected_url, comment, user):
-    try:
-        
-        go_page("Go to tweet", driver, url, expected_url)
-
-        if get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
-            raise Exception("Comment Tweet! Fail because you already comment this tweet!")
-
-        return go_comment(
-            driver, comment, user, "Something has failed! Retry!"
-        )
-    except TimeoutException:
-        return go_comment(
-            driver, comment, user, "Comment Twitter! Time Error!"
-        )
-    except Exception as e:
-        return f"{e}"
-
-
-# TODO Rename this here and in `comment_tweet`
-def go_comment(driver, comment, user, arg3):
-    twitter_actions("Check and click Comment tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[1]/div", True, False, None)
-    twitter_actions("Click and send Comment tweet", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[3]/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/div/div/div/div/div/div/div/div/div/label/div[1]/div/div/div/div/div/div[2]/div/div/div/div", True, True, comment, False, False)
-    print(twitter_actions("Click reply!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[3]/div[2]/div[2]/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]", True, False, None))
-    # twitter_actions("Got it! Click!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div", True, False, None)
-    sleep(2)
-
-    if get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
-        if unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
-                twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div/div", True, False, None)
-        return "Comment Twitter! Ok!"
-        
-    return arg3
-
-def retweet_tweet(driver, url, expected_url):
-    try:
-        go_page("Go to tweet", driver, url, expected_url)
-        twitter_actions("Get element for Retweet tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]", False, False, None)
-
-        # Get the color of the element
-        color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]/div/div")
-        # Get the RGB values
-        r1, g1, b1, a1 = get_rgba_value(color)
-        r2, g2, b2, a2 = get_rgba_value(green_color_retweet_css)
-        
-        check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
-        if check != "Ok!":
-            raise Exception("Retweet Tweet! Fail because you already retweet this tweet!")
-        
-        print(twitter_actions("Retweet Tweet Click", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]", True, False, None))
-        print(twitter_actions("Choose Retweet Option Tweet Click", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div[2]/div/div[3]/div/div/div/div", True, False, None))
-        
-        sleep(1)
-        
-        color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]/div/div")
-        # Get the RGB values
-        r1, g1, b1, a1 = get_rgba_value(color)
-        check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
-        if check != "Ok!":
-            if unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
-                twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div/div", True, False, None)
-            return "Retweet Twitter! Ok!"
-        
-        return "Something has failed! Retry!"
-
-    except TimeoutException:
-        return "Retweet Twitter! Time Error!"
-
-    except Exception as e:
-        return f"{e}"
-
-def like_tweet(driver, url, expected_url):
-    try:
-        go_page("Go to tweet", driver, url, expected_url)
-        twitter_actions("Get element for Like tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div", False, False, None)
-        
-        # Get the color of the element
-        color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div")
-        
-        if color == "Fail! We didn't find the element!":
-            color = get_color(driver, 1, ".r-1bwzh9t")
-            
-        # Get the RGB values
-        r1, g1, b1, a1 = get_rgba_value(color)
-        r2, g2, b2, a2 = get_rgba_value(red_color_like_css)
-
-        check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
-        
-        if check != "Ok!":
-            raise Exception("Like Tweet! Fail because you already like this tweet!")
-        
-        twitter_actions("Liking Tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[5]/div/div[3]", True, False, None)
-        sleep(1)
-        # Get the color of the element
-        color = get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[3]/div/div")
-        
-        # Get the RGB values
-        r1, g1, b1, a1 = get_rgba_value(color)
-        r2, g2, b2, a2 = get_rgba_value(red_color_like_css)
-        
-        check = check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
-        
-        if check != "Ok!":
-            if unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
-                twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div/div", True, False, None)
-            return "Like Twitter! Ok!"
-        else:
-            return "Something has failed! Retry!"
-
-    except TimeoutException:
-        return "Like Twitter! Time Error!"
-
-    except Exception as e:
-        return f"{e}"
-
-def loginUserTwitter(driver, email, password, user):
-    #! First Step we go to the login page and we check that we don't redirecto to another one
-    go_page("Twitter Login Page", driver, url_login, "https://twitter.com/i/flow/login")
-    
-    #! We use this for make a chain of actions, first we check that we are in the login form
-    #! Then we insert the credentials of the email, last one click on next button
-    actions = [
-        ("Check Twitter Login Page", driver, 1, "div.r-1867qdf:nth-child(2)", False, False, None),
-        ("Login User", driver, 1, ".r-30o5oe", True, True, email),
-        #("Check and Click Next Button", driver, 2, "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div[6]/div", True, False, None),
-        ("Check and Click Next Button", driver, 1, "#layers > div > div > div > div > div > div > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1pi2tsx.r-1777fci.r-1xcajam.r-ipm5af.r-g6jmlv > div.css-1dbjc4n.r-1867qdf.r-1wbh5a2.r-kwpbio.r-rsyp9y.r-1pjcn9w.r-1279nm1.r-htvplk.r-1udh08x > div > div > div.css-1dbjc4n.r-kemksi.r-6koalj.r-16y2uox.r-1wbh5a2 > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1jgb5lz.r-1ye8kvj.r-13qz1uu > div > div > div > div:nth-child(6) > div", True, False, None),
-    ]
-    
-    for action in actions:
-        twitter_actions(*action)
-    
-    if get_login_locked(driver, 2, "//*[@id='modal-header']/span/span"):
-        
-        twitter_actions("Insert user!", driver, 2, 
-                        "//*[@id='layers']/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input",
-                        True, True, user)
-        
-        twitter_actions("Click next button!", driver, 2,
-                        "//*[@id='layers']/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div",
-                        True, False, None)
-        
-    actions2 =[    
-        ("Login Password", driver, 1, ".r-homxoj", True, True, password),
-        #("Check and Click Next Button", driver, 2, "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/div", True, False, None)
-        ("Check and Click Next Button", driver, 1, "#layers > div > div > div > div > div > div > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1pi2tsx.r-1777fci.r-1xcajam.r-ipm5af.r-g6jmlv > div.css-1dbjc4n.r-1867qdf.r-1wbh5a2.r-kwpbio.r-rsyp9y.r-1pjcn9w.r-1279nm1.r-htvplk.r-1udh08x > div > div > div.css-1dbjc4n.r-kemksi.r-6koalj.r-16y2uox.r-1wbh5a2 > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1jgb5lz.r-1ye8kvj.r-13qz1uu > div.css-1dbjc4n.r-1isdzm1 > div > div > div > div > div > div", True, False, None)
-    ]
-    
-    for action2 in actions2:
-        twitter_actions(*action2)
-    
-    if get_suspicious_activity(driver, 2, "//*[@id='modal-header']/span/span"):
-        
-        insertCodeSuspicious(driver, email, password)
-    
-    
-    return "Login User! Ok!"
-
-def registerUserTwitter(driver, email, password):
-    try:
-        data = ce.generateProfile()
-        
-        email_twitter = data["email"]
-        password_twitter = data["password"]
-        user_twitter = data["user"]
-        month = data["month"]
-        day = data["day"]
-        year = data["year"]
-        name = data ["name"]
-        surname = data["surname"]
-        profile = f"{name} {surname}"
-        
-        ce.createMail(data)
-        
-        step1CreateUserTwitter(driver, email_twitter, profile, year, month, day)
-        
-        step2CreateUserTwitter(driver)
-        
-        fdb.loadValues(email, password, data)
-        
-        step3CreateUserTwitter(driver)
-        
-        stepVerifyCreateUserTwitter(driver)
-        
-        step4CreateUserTwitter(driver, email_twitter, password_twitter)
-        
-        step5CreateUserTwitter(driver, password_twitter)
-        
-        step6DiscardImageProfile(driver)
-        
-        step7IntroduceUSername(driver, user_twitter)
-        
-        step8SkipNotifications(driver)
-        
-        print(step9CreateUserTwitter(driver))
-        
-        verifyIsAccountLocked(driver)
-        
-        print(step10ChangeImageProfile(driver))
-        
-        print("Create User! Ok!")
-        
-        print("Testing created account!")
-        
-        print("Testing follow user")
-        verifyIsAccountLocked(driver)
-        follow_user(driver, "https://twitter.com/TFM_Botnet_", "https://twitter.com/TFM_Botnet_")
-        
-        print("Testing like button")
-        verifyIsAccountLocked(driver)
-        like_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120")
-        
-        print("Testing retweet button")
-        verifyIsAccountLocked(driver)
-        retweet_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120")
-        
-        print("Testing comment button")
-        verifyIsAccountLocked(driver)
-        comment_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "Checked!", user_twitter)
-        
-        print("Everything tested!")
-        
-        return "Create User! Ok!"
-        
-    except exceptions as e:
-        if "not connected to DevTools" in str(e):
-            print("Deleting data created...")
-            ce.deleteMail(email_twitter)
-            fdb.deleteValues(email, password)
-            return "Ups! Seem you close the page before finishing the process"
-    
-    except KeyboardInterrupt as e:
-        print("Deleting data created...")
-        ce.deleteMail(email_twitter)
-        fdb.deleteValues(email, password)
-        return "Ups! Seem you close the page before finishing the process"
-
-## --------------------------------------------END-------------------------------------------- ##
-#################################################################################################
 
 ######################### HERE ARE THE FUNCTIONS FOR THE REGISTER USER ##########################
 ## --------------------------------------------------------------------------------------------##
@@ -529,29 +200,19 @@ def step10ChangeImageProfile(driver):
     
     for action2 in actions2:
         twitter_actions(*action2)
-    # Go to profile -> /html/body/div[1]/div/div/div[2]/header/div/div/div/div[1]/div[2]/nav/a[8]/div
-    # Set up profile -> /html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div[2]/div[1]/div[2]/a/div
-    # insert route photo -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div/input
-    # sleep(1)
-    # Botón siguiente -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div
-    # skip pick a header -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div
-    # skip bio -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div
-    # skip location -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div
-    # see profile -> /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/div/div/div/div[2]/div[2]/div
-    
-    
+
 # Function that try if the account is locked by twitter
-def verifyIsAccountLocked(driver):
-    print("Check 1")
+def verifyIsAccountLocked(driver, email):
     if check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
         print("Tu cuenta está bloqueada")
         twitter_actions("Unlock button clicked!", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
         while True:
             print("Autentica la cuenta")
             if check_account_status(driver, 2, "/html/body/div[2]/div/div[1]") == True:
-                
                 twitter_actions("Continue to Twitter", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
                 print("Cuenta autenticada")
+                # fdb.updateValues(temp.get_email(), temp.get_password(), email, "locked")
+                fdb.updateValues("danifdezloz@gmail.com", "Dani5Fdez", email, "unlocked")
                 return True
     return False
 
@@ -580,97 +241,6 @@ def verifyIsAccountLocked(driver):
                 print("Cuenta autenticada")
                 return True
     return False
-
-######################### HERE ARE THE FUNCTIONS FOR THE GUI OF THE APP #########################
-## --------------------------------------------------------------------------------------------##
-            #! action_n_times --> will like, retweet, comment or follow n times
-            #? If you alredy liked on the tweet, it will indicate 
-            #? that the like has already been made
-            #! Params -> driver, data, url, expected_url, selector, comment = "", user = ""
-                # driver -> use the web browser
-                # data -> dictionary with email, password, user for Twitter
-                # url -> url given 
-                # expected_ulr -> check if the url doesn't redirect
-                # selector  -> help to make the action could be:
-                    # 1 -> Retweet
-                    # 2 -> Like
-                    # 3 -> Comment
-                    # 4 -> Follow
-                # comment -> introduce the comment to write in the timeline
-                # user -> to check if the comment has already made
-## --------------------------------------------------------------------------------------------##
-            #! full_action_n_times --> will like, retweet, comment or follow n times
-            #? If you alredy liked on the tweet, it will indicate 
-            #? that the like has already been made
-            #! Params -> driver, data, url, expected_url, comment, user
-                # driver -> use the web browser
-                # data -> dictionary with email, password, user for Twitter
-                # url -> url given 
-                # expected_ulr -> check if the url doesn't redirect
-                # comment -> introduce the comment to write in the timeline
-                # user -> to check if the comment has already made
-## --------------------------------------------------------------------------------------------##
-
-# Function to make action in relation with 
-def action_n_times(driver, data, url, expected_url, type, comment = "", user = ""):
-    selector = get_type_action(type)
-    
-    # For that will like the tweet n times
-    for key, value in data.items():
-        
-        # Extract the valours of email, password, user
-        email = value['email']
-        password = value['password']
-        user = value['user']
-        
-        # Function to log into the account
-        loginUserTwitter(driver, email, password, user)
-        # Function to accept the cookies
-        acceptCookies(driver)
-        
-        # Depend on the selector will make a different action
-        if selector == "Retweet":
-            # Action for retweet tweet
-            retweet_tweet(driver, url, expected_url)
-        elif selector == "Like":
-            # Action of like tweet
-            like_tweet(driver, url, expected_url)
-        elif selector == "Comment":
-            comment_tweet(driver, url, expected_url, comment, user)
-        elif selector == "Follow":
-            follow_user(driver, url, expected_url)
-            
-        # Close session for the next user
-        closeSession(driver)
-        # We wait 2 seconds for the next user
-        sleep(2)
-
-def full_action_n_times(driver, data, url, expected_url, comment, user):
-    # For that will like the tweet n times
-    for key, value in data.items():
-        
-        # Extract the valours of email, password, user
-        email = value['email']
-        password = value['password']
-        user = value['user']
-        
-        # Function to log into the account
-        loginUserTwitter(driver, email, password, user)
-        # Function to accept the cookies
-        acceptCookies(driver)
-
-        retweet_tweet(driver, url, expected_url)
-        like_tweet(driver, url, expected_url)
-        # comment_tweet(driver, url, expected_url, comment, user)
-            
-        # Close session for the next user
-        closeSession(driver)
-        # We wait 2 seconds for the next user
-        sleep(2)
-        
-## --------------------------------------------END-------------------------------------------- ##
-#################################################################################################
-
 
 ################ HERE ARE THE FUNCTIONS IN RELATION WITH THE CHECK COLORS FOR TWITTER #################
 ## --------------------------------------------------------------------------------------------------##
@@ -745,6 +315,21 @@ def check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2):
             #? Will check if both colors are the same in format rgba
             #! Params -> r1, g1, b1, a1, r2, g2, b2, a2
 ## --------------------------------------------------------------------------------------------------##
+
+def get_user_profile(driver, type, element, user):
+    selector = get_type_selector(type)
+    try: 
+        div_action = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((selector, element))
+        )
+    except TimeoutException:
+        return False
+    
+    if div_action.text in [
+        f"@{user}"
+    ]:
+        return True
+    return False
 
 # This function will check if your account is locked in the login because as a result of an unusual activity
 def get_login_locked(driver, type, element):
@@ -839,6 +424,7 @@ def insertCodeSuspicious(driver, email, password):
 
 ## ----------------------------------------------END-------------------------------------------------##
 #######################################################################################################
+
 
 # Function that check the answers
 def check_answer(answer, user):
@@ -1149,3 +735,54 @@ def insertUsername(driver, username):
                     True, False, None)
     
     return "Insert username! Ok!"
+
+def checkColorFollowUser_1(driver):
+    # Get the color of the element and rgb from rgba
+    color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
+
+    # Get the RGB values
+    r1, g1, b1, a1 = get_rgba_value(color)
+    r2, g2, b2, a2 = get_rgba_value(black_color_follow_rgba_css)
+    
+    return check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
+
+def checkColorFollowUser_2(driver):
+    
+    color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
+
+    # Get the RGB values
+    r1, g1, b1, a1 = get_rgba_value(color)
+    r2, g2, b2, a2 = get_rgba_value(black_color_follow_rgba_css)
+    
+    return check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
+
+
+def split_register(driver, email_twitter, profile, year, month, day, email, password, data, password_twitter, user_twitter):
+    
+    step1CreateUserTwitter(driver, email_twitter, profile, year, month, day)
+    
+    step2CreateUserTwitter(driver)
+    
+    fdb.loadValues(email, password, data)
+    
+    step3CreateUserTwitter(driver)
+    
+    stepVerifyCreateUserTwitter(driver)
+    
+    step4CreateUserTwitter(driver, email_twitter, password_twitter)
+    
+    step5CreateUserTwitter(driver, password_twitter)
+    
+    step6DiscardImageProfile(driver)
+    
+    step7IntroduceUSername(driver, user_twitter)
+    
+    step8SkipNotifications(driver)
+    
+    step9CreateUserTwitter(driver)
+    
+    verifyIsAccountLocked(driver)
+    
+    step10ChangeImageProfile(driver)
+    
+    return "Create register step ok!"
