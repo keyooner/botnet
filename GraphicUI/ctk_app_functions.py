@@ -4,6 +4,8 @@ import sys
 import temp
 import datetime
 import customtkinter as ctk
+import FirebaseFunctions.firebaseDatabase as fdb
+from CTkTable import *
 
 ############################################### TEXTBOX ##################################################
 
@@ -16,6 +18,43 @@ def input_message_in_textbox(textbox, entry):
         textbox.insert("0.0", f"[{date_time}] $: {entry.get()}" + f" {test_return_variable()}" "\n\n")
         entry.delete(0, ctk.END)
         textbox.configure(state="disabled")
+
+############################################### ACCOUNTS ##################################################
+
+def accounts_option_table(options_frame):
+        #create scrollable frame for table
+        scrollable_table_frame = ctk.CTkScrollableFrame(options_frame, fg_color="transparent", label_text="Accounts")
+        scrollable_table_frame.pack(side="top", padx=(20, 0), pady=(20, 0), fill="both", expand=True)
+        scrollable_table_frame.grid_rowconfigure(0, weight=0)
+        scrollable_table_frame.grid_columnconfigure(0, weight=1)
+        scrollable_table_frame_values = []
+
+        #accounts available
+        data = fdb.get_values(temp.get_email(), temp.get_password())
+        header_values = [['             EMAIL            ', ' PASSWORD ', '      USERNAME      ']]
+        header_table = CTkTable(scrollable_table_frame, row=1, column=3, values=header_values, header_color="#8370F7", hover=True)
+        header_table.grid(row=0 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
+        
+
+        for i, key in enumerate(data.keys()):
+                account_data = data[key]
+                table_values = [[account_data['email'], [account_data['password']], account_data['user']]]
+                table_accounts_available = CTkTable(scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover=True)
+                table_accounts_available.grid(row=i+1 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
+                scrollable_table_frame_values.append(table_accounts_available)
+
+        # Adjust scrollable size
+        scrollable_table_frame.update()
+
+        #create frame for the button
+        button_frame = ctk.CTkFrame(options_frame, fg_color="transparent")
+        button_frame.pack(side="top", fill="x")
+
+        #create button to create account
+        create_account_button = ctk.CTkButton(button_frame, text="Create Account")
+        create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
+        create_unlock_button = ctk.CTkButton(button_frame, text="Unlock Account/s")
+        create_unlock_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
 
 ############################################### VPN ##################################################
 

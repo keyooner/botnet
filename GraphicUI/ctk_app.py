@@ -133,7 +133,7 @@ class App(ctk.CTk):
         image_label.pack(anchor="center", expand=True)
 
 #########################################################################################################################################################
-####################################################### FUNCTIONS #######################################################################################
+################################################ BASIC FUNCTIONS ########################################################################################
 #########################################################################################################################################################
 
     def open_input_dialog_event(self):
@@ -167,40 +167,7 @@ class App(ctk.CTk):
     def accounts_option_button_clicked(self):
 
         self.disable_option_button('accounts')
-
-        #create scrollable frame for table
-        self.scrollable_table_frame = ctk.CTkScrollableFrame(self.options_frame, fg_color="transparent", label_text="Accounts")
-        self.scrollable_table_frame.pack(side="top", padx=(20, 0), pady=(20, 0), fill="both", expand=True)
-        self.scrollable_table_frame.grid_rowconfigure(0, weight=0)
-        self.scrollable_table_frame.grid_columnconfigure(0, weight=1)
-        self.scrollable_table_frame_values = []
-
-        #accounts available
-        data = fdb.get_values(temp.get_email(), temp.get_password())
-        header_values = [['             EMAIL            ', ' PASSWORD ', '      USERNAME      ']]
-        header_table = CTkTable(self.scrollable_table_frame, row=1, column=3, values=header_values, header_color="#8370F7", hover=True)
-        header_table.grid(row=0 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
-        
-
-        for i, key in enumerate(data.keys()):
-            account_data = data[key]
-            table_values = [[account_data['email'], [account_data['password']], account_data['user']]]
-            table_accounts_available = CTkTable(self.scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover=True)
-            table_accounts_available.grid(row=i+1 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
-            self.scrollable_table_frame_values.append(table_accounts_available)
-
-        # Adjust scrollable size
-        self.scrollable_table_frame.update()
-
-        #create frame for the button
-        button_frame = ctk.CTkFrame(self.options_frame, fg_color="transparent")
-        button_frame.pack(side="top", fill="x")
-
-        #create button to create account
-        self.create_account_button = ctk.CTkButton(button_frame, text="Create Account")
-        self.create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
-        self.create_unlock_button = ctk.CTkButton(button_frame, text="Unlock Account/s")
-        self.create_unlock_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
+        ctkfun.accounts_option_table(self.options_frame)
 
     
     def vpn_option_button_clicked(self):
@@ -390,9 +357,6 @@ class App(ctk.CTk):
 
         popup_comment_window_button = ctk.CTkButton(self.scrollable_popup_frame, text='Go!')
         popup_comment_window_button.grid(row=entry_value, column=0)
-        
-
-    
         
     def twitter_url_verified(self, url):
         tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
