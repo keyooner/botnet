@@ -1,12 +1,10 @@
 import re
 import temp
-import datetime
 import customtkinter as ctk
 import FirebaseFunctions.firebaseDatabase as fdb
 import TwitterFunctions.seleniumFunctions as sf
 import FirebaseFunctions.firebaseAuthentication as fba
 import ctk_app_functions as ctkfun
-from CTkTable import *
 from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -166,46 +164,17 @@ class App(ctk.CTk):
 
     def accounts_option_button_clicked(self):
 
-        self.disable_option_button('accounts')
-        ctkfun.accounts_option_table(self.options_frame)
+        ctkfun.disable_option_button('accounts', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
+        ctkfun.accounts_option_content(self.options_frame)
 
     
     def vpn_option_button_clicked(self):
-        self.disable_option_button('vpn')
-
-        vpn_container_frame = ctk.CTkFrame(self.options_frame, fg_color="transparent")
-        vpn_container_frame.pack(fill="x", expand=True)
-
-        self.vpn_label_option = ctk.CTkLabel(vpn_container_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.vpn_label_option.pack(padx=(10,10), pady=(10,10))
-
-        self.vpn_switch_label = ctk.CTkLabel(master=vpn_container_frame, text="Do you want to use VPN?")
-        self.vpn_switch_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
-
-        self.vpn_switch_var = ctk.StringVar(value=temp.get_vpn_mode())
-        self.vpn_switch = ctk.CTkSwitch(master=vpn_container_frame, 
-                                        text="Vpn On/Off", 
-                                        command=lambda: ctkfun.vpn_connect_clicked(self.vpn_switch_var, self.label_profile_vpn_status, 
-                                        self.vpn_switch_status_label, self.label_profile_vpn_location, self.vpn_switch_location_label, 
-                                        self.label_profile_vpn_ip, self.vpn_switch_ip_label), 
-                                        variable=self.vpn_switch_var, onvalue='on', offvalue='off')
-        self.vpn_switch.pack(side="left", padx=(20, 10), pady=(10, 10), fill="both", expand=True)
-
-        vpn_container_frame_2 = ctk.CTkFrame(self.options_frame, fg_color="transparent")
-        vpn_container_frame_2.pack(fill="x", expand=True)
-
-        self.vpn_switch_status_label = ctk.CTkLabel(vpn_container_frame_2, text=temp.get_vpn_status(), justify='center')
-        self.vpn_switch_status_label.pack(padx=(10,10), pady=(10,10))
-
-        self.vpn_switch_location_label = ctk.CTkLabel(master=self.options_frame, text=temp.get_vpn_location())
-        self.vpn_switch_location_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
-
-        self.vpn_switch_ip_label = ctk.CTkLabel(master=self.options_frame, text=temp.get_vpn_ip())
-        self.vpn_switch_ip_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
+        ctkfun.disable_option_button('vpn', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
+        ctkfun.vpn_option_content(self.options_frame, self.label_profile_vpn_status, self.label_profile_vpn_location, self.label_profile_vpn_ip)
 
     def twitter_option_button_clicked(self):
         
-        self.disable_option_button('twitter')
+        ctkfun.disable_option_button('twitter', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
 
         # label option selected
         self.twitter_label_option = ctk.CTkLabel(self.options_frame, text='Twitter', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
@@ -410,57 +379,15 @@ class App(ctk.CTk):
                 
 
     def logout_option_button_clicked(self):
-        self.disable_option_button('logout')
-
-        #create logout container frame
-        logout_container_frame = ctk.CTkFrame(self.options_frame)
-        logout_container_frame.pack(fill="both", expand=True)
-
-        #label option selected
-        self.logout_label_option = ctk.CTkLabel(logout_container_frame, text='LogOut', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.logout_label_option.pack(padx=(10,10), pady=(10,10))
-
-        self.logout_label_quest = ctk.CTkLabel(logout_container_frame, text="Are you sure?", justify="center")
-        self.logout_label_quest.pack(padx=(20, 10), pady=(10, 10))
-
-        #button option selected
-        self.logout_button_yes = ctk.CTkButton(logout_container_frame, text="Yes", anchor='center', command=self.action_logOut)
-        self.logout_button_yes.pack(side="top", padx=10, pady=10)
+        ctkfun.disable_option_button('logout', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
+        ctkfun.logout_option_content(self.options_frame, self.action_logOut)
 
     def close_main_window(self):
         self.destroy()
-    
-    def logout_user(self):
-        import GraphicUI.ctk_login as login_app
-        fba.logOutUser()
-        login_app.main_window.mainloop()
 
     def action_logOut(self):
         self.close_main_window()
-        self.logout_user()        
-
-    def input_vpn_message_in_textbox(self, message):
-        date_time = datetime.datetime.now()
-        self.textbox.configure(state="normal")
-        self.textbox.insert("0.0", f'[{date_time}] $: ', message, '\n\n')
-        self.entry.delete(0, ctk.END)
-        self.textbox.configure(state="disabled")
-
-    def disable_option_button(self,button):
-        #enable other buttons
-        self.sidebar_vpn_button.configure(state='normal')
-        self.sidebar_accounts_button.configure(state='normal')
-        self.sidebar_twitter_button.configure(state='normal')
-        self.sidebar_logout_button.configure(state='normal')
-        #disable specific button
-        if button == 'twitter':
-            self.sidebar_twitter_button.configure(state='disabled')
-        elif button == 'vpn':
-            self.sidebar_vpn_button.configure(state='disabled')
-        elif button == 'accounts':
-            self.sidebar_accounts_button.configure(state='disabled')
-        elif button == 'logout':
-            self.sidebar_logout_button.configure(state='disabled')
+        ctkfun.logout_user()        
 
 if __name__ == "__main__":
     app = App()

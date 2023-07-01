@@ -5,7 +5,9 @@ import temp
 import datetime
 import customtkinter as ctk
 import FirebaseFunctions.firebaseDatabase as fdb
+import FirebaseFunctions.firebaseAuthentication as fba
 from CTkTable import *
+from nordvpn_switcher import initialize_VPN, rotate_VPN, terminate_VPN
 
 ############################################### TEXTBOX ##################################################
 
@@ -21,7 +23,7 @@ def input_message_in_textbox(textbox, entry):
 
 ############################################### ACCOUNTS ##################################################
 
-def accounts_option_table(options_frame):
+def accounts_option_content(options_frame):
         #create scrollable frame for table
         scrollable_table_frame = ctk.CTkScrollableFrame(options_frame, fg_color="transparent", label_text="Accounts")
         scrollable_table_frame.pack(side="top", padx=(20, 0), pady=(20, 0), fill="both", expand=True)
@@ -58,10 +60,40 @@ def accounts_option_table(options_frame):
 
 ############################################### VPN ##################################################
 
+def vpn_option_content(options_frame, label_profile_vpn_status, label_profile_vpn_location, label_profile_vpn_ip):
+        vpn_container_frame = ctk.CTkFrame(options_frame, fg_color="transparent")
+        vpn_container_frame.pack(fill="x", expand=True)
+
+        vpn_label_option = ctk.CTkLabel(vpn_container_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        vpn_label_option.pack(padx=(10,10), pady=(10,10))
+
+        vpn_switch_label = ctk.CTkLabel(master=vpn_container_frame, text="Do you want to use VPN?")
+        vpn_switch_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
+
+        vpn_switch_var = ctk.StringVar(value=temp.get_vpn_mode())
+        vpn_switch = ctk.CTkSwitch(master=vpn_container_frame, 
+                                        text="Vpn On/Off", 
+                                        command=lambda: vpn_connect_clicked(vpn_switch_var, label_profile_vpn_status, 
+                                        vpn_switch_status_label, label_profile_vpn_location, vpn_switch_location_label, 
+                                        label_profile_vpn_ip, vpn_switch_ip_label), 
+                                        variable=vpn_switch_var, onvalue='on', offvalue='off')
+        vpn_switch.pack(side="left", padx=(20, 10), pady=(10, 10), fill="both", expand=True)
+
+        vpn_container_frame_2 = ctk.CTkFrame(options_frame, fg_color="transparent")
+        vpn_container_frame_2.pack(fill="x", expand=True)
+
+        vpn_switch_status_label = ctk.CTkLabel(vpn_container_frame_2, text=temp.get_vpn_status(), justify='center')
+        vpn_switch_status_label.pack(padx=(10,10), pady=(10,10))
+
+        vpn_switch_location_label = ctk.CTkLabel(master=options_frame, text=temp.get_vpn_location())
+        vpn_switch_location_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
+
+        vpn_switch_ip_label = ctk.CTkLabel(master=options_frame, text=temp.get_vpn_ip())
+        vpn_switch_ip_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
+
 def vpn_connect_clicked(vpn_switch_var, label_profile_vpn_status, 
                 vpn_switch_status_label, label_profile_vpn_location, 
                 vpn_switch_location_label, label_profile_vpn_ip, vpn_switch_ip_label):
-        from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
         temp.set_vpn_mode('on')
         temp.set_vpn_status('Connected')
         if vpn_switch_var.get() == 'on':
@@ -86,7 +118,14 @@ def vpn_connect_clicked(vpn_switch_var, label_profile_vpn_status,
                 )
         else:
                 terminate_VPN()
-                temp.set_vpn_mode('off')
+                vpn_labels_off(
+                        label_profile_vpn_status,
+                        vpn_switch_status_label,
+                        label_profile_vpn_location,
+                        vpn_switch_location_label,
+                        label_profile_vpn_ip,
+                        vpn_switch_ip_label,
+                )
 
 def vpn_labels_on(vpn_location, vpn_ip, label_profile_vpn_status, 
                 vpn_switch_status_label, label_profile_vpn_location, 
@@ -104,11 +143,55 @@ def vpn_labels_on(vpn_location, vpn_ip, label_profile_vpn_status,
 def vpn_labels_off(label_profile_vpn_status, 
                 vpn_switch_status_label, label_profile_vpn_location, 
                 vpn_switch_location_label, label_profile_vpn_ip, vpn_switch_ip_label):
-        
+        temp.set_vpn_mode('off')
         temp.set_vpn_status("Disconnected")
+        temp.set_vpn_location('')
+        temp.set_vpn_ip('')
+
         label_profile_vpn_status.configure(text=temp.get_vpn_status())
         vpn_switch_status_label.configure(text=temp.get_vpn_status())
         label_profile_vpn_location.configure(text=temp.get_vpn_location())
         vpn_switch_location_label.configure(text=temp.get_vpn_location())
         label_profile_vpn_ip.configure(text=temp.get_vpn_ip())
         vpn_switch_ip_label.configure(text=temp.get_vpn_ip())
+
+############################################### LOGOUT ##################################################
+
+def logout_option_content(options_frame, action_logOut):
+        #create logout container frame
+        logout_container_frame = ctk.CTkFrame(options_frame)
+        logout_container_frame.pack(fill="both", expand=True)
+
+        #label option selected
+        logout_label_option = ctk.CTkLabel(logout_container_frame, text='LogOut', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        logout_label_option.pack(padx=(10,10), pady=(10,10))
+
+        logout_label_quest = ctk.CTkLabel(logout_container_frame, text="Are you sure?", justify="center")
+        logout_label_quest.pack(padx=(20, 10), pady=(10, 10))
+
+        #button option selected
+        logout_button_yes = ctk.CTkButton(logout_container_frame, text="Yes", anchor='center', command=action_logOut)
+        logout_button_yes.pack(side="top", padx=10, pady=10)
+
+def logout_user():
+        import GraphicUI.ctk_login as login_app
+        fba.logOutUser()
+        login_app.main_window.mainloop() 
+
+############################################### DISABLE BUTTONS ##################################################
+
+def disable_option_button(button, sidebar_vpn_button, sidebar_accounts_button, sidebar_twitter_button, sidebar_logout_button):
+        #enable other buttons
+        sidebar_vpn_button.configure(state='normal')
+        sidebar_accounts_button.configure(state='normal')
+        sidebar_twitter_button.configure(state='normal')
+        sidebar_logout_button.configure(state='normal')
+        #disable specific button
+        if button == 'accounts':
+                sidebar_accounts_button.configure(state='disabled')
+        elif button == 'twitter':
+                sidebar_twitter_button.configure(state='disabled')
+        elif button == 'vpn':
+                sidebar_vpn_button.configure(state='disabled')
+        elif button == 'logout':
+                sidebar_logout_button.configure(state='disabled')
