@@ -1,5 +1,5 @@
-email = "danifdezloz@gmail.com"
-password = "Dani5Fdez"
+email = None
+password = None
 vpn_mode = 'on'
 vpn_status = 'Disconnected'
 vpn_location = ''

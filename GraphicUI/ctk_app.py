@@ -34,26 +34,30 @@ class App(ctk.CTk):
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # sidebar buttons
-        self.sidebar_accounts_button = ctk.CTkButton(self.sidebar_frame, text="Accounts",command=lambda:self.sidebar_button_clicked('accounts'))
+        self.sidebar_help_button = ctk.CTkButton(self.sidebar_frame, text="Help", command=lambda:self.sidebar_button_clicked('help'))
+        self.sidebar_help_button.grid(row=0, column=0, padx=20, pady=10)
+        self.sidebar_accounts_button = ctk.CTkButton(self.sidebar_frame, text="Accounts", command=lambda:self.sidebar_button_clicked('accounts'))
         self.sidebar_accounts_button.grid(row=1, column=0, padx=20, pady=10)
-        self.sidebar_vpn_button = ctk.CTkButton(self.sidebar_frame, text="VPN",command=lambda:self.sidebar_button_clicked('vpn'))
-        self.sidebar_vpn_button.grid(row=2, column=0, padx=20, pady=10)
-        self.sidebar_twitter_button = ctk.CTkButton(self.sidebar_frame, text="Twitter" ,command=lambda:self.sidebar_button_clicked('twitter'))
-        self.sidebar_twitter_button.grid(row=3, column=0, padx=20, pady=10)
-        self.sidebar_logout_button = ctk.CTkButton(self.sidebar_frame, text="LogOut" ,command=lambda:self.sidebar_button_clicked('logout'))
-        self.sidebar_logout_button.grid(row=4, column=0, padx=20, pady=10)
+        self.sidebar_unlock_button = ctk.CTkButton(self.sidebar_frame, text="Unlock Accounts", command=lambda:self.sidebar_button_clicked('unlock'))
+        self.sidebar_unlock_button.grid(row=2, column=0, padx=20, pady=10)
+        self.sidebar_vpn_button = ctk.CTkButton(self.sidebar_frame, text="VPN", command=lambda:self.sidebar_button_clicked('vpn'))
+        self.sidebar_vpn_button.grid(row=3, column=0, padx=20, pady=10)
+        self.sidebar_twitter_button = ctk.CTkButton(self.sidebar_frame, text="Twitter", command=lambda:self.sidebar_button_clicked('twitter'))
+        self.sidebar_twitter_button.grid(row=4, column=0, padx=20, pady=10)
+        self.sidebar_logout_button = ctk.CTkButton(self.sidebar_frame, text="LogOut", command=lambda:self.sidebar_button_clicked('logout'))
+        self.sidebar_logout_button.grid(row=5, column=0, padx=20, pady=10)
         
         #sidebar appearance mode
         self.appearance_mode_label = ctk.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_label.grid(row=6, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
                                                                         command=self.change_appearance_mode_event)
-        self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
+        self.appearance_mode_optionemenu.grid(row=7, column=0, padx=20, pady=(10, 10))
         self.scaling_label = ctk.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
-        self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
+        self.scaling_label.grid(row=8, column=0, padx=20, pady=(10, 0))
         self.scaling_optionemenu = ctk.CTkOptionMenu(self.sidebar_frame, values=["80%", "90%", "100%", "110%", "120%"],
                                                                 command=self.change_scaling_event)
-        self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
+        self.scaling_optionemenu.grid(row=9, column=0, padx=20, pady=(10, 20))
 
         # create interactive options frame
         self.options_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -124,8 +128,14 @@ class App(ctk.CTk):
         for widget in self.options_frame.winfo_children():
             widget.destroy()
 
-        if button == 'accounts':
+        if button == 'help':
+            self.help_option_button_clicked()
+
+        elif button == 'accounts':
             self.accounts_option_button_clicked()
+        
+        elif button == 'unlock':
+            self.unlock_option_button_clicked()
 
         elif button == 'vpn':
             self.vpn_option_button_clicked()
@@ -136,21 +146,48 @@ class App(ctk.CTk):
         elif button == 'logout':
             self.logout_option_button_clicked()
 
+    def help_option_button_clicked(self):
+        ctkfun.help_option_content(self.options_frame)
+        ctkfun.disable_option_button('help', self.sidebar_help_button, 
+                                    self.sidebar_accounts_button, self.sidebar_unlock_button, 
+                                    self.sidebar_vpn_button, self.sidebar_twitter_button, 
+                                    self.sidebar_logout_button)
+
     def accounts_option_button_clicked(self):
-        ctkfun.disable_option_button('accounts', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
         ctkfun.accounts_option_content(self.options_frame)
-        
+        ctkfun.disable_option_button('accounts', self.sidebar_help_button, 
+                                    self.sidebar_accounts_button, self.sidebar_unlock_button, 
+                                    self.sidebar_vpn_button, self.sidebar_twitter_button, 
+                                    self.sidebar_logout_button)
+
+    def unlock_option_button_clicked(self):
+        ctkfun.unlock_option_content(self.options_frame)
+        ctkfun.disable_option_button('unlock', self.sidebar_help_button, 
+                                    self.sidebar_accounts_button, self.sidebar_unlock_button, 
+                                    self.sidebar_vpn_button, self.sidebar_twitter_button, 
+                                    self.sidebar_logout_button)  
+
     def vpn_option_button_clicked(self):
-        ctkfun.disable_option_button('vpn', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
         ctkfun.vpn_option_content(self.options_frame, self.label_profile_vpn_status, self.label_profile_vpn_location, self.label_profile_vpn_ip)
+        ctkfun.disable_option_button('vpn', self.sidebar_help_button, 
+                                    self.sidebar_accounts_button, self.sidebar_unlock_button, 
+                                    self.sidebar_vpn_button, self.sidebar_twitter_button, 
+                                    self.sidebar_logout_button)
 
     def twitter_option_button_clicked(self):
-        ctkfun.disable_option_button('twitter', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
         ctkfun.twitter_option_content(self.options_frame, self)
+        ctkfun.disable_option_button('twitter', self.sidebar_help_button, 
+                                    self.sidebar_accounts_button, self.sidebar_unlock_button, 
+                                    self.sidebar_vpn_button, self.sidebar_twitter_button, 
+                                    self.sidebar_logout_button)
 
     def logout_option_button_clicked(self):
-        ctkfun.disable_option_button('logout', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
-        ctkfun.logout_option_content(self.options_frame, self)     
+        ctkfun.logout_option_content(self.options_frame, self) 
+        ctkfun.disable_option_button('logout', self.sidebar_help_button, 
+                                    self.sidebar_accounts_button, self.sidebar_unlock_button, 
+                                    self.sidebar_vpn_button, self.sidebar_twitter_button, 
+                                    self.sidebar_logout_button)
+            
 
 if __name__ == "__main__":
     app = App()
