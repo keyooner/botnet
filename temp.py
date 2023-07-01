@@ -1,5 +1,7 @@
 email = None
 password = None
+email = "danifdezloz@gmail.com"
+password = "Dani5Fdez"
 vpn_mode = 'on'
 vpn_status = 'Disconnected'
 vpn_location = ''
