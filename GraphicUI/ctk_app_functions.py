@@ -4,7 +4,7 @@ import sys
 import temp
 import datetime
 import customtkinter as ctk
-import TwitterActions as sf
+import TwitterFunctions.twitterActions as sf
 import FirebaseFunctions.firebaseDatabase as fdb
 import FirebaseFunctions.firebaseAuthentication as fba
 from CTkTable import *
