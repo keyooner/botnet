@@ -179,17 +179,18 @@ def get_values_for_actions(email, password, n_times: int):
 
         # Obtenemos todos los valores existentes para el usuario
         data = db.child("created_users").child(email_local).get(token)
+            # Convertir el objeto FirebaseResponse en un diccionario
+        data_dict = data.val()
         
+        # Ordenar los elementos del diccionario por clave
+        sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
         # Creamos un diccionario para almacenar los valores desbloqueados
         unlocked_values = {}
         count = 0
-        for index, item in enumerate(data.each()):
-                print(index)
+        for key, value in sorted_data.items():
                 if count >= n_times:
                         break
                 
-                key = item.key()
-                value = item.val()
                 if value.get('state') == 'unlocked':
                         email_twitter = value.get('email')
                         password_twitter = value.get('password')

@@ -70,13 +70,8 @@ class App(ctk.CTk):
         welcome_image_label.pack(anchor="center", expand=True)
 
         # create textbox frame
-        self.textbox_frame= ctk.CTkFrame(self, fg_color="transparent")
-        self.textbox_frame.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.textbox = ctk.CTkTextbox(self.textbox_frame, width=700, state="disabled")
-        self.textbox.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
-
-        self.textbox_frame.columnconfigure(0, weight=1)
-        self.textbox_frame.rowconfigure(0, weight=1)
+        ctkfun.setInstance(self)
+        ctkfun.create_textbox_entry()
 
         # create profile data frame
         self.profile_frame = ctk.CTkFrame(self)
@@ -155,7 +150,7 @@ class App(ctk.CTk):
 
     def logout_option_button_clicked(self):
         ctkfun.disable_option_button('logout', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
-        ctkfun.logout_option_content(self.options_frame, self)      
+        ctkfun.logout_option_content(self.options_frame, self)     
 
 if __name__ == "__main__":
     app = App()

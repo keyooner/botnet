@@ -1,5 +1,4 @@
 import TwitterFunctions.twitterActions as function
-import TwitterFunctions.seleniumFunctions as function2
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -9,58 +8,9 @@ import FirebaseFunctions.firebaseDatabase as fdb
 import re
 
 driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
-email = "xzxsvejb23119767@raptoragency.es"
-password = "Kpojtgke$$47380624"
-user = "9d1iie2ASmg7u87"
-
-def loadActions(email, check1, check2, check3, url, user):
-    
-    data = {
-        "email": email,
-        "like": check1,
-        "retweet": check2,
-        "comment": check3,
-    }
-    
-    username, numbers = split_url_actions(url)
-    
-    fdb.loadValuesActionsTwitter("danifdezloz@gmail.com", "Dani5Fdez", f"{username}-{numbers}", data, user)
-
-def loadFollow(email, check, url, user):
-    
-    data = {
-        "email": email,
-        "follow": check
-    }
-    
-    username = split_url_follow(url)
-    print(username)
-    fdb.loadValuesFollow("danifdezloz@gmail.com", "Dani5Fdez", username, data, user)
-    
-def split_url_actions(url):
-    # Utilizamos una expresión regular para extraer "TFM_Botnet_" y los números
-    pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)(/status/)([0-9]+)"
-    matches = re.search(pattern, url)
-
-    if matches:
-        username = matches.group(2)  # "TFM_Botnet_"
-        numbers = matches.group(4)  # "1674334209156997120"
-        return username, numbers
-    
-    else:
-        return None
-
-def split_url_follow(url):
-    # Utilizamos una expresión regular para extraer "TFM_Botnet_" y los números
-    pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)"
-    matches = re.search(pattern, url)
-
-    if matches:
-        username = matches.group(2)  # "TFM_Botnet_"
-        return username
-    
-    else:
-        return None
+email = "clydueyi76380985@raptoragency.es"
+password = "Axqwrpoe_$49207782"
+user = "p1nC3iS1iborha9"
     
 # email = "wmpkizhg96696548@raptoragency.es"
 # password = "Oktebufk$_79375481"
@@ -124,10 +74,6 @@ function.acceptCookies(driver)
 #     check2 = True
 # sleep(1)
 
-follow = function.follow_user(driver, url, url)
+# follow = function.follow_user(driver, url, url)
 
-if follow == "Follow User Twitter! Ok!" or "Follow user! Fail because you already follow this user!":
-    check = True
-sleep(1)
-
-loadFollow(email, check, url, user)
+sleep(300)

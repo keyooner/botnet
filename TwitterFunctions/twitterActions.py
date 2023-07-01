@@ -434,6 +434,7 @@ def full_action_n_times(driver, data, url, expected_url, comment, user):
         # We wait 2 seconds for the next user
         sleep(2)
         
+        return "Action completed"
 ## --------------------------------------------END-------------------------------------------- ##
 #################################################################################################
 
@@ -502,6 +503,17 @@ def loginUserTwitterLocked(driver, email, password, user):
         return "Login User! Ok!"
     
     return "Something has failed retry!"
+# Function to close the actual session
+def closeSession(driver):
+    actions = [
+    ("Open tab for close session", driver, 2, "/html/body/div[1]/div/div/div[2]/header/div/div/div/div[2]/div/div/div/div/div[2]/div/div[2]/div/div/div[4]", True, False, None),
+    ("Click close session", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div[2]/div/div[2]/div/div/div/div/div/a[2]/div[1]/div/span", True, False, None),
+    ("Click close session", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div[2]/div[1]/div", True, False, None),]
+    
+    for action in actions:
+        tf.twitter_actions(*action)
+    return "Clossed Session!"
 
 def acceptCookies(driver):
     tf.twitter_actions("Accept Cookies!", driver, 2, "//*[@id='layers']/div/div/div/div/div/div[2]/div[1]", True, False, None)
+    return "Cookies has been accepted!"

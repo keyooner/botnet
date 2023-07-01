@@ -13,6 +13,8 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from nordvpn_switcher import initialize_VPN, rotate_VPN, terminate_VPN
 
+instance = None
+instance_2 = None
 ################################################ DRIVER ##################################################
 
 def get_driver():
@@ -20,13 +22,36 @@ def get_driver():
 
 ############################################### TEXTBOX ##################################################
 
-def input_message_in_textbox(message, textbox):
-        date_time = datetime.datetime.now()
-        textbox.configure(state="normal")
-        textbox.insert("0.0", f"[{date_time}] $:" + f" {message}" "\n\n")
-        textbox.configure(state="disabled")
+def setInstance(instance_new):
+        global instance
+        instance = instance_new
+        
+def getInstance():
+        return instance
 
+def create_textbox_entry():
+        instance = getInstance()
+        textbox_frame = ctk.CTkFrame(instance, fg_color="transparent")
+        textbox_frame.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        textbox = ctk.CTkTextbox(textbox_frame, width=700, state="disabled")
+        textbox.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+        
+        textbox_frame.columnconfigure(0, weight=1)
+        textbox_frame.rowconfigure(0, weight=1)
+        
+        setInstance(textbox)
+
+def input_message_in_textbox(message):
+        self = getInstance()
+        date_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.configure(state="normal")
+        self.insert("0.0", f"[{date_time}] $:" + f" {message}" "\n\n")
+        self.configure(state="disabled")
+        
+        return message
+        
 ############################################### ACCOUNTS ##################################################
+        
 
 def accounts_option_content(options_frame):
         #create scrollable frame for table
@@ -289,9 +314,82 @@ def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt
                         twitter_popup_comment_window()
 
                 if twitter_checkbox_like.get() == 1:
-                        print(sf.action_n_times(get_driver(), fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get())), entry_twitter_url.get(), 
-                                entry_twitter_url.get(), 2))
+                        #input_message_in_textbox(sf.loginUserTwitter(get_driver(), "xzxsvejb23119767@raptoragency.es", "Kpojtgke$$47380624", "9d1iie2ASmg7u87"))
+                        #input_message_in_textbox(sf.like_tweet(get_driver(), entry_twitter_url.get(), entry_twitter_url.get()))
+                        # input_message_in_textbox(sf.action_n_times(get_driver(), fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get())), entry_twitter_url.get(), 
+                        #         entry_twitter_url.get(), 2))
+                        twitter_give_like(get_driver(), entry_twitter_url, button_entry)
 
+def twitter_give_like(driver, entry_twitter_url, button_entry):
+        data = fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get()))
+        print(data)
+        user_try = 1
+        for key, value in data.items():
+                # Variables para almacenar los valores
+                id_value = key
+                email_value = value['email']
+                password_value = value['password']
+                user_value = value['user']
+                input_message_in_textbox(f"Users selected : {button_entry.get()}")
+                input_message_in_textbox(f"User try: {user_try}")
+                input_message_in_textbox(f"Actions for user {user_value}")
+                input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
+                sf.acceptCookies(driver)
+                like = input_message_in_textbox(sf.like_tweet(driver, entry_twitter_url.get(), entry_twitter_url.get()))
+                if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
+                        check1 = True
+                loadActions(email_value, check1, False, False, entry_twitter_url.get(), user_value)
+                sf.closeSession(driver)
+                user_try = user_try + 1
+                                
+def loadActions(email, check1, check2, check3, url, user):
+        
+        data = {
+                "email": email,
+                "like": check1,
+                "retweet": check2,
+                "comment": check3,
+        }
+        
+        username, numbers = split_url_actions(url)
+        
+        fdb.loadValuesActionsTwitter("danifdezloz@gmail.com", "Dani5Fdez", f"{username}-{numbers}", data, user)
+
+def loadFollow(email, check, url, user):
+        
+        data = {
+                "email": email,
+                "follow": check
+        }
+        
+        username = split_url_follow(url)
+        print(username)
+        fdb.loadValuesFollow("danifdezloz@gmail.com", "Dani5Fdez", username, data, user)
+    
+def split_url_actions(url):
+        pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)(/status/)([0-9]+)"
+        matches = re.search(pattern, url)
+
+        if matches:
+                username = matches.group(2)  # "TFM_Botnet_"
+                numbers = matches.group(4)  # "1674334209156997120"
+                return username, numbers
+        
+        else:
+                return None
+
+def split_url_follow(url):
+        # Utilizamos una expresión regular para extraer "TFM_Botnet_" y los números
+        pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)"
+        matches = re.search(pattern, url)
+
+        if matches:
+                username = matches.group(2)  # "TFM_Botnet_"
+                return username
+        
+        else:
+                return None
+                
 def return_available_accounts_twitter():
         return fdb.get_values_unlocked(temp.get_email(), temp.get_password())
 
