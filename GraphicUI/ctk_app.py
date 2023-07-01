@@ -1,22 +1,8 @@
-import re
 import temp
-import datetime
 import customtkinter as ctk
 import FirebaseFunctions.firebaseDatabase as fdb
-import TwitterFunctions.seleniumFunctions as sf
-import FirebaseFunctions.firebaseAuthentication as fba
 import ctk_app_functions as ctkfun
-from CTkTable import *
 from PIL import Image
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-
-
-
-# driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
-
-#vpn_switch_var = ctk.StringVar(value="off") #no me funciona la variable
 
 ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -24,9 +10,6 @@ ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dar
 def splitEmail(email):
     name, domain = email.split("@")
     return name, domain
-
-def get_driver():
-    return webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 
 class App(ctk.CTk):
     def __init__(self):
@@ -165,302 +148,20 @@ class App(ctk.CTk):
             self.logout_option_button_clicked()
 
     def accounts_option_button_clicked(self):
-
-        self.disable_option_button('accounts')
-        ctkfun.accounts_option_table(self.options_frame)
-
-    
+        ctkfun.disable_option_button('accounts', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
+        ctkfun.accounts_option_content(self.options_frame)
+        
     def vpn_option_button_clicked(self):
-        self.disable_option_button('vpn')
-
-        vpn_container_frame = ctk.CTkFrame(self.options_frame, fg_color="transparent")
-        vpn_container_frame.pack(fill="x", expand=True)
-
-        self.vpn_label_option = ctk.CTkLabel(vpn_container_frame, text='Vpn', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.vpn_label_option.pack(padx=(10,10), pady=(10,10))
-
-        self.vpn_switch_label = ctk.CTkLabel(master=vpn_container_frame, text="Do you want to use VPN?")
-        self.vpn_switch_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
-
-        self.vpn_switch_var = ctk.StringVar(value=temp.get_vpn_mode())
-        self.vpn_switch = ctk.CTkSwitch(master=vpn_container_frame, 
-                                        text="Vpn On/Off", 
-                                        command=lambda: ctkfun.vpn_connect_clicked(self.vpn_switch_var, self.label_profile_vpn_status, 
-                                        self.vpn_switch_status_label, self.label_profile_vpn_location, self.vpn_switch_location_label, 
-                                        self.label_profile_vpn_ip, self.vpn_switch_ip_label), 
-                                        variable=self.vpn_switch_var, onvalue='on', offvalue='off')
-        self.vpn_switch.pack(side="left", padx=(20, 10), pady=(10, 10), fill="both", expand=True)
-
-        vpn_container_frame_2 = ctk.CTkFrame(self.options_frame, fg_color="transparent")
-        vpn_container_frame_2.pack(fill="x", expand=True)
-
-        self.vpn_switch_status_label = ctk.CTkLabel(vpn_container_frame_2, text=temp.get_vpn_status(), justify='center')
-        self.vpn_switch_status_label.pack(padx=(10,10), pady=(10,10))
-
-        self.vpn_switch_location_label = ctk.CTkLabel(master=self.options_frame, text=temp.get_vpn_location())
-        self.vpn_switch_location_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
-
-        self.vpn_switch_ip_label = ctk.CTkLabel(master=self.options_frame, text=temp.get_vpn_ip())
-        self.vpn_switch_ip_label.pack(side="left", padx=(10,10), pady=(10,10), fill="both", expand=True)
+        ctkfun.disable_option_button('vpn', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
+        ctkfun.vpn_option_content(self.options_frame, self.label_profile_vpn_status, self.label_profile_vpn_location, self.label_profile_vpn_ip)
 
     def twitter_option_button_clicked(self):
-        
-        self.disable_option_button('twitter')
-
-        # label option selected
-        self.twitter_label_option = ctk.CTkLabel(self.options_frame, text='Twitter', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.twitter_label_option.pack(padx=(10,10), pady=(10,10))
-
-        self.add_entry_valuable_button(0,self.return_available_accounts_twitter())
-
-        # create urls container frame
-        urls_container_frame = ctk.CTkFrame(self.options_frame)
-        urls_container_frame.pack(fill="x")
-        
-        # create entry urls
-        if temp.get_twitter_url() == None:
-            self.entry_twitter_url = ctk.CTkEntry(urls_container_frame, placeholder_text="Entry your twitter url here")
-            self.twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
-            temp.set_twitter_url(None)
-        else:
-            twitter_url_input_variable = ctk.StringVar()
-            twitter_url_input_variable.set(temp.get_twitter_url())
-            twitter_placeholder_url_input_variable = ctk.StringVar()
-            twitter_placeholder_url_input_variable.set("Entry your twitter url here")
-            self.entry_twitter_url = ctk.CTkEntry(urls_container_frame, textvariable=twitter_url_input_variable, placeholder_text=twitter_placeholder_url_input_variable)
-            self.twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:self.verify_twitter_url(self.entry_twitter_url.get()))
-        
-        self.entry_twitter_url.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
-        self.twitter_url_button.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
-
-        # create checkboxes
-        checkbox_container_frame = ctk.CTkFrame(self.options_frame)
-        checkbox_container_frame.pack(fill="x")
-
-        if temp.get_twitter_actions() == None:
-            self.twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='disabled')
-            self.twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='disabled')
-            self.twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='disabled')
-            temp.set_twitter_actions(None)
-        else:
-            self.twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='normal')
-            self.twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='normal')
-            self.twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='normal')
-
-        self.twitter_checkbox_like.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_checkbox_rt.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_checkbox_cmnt.pack(side="left", padx=(20,10), pady=(20,10))
-
-
-        if temp.get_twitter_follow() == None:
-            self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
-            temp.set_twitter_follow(None)
-        else:
-            self.twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='normal')
-
-        if ((temp.get_twitter_actions()) == None) and ((temp.get_twitter_follow()) == None):
-            self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command = self.twitter_checkCheckbox)
-        else:
-            self.twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command = self.twitter_checkCheckbox)
-
-        self.twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
-        self.twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
-                
-    def return_available_accounts_twitter(self):
-        #! CAMBIAR!! POR --> EMAIL, PASSWORD
-        return fdb.get_values_unlocked(temp.get_email(), temp.get_password())
-
-    def add_entry_valuable_button(self, min_value, max_value):
-        
-        def validate_entry(text):
-            if (text.isdigit() or text == ""):
-                return text == "" or int(text) <= self.return_available_accounts_twitter()
-            else:
-                return False
-
-        validate_command = self.options_frame.register(validate_entry)
-
-        def increase(self):
-            value = int(self.button_entry.get())
-            if value < max_value:
-                self.button_entry.delete(0, ctk.END)
-                self.button_entry.insert(0, str(value + 1))
-
-        def decrease(self):
-            value = int(self.button_entry.get())
-            if value > min_value:
-                self.button_entry.delete(0, ctk.END)
-                self.button_entry.insert(0, str(value - 1))
-
-        container = ctk.CTkFrame(self.options_frame)
-        container.pack(fill="x")
-
-        self.twitter_label_accounts = ctk.CTkLabel(
-            container,
-            text=f'Max interactions available: {self.return_available_accounts_twitter()}',
-        )
-        self.twitter_label_accounts.pack(side="top", padx=5, pady=5)
-
-        self.twitter_label_interactions = ctk.CTkLabel(container, text="Select number of interactions: ")
-        self.twitter_label_interactions.pack(side="left", padx=5, pady=5, anchor="center")
-
-        self.button_entry = ctk.CTkEntry(container, width=30, validate="key", validatecommand=(validate_command, "%P"))
-
-        self.button_entry.pack(side="left", padx=5, pady=5, anchor="center")
-
-        self.button_increase = ctk.CTkButton(container, text='+', command=lambda:increase(self), width=2)
-        self.button_increase.pack(side="left", padx=5, pady=5, anchor="center")
-
-        self.button_decrease = ctk.CTkButton(container, text='-', command=lambda:decrease(self), width=2)
-        self.button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
-
-        if fdb.get_values_unlocked(temp.get_email(), temp.get_password()) < 1:
-            self.button_entry.configure(state="disabled")
-            self.button_increase.configure(state="disabled")
-            self.button_decrease.configure(state="disabled")
-        else:
-            if temp.get_twitter_interactions() != None:
-                self.button_entry.insert(temp.get_twitter_interactions(), f"{temp.get_twitter_interactions()}")
-            else:
-                self.button_entry.insert(1, "1")
-    
-    def twitter_checkCheckbox(self):
-        if self.twitter_url_verified(self.entry_twitter_url.get()) in [
-            'actions',
-            'follow',
-        ]:
-
-            if  self.twitter_checkbox_cmnt.get() == 1:
-                self.twitter_popup_comment_window()
-
-            if self.twitter_checkbox_like.get() == 1:
-                print(sf.action_n_times(get_driver(), fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(self.button_entry.get())), self.entry_twitter_url.get(), 
-                            self.entry_twitter_url.get(), 2))
-
-    def twitter_popup_comment_window(self):
-        entry_value = int(self.button_entry.get())
-        popup_comment_window = ctk.CTkToplevel()
-        popup_comment_window.title("Comments window")
-        popup_comment_window.geometry("250x300")
-        popup_comment_window.focus()
-
-        # create scrollable frame
-        self.scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window, label_text="Comments")
-        self.scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        self.scrollable_popup_frame.grid_columnconfigure(0, weight=2)
-        self.scrollable_frame_entries = []
-        for i in range(entry_value):
-            self.comment_entries = ctk.CTkEntry(master=self.scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
-            self.comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
-            setattr(self, f"comment_entries_{i}", self.comment_entries)
-            self.scrollable_frame_entries.append(self.comment_entries)
-
-        popup_comment_window_button = ctk.CTkButton(self.scrollable_popup_frame, text='Go!')
-        popup_comment_window_button.grid(row=entry_value, column=0)
-        
-    def twitter_url_verified(self, url):
-        tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
-        follow_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}$'
-        if re.match(tweet_url, url) and (int(self.button_entry.get()) > 0):
-            return "actions"
-        elif re.match(follow_url, url) and (int(self.button_entry.get()) > 0):
-            return "follow"
-
-    def verify_twitter_url(self, url):
-
-        if self.twitter_url_verified(url) == 'actions':
-            self._extracted_from_verify_twitter_url_4('normal')
-            self.twitter_checkbox_follow.configure(state='disabled')
-            self.twitter_checkbox_follow.deselect()
-            self.entry_twitter_url.configure(border_color="green")
-            temp.set_twitter_actions(1)
-        elif self.twitter_url_verified(url) == 'follow':
-            self.twitter_checkbox_follow.configure(state='normal')
-            self._extracted_from_verify_twitter_url_4('disabled')
-            self.twitter_button_action.configure(state='normal')
-            self.twitter_checkbox_like.deselect()
-            self.twitter_checkbox_rt.deselect()
-            self.twitter_checkbox_cmnt.deselect()
-            self.entry_twitter_url.configure(border_color="green")
-            temp.set_twitter_follow(1)
-        else:
-            self._extracted_from_verify_twitter_url_4('disabled')
-            self.twitter_checkbox_like.deselect()
-            self.twitter_checkbox_rt.deselect()
-            self.twitter_checkbox_cmnt.deselect()
-            self.twitter_checkbox_follow.configure(state='disabled')
-            self.twitter_checkbox_follow.deselect()
-            self.entry_twitter_url.configure(border_color="red")
-            temp.set_twitter_actions(None)
-            temp.set_twitter_follow(None)
-        if not self.entry_twitter_url.get():
-            temp.set_twitter_url(None)
-        else:
-            temp.set_twitter_url(self.entry_twitter_url.get())
-        temp.set_twitter_interactions(self.button_entry.get())
-
-        
-
-    # TODO Rename this here and in `verify_twitter_url`
-    def _extracted_from_verify_twitter_url_4(self, state):
-        self.twitter_checkbox_like.configure(state=state)
-        self.twitter_checkbox_rt.configure(state=state)
-        self.twitter_checkbox_cmnt.configure(state=state)
-        self.twitter_button_action.configure(state=state)
-                
+        ctkfun.disable_option_button('twitter', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
+        ctkfun.twitter_option_content(self.options_frame, self)
 
     def logout_option_button_clicked(self):
-        self.disable_option_button('logout')
-
-        #create logout container frame
-        logout_container_frame = ctk.CTkFrame(self.options_frame)
-        logout_container_frame.pack(fill="both", expand=True)
-
-        #label option selected
-        self.logout_label_option = ctk.CTkLabel(logout_container_frame, text='LogOut', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        self.logout_label_option.pack(padx=(10,10), pady=(10,10))
-
-        self.logout_label_quest = ctk.CTkLabel(logout_container_frame, text="Are you sure?", justify="center")
-        self.logout_label_quest.pack(padx=(20, 10), pady=(10, 10))
-
-        #button option selected
-        self.logout_button_yes = ctk.CTkButton(logout_container_frame, text="Yes", anchor='center', command=self.action_logOut)
-        self.logout_button_yes.pack(side="top", padx=10, pady=10)
-
-    def close_main_window(self):
-        self.destroy()
-    
-    def logout_user(self):
-        import GraphicUI.ctk_login as login_app
-        fba.logOutUser()
-        login_app.main_window.mainloop()
-
-    def action_logOut(self):
-        self.close_main_window()
-        self.logout_user()        
-
-    def input_vpn_message_in_textbox(self, message):
-        date_time = datetime.datetime.now()
-        self.textbox.configure(state="normal")
-        self.textbox.insert("0.0", f'[{date_time}] $: ', message, '\n\n')
-        self.entry.delete(0, ctk.END)
-        self.textbox.configure(state="disabled")
-
-    def disable_option_button(self,button):
-        #enable other buttons
-        self.sidebar_vpn_button.configure(state='normal')
-        self.sidebar_accounts_button.configure(state='normal')
-        self.sidebar_twitter_button.configure(state='normal')
-        self.sidebar_logout_button.configure(state='normal')
-        #disable specific button
-        if button == 'twitter':
-            self.sidebar_twitter_button.configure(state='disabled')
-        elif button == 'vpn':
-            self.sidebar_vpn_button.configure(state='disabled')
-        elif button == 'accounts':
-            self.sidebar_accounts_button.configure(state='disabled')
-        elif button == 'logout':
-            self.sidebar_logout_button.configure(state='disabled')
+        ctkfun.disable_option_button('logout', self.sidebar_vpn_button, self.sidebar_accounts_button, self.sidebar_twitter_button, self.sidebar_logout_button)
+        ctkfun.logout_option_content(self.options_frame, self)      
 
 if __name__ == "__main__":
     app = App()
