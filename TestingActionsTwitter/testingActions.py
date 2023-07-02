@@ -8,13 +8,18 @@ import FirebaseFunctions.firebaseDatabase as fdb
 import re
 
 driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
-email = "clydueyi76380985@raptoragency.es"
-password = "Axqwrpoe_$49207782"
-user = "p1nC3iS1iborha9"
+# email = "ekmuroxf55734774@raptoragency.es"
+# password = "Vajaqxbf_$19613930"
+# user = "EricA3febr197"
     
 # email = "wmpkizhg96696548@raptoragency.es"
 # password = "Oktebufk$_79375481"
 # user = "RamiP3agost199"
+
+email = "ekmuroxf55734774@raptoragency.es"
+password = "Vajaqxbf_$19613930"
+user = "EricA3febr197"
+
 # url = "https://twitter.com/TFM_Botnet_/status/1674334209156997120"
 url = "https://twitter.com/TFM_Botnet_"
 
@@ -58,8 +63,8 @@ url = "https://twitter.com/TFM_Botnet_"
 print(function.loginUserTwitter(driver, email, password, user))
 # print(function.verifyIsAccountLocked(driver))
 # print(function.step10ChangeImageProfile(driver))
-function.acceptCookies(driver)
-
+print(function.acceptCookies(driver))
+print(function.follow_user(driver, url, url))
 # like = function.like_tweet(driver, url, url)
 # if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
 #     check1 = True
@@ -75,5 +80,3 @@ function.acceptCookies(driver)
 # sleep(1)
 
 # follow = function.follow_user(driver, url, url)
-
-sleep(300)

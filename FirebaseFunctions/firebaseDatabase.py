@@ -4,7 +4,7 @@ import FirebaseFunctions.firebaseAuthentication as fa
 import firebase
 from collections import Counter
 
-def getLastValue(email, password):
+def getLastValue(email, password):  # sourcery skip: do-not-use-bare-except
         # We try to initialize app
         firebase = fa.initializeApp()
 
@@ -43,6 +43,7 @@ def loadValues(email, password, data: dict):
         db.child("created_users").child(email_local).child(f"ID-{id}").set(data, token)
 
 def updateValues(email, password, email_find, update_state):
+        # sourcery skip: avoid-builtin-shadow
         
         firebase = fa.initializeApp()
         
@@ -64,14 +65,12 @@ def updateValues(email, password, email_find, update_state):
                 key = item.key()
                 value = item.val()
                 values[key] = value
-        
         id = find_id_by_email(email_find, values)
-        
         db.child("created_users").child(email_local).child(id).update({"state": update_state}, token)
         
         return f"{id}: has been updated!"
 
-def deleteValues(email, password):
+def deleteValues(email, password):  # sourcery skip: avoid-builtin-shadow
         # We try to initialize app
         firebase = fa.initializeApp()
 
@@ -133,7 +132,7 @@ def get_values(email, password):
         
         return values
 
-def get_values_unlocked(email, password):
+def get_count_values_unlocked(email, password): # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
         # Intentamos inicializar la aplicación
         firebase = fa.initializeApp()
 
@@ -149,12 +148,11 @@ def get_values_unlocked(email, password):
 
         # Obtenemos todos los valores existentes para el usuario
         data = db.child("created_users").child(email_local).get(token)
-        
+        data_dict = data.val()
+        sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
         # Creamos un diccionario para almacenar los valores desbloqueados
         unlocked_values = {}
-        for item in data.each():
-                key = item.key()
-                value = item.val()
+        for key, value in sorted_data.items():
                 if value.get('state') == 'unlocked':
                         unlocked_values[key] = value
 
@@ -162,6 +160,93 @@ def get_values_unlocked(email, password):
                 return 0
         else:
                 return len(unlocked_values)
+        
+def get_count_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
+        # Intentamos inicializar la aplicación
+        firebase = fa.initializeApp()
+
+        db = firebase.database()
+
+        # Obtenemos una referencia al servicio de autenticación
+        auth = firebase.auth()
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("created_users").child(email_local).get(token)
+        data_dict = data.val()
+        sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
+        # Creamos un diccionario para almacenar los valores desbloqueados
+        locked_values = {}
+        for key, value in sorted_data.items():
+                if value.get('state') == 'locked':
+                        locked_values[key] = value
+
+        if len(locked_values) == 0:
+                return 0
+        else:
+                return len(locked_values)
+
+def get_values_unlocked(email, password):  # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
+        # Intentamos inicializar la aplicación
+        firebase = fa.initializeApp()
+
+        db = firebase.database()
+
+        # Obtenemos una referencia al servicio de autenticación
+        auth = firebase.auth()
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("created_users").child(email_local).get(token)
+        data_dict = data.val()
+        sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
+        # Creamos un diccionario para almacenar los valores desbloqueados
+        unlocked_values = {}
+        for key, value in sorted_data.items():
+                if value.get('state') == 'unlocked':
+                        unlocked_values[key] = value
+
+        if len(unlocked_values) == 0:
+                return 0
+        else:
+                return unlocked_values
+
+def get_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
+        # Intentamos inicializar la aplicación
+        firebase = fa.initializeApp()
+
+        db = firebase.database()
+
+        # Obtenemos una referencia al servicio de autenticación
+        auth = firebase.auth()
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("created_users").child(email_local).get(token)
+        data_dict = data.val()
+        sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
+        # Creamos un diccionario para almacenar los valores desbloqueados
+        locked_values = {}
+        for key, value in sorted_data.items():
+                if value.get('state') == 'locked':
+                        locked_values[key] = value
+
+        if len(locked_values) == 0:
+                return 0
+        else:
+                return locked_values
 
 def get_values_for_actions(email, password, n_times: int):
         # Intentamos inicializar la aplicación
@@ -179,7 +264,7 @@ def get_values_for_actions(email, password, n_times: int):
 
         # Obtenemos todos los valores existentes para el usuario
         data = db.child("created_users").child(email_local).get(token)
-            # Convertir el objeto FirebaseResponse en un diccionario
+        # Convertir el objeto FirebaseResponse en un diccionario
         data_dict = data.val()
         
         # Ordenar los elementos del diccionario por clave
@@ -200,43 +285,41 @@ def get_values_for_actions(email, password, n_times: int):
         return unlocked_values
 
 def reorder_ids(data):
-    sorted_ids = sorted(data.keys())  # Ordenamos las claves de forma ascendente
-    new_data = {}
+        sorted_ids = sorted(data.keys())  # Ordenamos las claves de forma ascendente
+        new_data = {}
 
-    for i, old_id in enumerate(sorted_ids, start=1):
-        new_id = f"ID-{i}"
-        new_data[new_id] = data[old_id]
-
-    return new_data
+        for i, old_id in enumerate(sorted_ids, start=1):
+                new_id = f"ID-{i}"
+                new_data[new_id] = data[old_id]
+        return new_data
 
 def upload_updated_values(email, password, data):
-    firebase = fa.initializeApp()
-    db = firebase.database()
-    auth = firebase.auth()
+        firebase = fa.initializeApp()
+        db = firebase.database()
+        auth = firebase.auth()
 
-    user = auth.sign_in_with_email_and_password(email=email, password=password)
-    email_local = user['localId']
-    token = user['idToken']
-
-    for id, value in data.items():
-        db.child("created_users").child(email_local).child(id).set(value, token)
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+        email_local = user['localId']
+        token = user['idToken']
+        db.child("created_users").remove(token)
+        for id, value in data.items():
+                db.child("created_users").child(email_local).child(id).set(value, token)
+        return "Uploaded database"
 
 def remove_duplicates(data):
-    unique_data = {}  # Diccionario para almacenar los valores únicos
+        unique_data = {}  # Diccionario para almacenar los valores únicos
 
-    # Conjunto para realizar la comparación de valores únicos
-    unique_set = set()
+        # Conjunto para realizar la comparación de valores únicos
+        unique_set = set()
 
-    for id, value in data.items():
-        # Convierte el diccionario de valores en una tupla ordenada
-        value_tuple = tuple(sorted(value.items()))
-
-        # Si la tupla no está en el conjunto de valores únicos, se agrega al diccionario
-        if value_tuple not in unique_set:
-            unique_data[id] = value
-            unique_set.add(value_tuple)
-
-    return unique_data
+        for id, value in data.items():
+                # Convierte el diccionario de valores en una tupla ordenada
+                value_tuple = tuple(sorted(value.items()))
+                # Si la tupla no está en el conjunto de valores únicos, se agrega al diccionario
+                if value_tuple not in unique_set:
+                        unique_data[id] = value
+                        unique_set.add(value_tuple)
+        return unique_data
 
 def updateDatabase(email, password):
         
@@ -245,7 +328,7 @@ def updateDatabase(email, password):
         
         return "Database updated!"
 
-def find_id_by_email(email, data):
+def find_id_by_email(email, data):  # sourcery skip: use-next
         for id_, values in data.items():
                 if values["email"] == email:
                         return id_
@@ -267,7 +350,7 @@ def loadValuesActionsTwitter(email, password, url, data: dict, user_twitter):
         email_local = user['localId']
         token =  user['idToken']
 
-        id = getLastValue(email, password)
+        # id = getLastValue(email, password)
 
         db.child("action_users").child(email_local).child(url).child(user_twitter).set(data, token)
 
@@ -285,6 +368,8 @@ def loadValuesFollow(email, password, url, data: dict, user_twitter):
         email_local = user['localId']
         token =  user['idToken']
 
-        id = getLastValue(email, password)
+        # id = getLastValue(email, password)
 
         db.child("follow_users").child(email_local).child(url).child(user_twitter).set(data, token)
+
+# print(upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez", reorder_ids((get_values("danifdezloz@gmail.com", "Dani5Fdez")))))

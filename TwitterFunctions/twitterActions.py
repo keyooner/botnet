@@ -111,15 +111,24 @@ action_mapping = {
 def follow_user(driver, url, expected_url):
     try:
         tf.go_page("Go to Twitter User Page", driver, url, expected_url)
+        
+        sleep(1)
+        
         tf.twitter_actions("Check follow button", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", False, False, None)
         
         check = tf.checkColorFollowUser_1(driver)
         
+        sleep(1)
+        
         if check != "Ok!":
             raise Exception("Follow user! Fail because you already follow this user!")
         
+        sleep(1)
+        
         tf.twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", True, False, None)
-
+        
+        sleep(1)
+        
         check = tf.checkColorFollowUser_2(driver)
         
         if check != "Ok!":
@@ -304,9 +313,15 @@ def loginUserTwitter(driver, email, password, user):
         fdb.updateValues("danifdezloz@gmail.com", "Dani5Fdez", email, "locked")
         return "Your account is locked!"
     
+    sleep(1)
+    
     # /html/body/div[1]/div/div/div[2]/header/div/div/div/div[2]/div/div/div[2]/div/div[2]/div/div/div/span
     if tf.get_user_profile(driver, 2, "/html/body/div[1]/div/div/div[2]/header/div/div/div/div[2]/div/div/div[2]/div/div[2]/div/div/div/span", user):
         return "Login User! Ok!"
+    
+    if driver.current_url == "https://twitter.com/account/access":
+        fdb.updateValues("danifdezloz@gmail.com", "Dani5Fdez", email, "locked")
+        return "Your account is locked!"
     
     return "Something has failed retry!"
 

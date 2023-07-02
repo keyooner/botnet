@@ -12,6 +12,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from nordvpn_switcher import initialize_VPN, rotate_VPN, terminate_VPN
+from time import sleep
 
 instance = None
 instance_2 = None
@@ -67,18 +68,17 @@ def accounts_option_content(options_frame):
         scrollable_table_frame_values = []
 
         #accounts available
-        data = fdb.get_values(temp.get_email(), temp.get_password())
+        data = fdb.get_values_unlocked(temp.get_email(), temp.get_password())
         header_values = [['             EMAIL            ', ' PASSWORD ', '      USERNAME      ']]
         header_table = CTkTable(scrollable_table_frame, row=1, column=3, values=header_values, header_color="#8370F7", hover=True)
         header_table.grid(row=0 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
-        
-
-        for i, key in enumerate(data.keys()):
-                account_data = data[key]
-                table_values = [[account_data['email'], [account_data['password']], account_data['user']]]
-                table_accounts_available = CTkTable(scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover=True)
-                table_accounts_available.grid(row=i+1 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
-                scrollable_table_frame_values.append(table_accounts_available)
+        if data != 0:
+                for i, key in enumerate(data.keys()):
+                        account_data = data[key]
+                        table_values = [[account_data['email'], [account_data['password']], account_data['user']]]
+                        table_accounts_available = CTkTable(scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover=True)
+                        table_accounts_available.grid(row=i+1 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
+                        scrollable_table_frame_values.append(table_accounts_available)
 
         # Adjust scrollable size
         scrollable_table_frame.update()
@@ -102,18 +102,18 @@ def unlock_option_content(options_frame):
         scrollable_table_frame_values = []
 
         #accounts available
-        data = fdb.get_values(temp.get_email(), temp.get_password())
+        data = fdb.get_values_locked(temp.get_email(), temp.get_password())
         header_values = [['             EMAIL            ', ' PASSWORD ', '      USERNAME      ']]
         header_table = CTkTable(scrollable_table_frame, row=1, column=3, values=header_values, header_color="#8370F7", hover=True)
         header_table.grid(row=0 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
         
-
-        for i, key in enumerate(data.keys()):
-                account_data = data[key]
-                table_values = [[account_data['email'], [account_data['password']], account_data['user']]]
-                table_accounts_available = CTkTable(scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover=True)
-                table_accounts_available.grid(row=i+1 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
-                scrollable_table_frame_values.append(table_accounts_available)
+        if data != 0:
+                for i, key in enumerate(data.keys()):
+                        account_data = data[key]
+                        table_values = [[account_data['email'], [account_data['password']], account_data['user']]]
+                        table_accounts_available = CTkTable(scrollable_table_frame, row=1, column=3, values=table_values, header_color="#2cc985", hover=True)
+                        table_accounts_available.grid(row=i+1 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
+                        scrollable_table_frame_values.append(table_accounts_available)
 
         # Adjust scrollable size
         scrollable_table_frame.update()
@@ -277,7 +277,7 @@ def twitter_option_content(options_frame, instance):
         button_decrease = ctk.CTkButton(entry_button_frame, text='-', command=lambda:decrease(), width=2)
         button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
 
-        if fdb.get_values_unlocked(temp.get_email(), temp.get_password()) < 1:
+        if fdb.get_count_values_unlocked(temp.get_email(), temp.get_password()) < 1:
                 button_entry.configure(state="disabled")
                 button_increase.configure(state="disabled")
                 button_decrease.configure(state="disabled")
@@ -332,9 +332,9 @@ def twitter_option_content(options_frame, instance):
                 twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='normal')
 
         if ((temp.get_twitter_actions()) == None) and ((temp.get_twitter_follow()) == None):
-                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance), twitter_checkbox_like))
+                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow))
         else:
-                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance), twitter_checkbox_like))
+                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow))
 
         twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
         twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
@@ -347,41 +347,101 @@ def twitter_url_check(url, button_entry):
         elif re.match(follow_url, url) and (int(button_entry.get()) > 0):
                 return "follow"
         
-def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window, twitter_checkbox_like):
+def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow):
         if twitter_url_check(entry_twitter_url.get(), button_entry) in ['actions','follow',]:
 
-                if  twitter_checkbox_cmnt.get() == 1:
+                if twitter_checkbox_follow.get() == 1:
+                        twitter_give_follow(get_driver(), entry_twitter_url, button_entry)
+                
+                if twitter_checkbox_cmnt.get() == 1:
                         twitter_popup_comment_window()
 
                 if twitter_checkbox_like.get() == 1:
-                        #input_message_in_textbox(sf.loginUserTwitter(get_driver(), "xzxsvejb23119767@raptoragency.es", "Kpojtgke$$47380624", "9d1iie2ASmg7u87"))
-                        #input_message_in_textbox(sf.like_tweet(get_driver(), entry_twitter_url.get(), entry_twitter_url.get()))
-                        # input_message_in_textbox(sf.action_n_times(get_driver(), fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get())), entry_twitter_url.get(), 
-                        #         entry_twitter_url.get(), 2))
                         twitter_give_like(get_driver(), entry_twitter_url, button_entry)
-
+                
+                if twitter_checkbox_rt.get() == 1:
+                        twitter_give_rt(get_driver(), entry_twitter_url, button_entry)
+                        
+                if twitter_checkbox_rt.get() == 1 and twitter_checkbox_like.get() == 1 and twitter_checkbox_cmnt.get() == 1:
+                        twitter_popup_comment_window()
+                        
 def twitter_give_like(driver, entry_twitter_url, button_entry):
         data = fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get()))
-        print(data)
         user_try = 1
+        count = 0
+        input_message_in_textbox(f"Users selected : {button_entry.get()}")
         for key, value in data.items():
                 # Variables para almacenar los valores
                 id_value = key
                 email_value = value['email']
                 password_value = value['password']
                 user_value = value['user']
-                input_message_in_textbox(f"Users selected : {button_entry.get()}")
+                input_message_in_textbox(f"User try: {user_try}")
+                input_message_in_textbox(f"Actions for user {user_value}")
+                result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
+                if result != "Your account is locked!":
+                        input_message_in_textbox(sf.acceptCookies(driver))
+                        like = input_message_in_textbox(sf.like_tweet(driver, entry_twitter_url.get(), entry_twitter_url.get()))
+                        if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
+                                count = count +1
+                                check1 = True
+                        loadActions(email_value, check1, False, False, entry_twitter_url.get(), user_value)
+                        input_message_in_textbox("Inserting data to the database...")
+                        input_message_in_textbox(sf.closeSession(driver))
+                user_try = user_try + 1
+        input_message_in_textbox(f"Se han completado con éxito {count} likes sobre {user_try}")
+
+def twitter_give_rt(driver, entry_twitter_url, button_entry):
+        data = fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get()))
+        user_try = 1
+        count = 0
+        input_message_in_textbox(f"Users selected : {button_entry.get()}")
+        for key, value in data.items():
+                # Variables para almacenar los valores
+                id_value = key
+                email_value = value['email']
+                password_value = value['password']
+                user_value = value['user']
                 input_message_in_textbox(f"User try: {user_try}")
                 input_message_in_textbox(f"Actions for user {user_value}")
                 input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
-                sf.acceptCookies(driver)
-                like = input_message_in_textbox(sf.like_tweet(driver, entry_twitter_url.get(), entry_twitter_url.get()))
-                if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
-                        check1 = True
-                loadActions(email_value, check1, False, False, entry_twitter_url.get(), user_value)
-                sf.closeSession(driver)
+                input_message_in_textbox(sf.acceptCookies(driver))
+                retweet = input_message_in_textbox(sf.retweet_tweet(driver, entry_twitter_url.get(), entry_twitter_url.get()))
+                if retweet == "Retweet Twitter! Ok!" or "Retweet Tweet! Fail because you already like this tweet!":
+                        count = count +1
+                        check2 = True
+                loadActions(email_value, False, check2, False, entry_twitter_url.get(), user_value)
+                input_message_in_textbox("Inserting data to the database...")
+                input_message_in_textbox(sf.closeSession(driver))
                 user_try = user_try + 1
-                                
+        input_message_in_textbox(f"Se han completado con éxito {count} likes sobre {user_try}")
+
+def twitter_give_follow(driver, entry_twitter_url, button_entry):
+        data = fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get()))
+        user_try = 1
+        count = 0
+        input_message_in_textbox(f"Users selected : {button_entry.get()}")
+        for key, value in data.items():
+                # Variables para almacenar los valores
+                id_value = key
+                email_value = value['email']
+                password_value = value['password']
+                user_value = value['user']
+                input_message_in_textbox(f"User try: {user_try}")
+                input_message_in_textbox(f"Actions for user {user_value}")
+                result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
+                if result != "Your account is locked!":
+                        input_message_in_textbox(sf.acceptCookies(driver))
+                        follow = input_message_in_textbox(sf.follow_user(driver, entry_twitter_url.get(), entry_twitter_url.get()))
+                        if follow == "Follow User Twitter! Ok!" or "Follow user! Fail because you already follow this user!":
+                                count = count +1
+                                check = True
+                        loadFollow(email_value, check, entry_twitter_url.get(), user_value)
+                        input_message_in_textbox("Inserting data to the database...")
+                        input_message_in_textbox(sf.closeSession(driver))
+                user_try = user_try + 1
+        input_message_in_textbox(f"Successfully completed {count} following actions out of {user_try-1}")
+
 def loadActions(email, check1, check2, check3, url, user):
         
         data = {
@@ -414,7 +474,6 @@ def split_url_actions(url):
                 username = matches.group(2)  # "TFM_Botnet_"
                 numbers = matches.group(4)  # "1674334209156997120"
                 return username, numbers
-        
         else:
                 return None
 
@@ -426,12 +485,11 @@ def split_url_follow(url):
         if matches:
                 username = matches.group(2)  # "TFM_Botnet_"
                 return username
-        
         else:
                 return None
                 
 def return_available_accounts_twitter():
-        return fdb.get_values_unlocked(temp.get_email(), temp.get_password())
+        return fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())
 
 def twitter_popup_comment_window(button_entry, instance):
         entry_value = int(button_entry.get())
