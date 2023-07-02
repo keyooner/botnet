@@ -581,6 +581,11 @@ def go_page(log, driver, url, expected_url):
         driver.get(url)
         # Maximize the window
         driver.maximize_window()
+        #driver.execute_script("document.body.style.transform = 'scale(0.8)'")
+        # driver.set_context("chrome")
+        # driver.find_element(By.TAG_NAME, 'html').send_keys(Keys.CONTROL + "-")
+        # driver.find_element(By.TAG_NAME, 'html').send_keys(Keys.CONTROL + "-")
+        # driver.set_context("content")
         # Save the actual url
         actual_url = driver.current_url
         # It check the expected url with actual url

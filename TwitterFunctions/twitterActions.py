@@ -125,8 +125,7 @@ def follow_user(driver, url, expected_url):
         
         sleep(1)
         
-        tf.twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", True, False, None)
-        
+        tf.twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div", True, False, None)
         sleep(1)
         
         check = tf.checkColorFollowUser_2(driver)
