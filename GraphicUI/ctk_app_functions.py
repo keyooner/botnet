@@ -3,16 +3,18 @@ import re
 import sys
 import temp
 import datetime
+import webbrowser
 import customtkinter as ctk
 import TwitterFunctions.twitterActions as sf
 import FirebaseFunctions.firebaseDatabase as fdb
 import FirebaseFunctions.firebaseAuthentication as fba
+from PIL import Image
+from time import sleep
 from CTkTable import *
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from nordvpn_switcher import initialize_VPN, rotate_VPN, terminate_VPN
-from time import sleep
 
 instance = None
 instance_2 = None
@@ -35,7 +37,7 @@ def create_textbox_entry():
         textbox_frame = ctk.CTkFrame(instance, fg_color="transparent")
         textbox_frame.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
         textbox = ctk.CTkTextbox(textbox_frame, width=700, state="disabled")
-        textbox.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+        textbox.grid(row=0, column=0, padx=0, pady=10, sticky="nsew")
         
         textbox_frame.columnconfigure(0, weight=1)
         textbox_frame.rowconfigure(0, weight=1)
@@ -52,10 +54,28 @@ def input_message_in_textbox(message):
         return message
 
 ################################################ HELP #####################################################
+def open_url(url):
+        webbrowser.open(url)
 
 def help_option_content(options_frame):
+        
         unlock_label_option = ctk.CTkLabel(options_frame, text='Help', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
         unlock_label_option.pack(padx=(10,10), pady=(10,10))
+
+        unlock_label_explain_1 = ctk.CTkLabel(options_frame, text='You can see a demo tutorial if you do click on the image', justify='center')
+        unlock_label_explain_1.pack(padx=(10,10), pady=(10,10))
+
+        youtube_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/Tutorial_youtube_light.png"),
+                                dark_image=Image.open("GraphicUI/images/Tutorial_youtube_dark.png"),
+                                size=(300, 100))
+
+        welcome_image_label = ctk.CTkLabel(options_frame, image=youtube_image, text="", cursor="hand2")
+        welcome_image_label.pack(anchor="center", expand=True)
+
+        welcome_image_label.bind("<Button-1>", lambda event: open_url("https://www.youtube.com"))
+
+        unlock_label_explain_2 = ctk.CTkLabel(options_frame, text='You can download a pdf tutorial if you do click on the document', justify='center')
+        unlock_label_explain_2.pack(padx=(10,10), pady=(10,10))
         
 ############################################### ACCOUNTS ##################################################
 
@@ -495,6 +515,12 @@ def return_avaliable_accounts_for_follow(entry_twitter_url):
         return len(fdb.get_values_for_follow(temp.get_email(), temp.get_password(), split_url_follow(entry_twitter_url.get())))
 
 def twitter_popup_comment_window(button_entry, instance):
+
+        def twitter_popup_comment_go_button():
+                for i, comment_entries in enumerate(scrollable_frame_entries):
+                        comment = comment_entries.get()
+                        print(f"Comentario {i+1}: {comment}")
+        
         entry_value = int(button_entry.get())
         popup_comment_window = ctk.CTkToplevel()
         popup_comment_window.title("Comments window")
@@ -512,7 +538,7 @@ def twitter_popup_comment_window(button_entry, instance):
                 setattr(instance, f"comment_entries_{i}", comment_entries)
                 scrollable_frame_entries.append(comment_entries)
 
-        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!')
+        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=twitter_popup_comment_go_button)
         popup_comment_window_button.grid(row=entry_value, column=0)
 
 def twitter_url_actions(url, entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action, twitter_label_accounts):

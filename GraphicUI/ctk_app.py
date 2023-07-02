@@ -22,7 +22,7 @@ class App(ctk.CTk):
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
-        self.grid_rowconfigure((0, 1, 2), weight=1)
+        self.grid_rowconfigure((0, 1), weight=1)
 
         # create sidebar frame with widgets
         self.sidebar_frame = ctk.CTkFrame(self, width=140, corner_radius=0)
@@ -101,7 +101,7 @@ class App(ctk.CTk):
 
         # create checkbox and switch frame
         self.image_frame = ctk.CTkFrame(self)
-        self.image_frame.grid(row=1, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
+        self.image_frame.grid(row=1, column=3, padx=(20, 20), pady=(20, 10), sticky="nsew")
         
         my_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/botnet_light.png"),
                                 dark_image=Image.open("GraphicUI/images/botnet_dark.png"),
@@ -109,6 +109,25 @@ class App(ctk.CTk):
 
         image_label = ctk.CTkLabel(self.image_frame, image=my_image, text="")
         image_label.pack(anchor="center", expand=True)
+
+        github_image_keyooner = ctk.CTkImage(light_image=Image.open("GraphicUI/images/github_keyooner_light.png"),
+                                dark_image=Image.open("GraphicUI/images/github_keyooner_dark.png"),
+                                size=(80, 30))
+        
+        github_image_label_keyooner = ctk.CTkLabel(self.image_frame, image=github_image_keyooner, text="", cursor="hand2")
+        github_image_label_keyooner.pack(side="left", expand=True)
+
+        github_image_label_keyooner.bind("<Button-1>", lambda event: ctkfun.open_url("https://github.com/keyooner"))
+
+        github_image_dani5fdez = ctk.CTkImage(light_image=Image.open("GraphicUI/images/github_dani5fdez_light.png"),
+                                dark_image=Image.open("GraphicUI/images/github_dani5fdez_dark.png"),
+                                size=(80, 30))
+        
+        github_image_label_dani5fdez = ctk.CTkLabel(self.image_frame, image=github_image_dani5fdez, text="", cursor="hand2")
+        github_image_label_dani5fdez.pack(side="right", expand=True)
+
+        github_image_label_dani5fdez.bind("<Button-1>", lambda event: ctkfun.open_url("https://github.com/dani5fdez"))
+        
 
 #########################################################################################################################################################
 ################################################ BASIC FUNCTIONS ########################################################################################
