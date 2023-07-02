@@ -275,7 +275,6 @@ def get_values_for_actions(email, password, n_times: int):
         for key, value in sorted_data.items():
                 if count >= n_times:
                         break
-                
                 if value.get('state') == 'unlocked':
                         email_twitter = value.get('email')
                         password_twitter = value.get('password')
@@ -372,4 +371,45 @@ def loadValuesFollow(email, password, url, data: dict, user_twitter):
 
         db.child("follow_users").child(email_local).child(url).child(user_twitter).set(data, token)
 
+def get_values_for_follow(email, password, url):
+        # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
+        # Intentamos inicializar la aplicación
+        firebase = fa.initializeApp()
+
+        db = firebase.database()
+
+        # Obtenemos una referencia al servicio de autenticación
+        auth = firebase.auth()
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("follow_users").child(email_local).child(url).get(token)
+        if data.val() is None:
+                values ={}
+        else:
+        # Creamos un diccionario para almacenar los valores
+                values = {}
+                for item in data.each():
+                        key = item.key()
+                        value = item.val()
+                        values[key] = value
+                
+        filtered_values = {key: value for key, value in values.items() if value.get('follow') == True}
+
+        # Obtenemos los valores de los usuarios existentes en otra fuente
+        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        
+        if data2 is None:
+                return 0
+        else:
+                emails_data1 = set([v['email'] for v in filtered_values.values()])
+                filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
+                
+                return filtered_data2
+
+# print(get_values_for_follow("danifdezloz@gmail.com", "Dani5Fdez", "IbaiLlanos3"))
 # print(upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez", reorder_ids((get_values("danifdezloz@gmail.com", "Dani5Fdez")))))

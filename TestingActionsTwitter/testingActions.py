@@ -61,6 +61,8 @@ print(function.loginUserTwitter(driver, email, password, user))
 # print(function.step10ChangeImageProfile(driver))
 # print(function.acceptCookies(driver))
 print(function.follow_user(driver, url, url))
+print(function.closeSession(driver))
+sleep(300)
 # like = function.like_tweet(driver, url, url)
 # if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
 #     check1 = True

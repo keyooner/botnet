@@ -744,7 +744,8 @@ def insertUsername(driver, username):
 def checkColorFollowUser_1(driver):
     # Get the color of the element and rgb from rgba
     color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
-
+    if color == "Fail! We didn't find the element!":
+        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
     # Get the RGB values
     r1, g1, b1, a1 = get_rgba_value(color)
     r2, g2, b2, a2 = get_rgba_value(black_color_follow_rgba_css)
@@ -752,9 +753,9 @@ def checkColorFollowUser_1(driver):
     return check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
 
 def checkColorFollowUser_2(driver):
-    
     color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
-
+    if color == "Fail! We didn't find the element!":
+        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
     # Get the RGB values
     r1, g1, b1, a1 = get_rgba_value(color)
     r2, g2, b2, a2 = get_rgba_value(black_color_follow_rgba_css)

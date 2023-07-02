@@ -294,7 +294,7 @@ def twitter_option_content(options_frame, instance):
         # create entry urls
         if temp.get_twitter_url() == None:
                 entry_twitter_url = ctk.CTkEntry(urls_container_frame, placeholder_text="Entry your twitter url here")
-                twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:twitter_url_actions(entry_twitter_url.get(), entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action))
+                twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:twitter_url_actions(entry_twitter_url.get(), entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action, twitter_label_accounts))
                 temp.set_twitter_url(None)
         else:
                 twitter_url_input_variable = ctk.StringVar()
@@ -302,7 +302,7 @@ def twitter_option_content(options_frame, instance):
                 twitter_placeholder_url_input_variable = ctk.StringVar()
                 twitter_placeholder_url_input_variable.set("Entry your twitter url here")
                 entry_twitter_url = ctk.CTkEntry(urls_container_frame, textvariable=twitter_url_input_variable, placeholder_text=twitter_placeholder_url_input_variable)
-                twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:twitter_url_actions(entry_twitter_url.get(), entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action))
+                twitter_url_button = ctk.CTkButton(urls_container_frame, text="Check Url", command=lambda:twitter_url_actions(entry_twitter_url.get(), entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action, twitter_label_accounts))
         
         entry_twitter_url.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
         twitter_url_button.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
@@ -347,7 +347,7 @@ def twitter_url_check(url, button_entry):
         elif re.match(follow_url, url) and (int(button_entry.get()) > 0):
                 return "follow"
         
-def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow):
+def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, ):
         if twitter_url_check(entry_twitter_url.get(), button_entry) in ['actions','follow',]:
 
                 if twitter_checkbox_follow.get() == 1:
@@ -415,7 +415,7 @@ def twitter_give_rt(driver, entry_twitter_url, button_entry):
         input_message_in_textbox(f"Se han completado con éxito {count} likes sobre {user_try}")
 
 def twitter_give_follow(driver, entry_twitter_url, button_entry):
-        data = fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get()))
+        data = fdb.get_values_for_follow(temp.get_email(), temp.get_password(), split_url_follow(entry_twitter_url.get()))
         user_try = 1
         count = 0
         input_message_in_textbox(f"Users selected : {button_entry.get()}")
@@ -433,11 +433,14 @@ def twitter_give_follow(driver, entry_twitter_url, button_entry):
                         if follow == "Follow User Twitter! Ok!" or "Follow user! Fail because you already follow this user!":
                                 count = count +1
                                 check = True
-                        loadFollow(email_value, check, entry_twitter_url.get(), user_value)
-                        input_message_in_textbox("Inserting data to the database...")
+                                input_message_in_textbox("Inserting data to the database...")
+                                loadFollow(email_value, check, entry_twitter_url.get(), user_value)        
                         input_message_in_textbox(sf.closeSession(driver))
+                        sleep(1)
                 user_try = user_try + 1
         input_message_in_textbox(f"Successfully completed {count} following actions out of {user_try-1}")
+        #! Tras realizar la acción actualizar la label!!!!
+        
 
 def loadActions(email, check1, check2, check3, url, user):
         
@@ -488,6 +491,9 @@ def split_url_follow(url):
 def return_available_accounts_twitter():
         return fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())
 
+def return_avaliable_accounts_for_follow(entry_twitter_url):
+        return len(fdb.get_values_for_follow(temp.get_email(), temp.get_password(), split_url_follow(entry_twitter_url.get())))
+
 def twitter_popup_comment_window(button_entry, instance):
         entry_value = int(button_entry.get())
         popup_comment_window = ctk.CTkToplevel()
@@ -509,7 +515,7 @@ def twitter_popup_comment_window(button_entry, instance):
         popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!')
         popup_comment_window_button.grid(row=entry_value, column=0)
 
-def twitter_url_actions(url, entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action):
+def twitter_url_actions(url, entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action, twitter_label_accounts):
 
         # is valid tweet url (like, rt, comment) 
         if twitter_url_check(url, button_entry) == 'actions':
@@ -520,10 +526,17 @@ def twitter_url_actions(url, entry_twitter_url, button_entry, twitter_checkbox_l
 
         # is valid profile tweet url (follow)
         elif twitter_url_check(url, button_entry) == 'follow':
-                twitter_widgets_states('disabled', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                twitter_widgets_configures('follow', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                temp.set_twitter_follow(1)
-                temp.set_twitter_actions(None)
+                twitter_label_accounts.configure(text=f'Max interactions available: {return_avaliable_accounts_for_follow(entry_twitter_url)}')
+                if return_avaliable_accounts_for_follow(entry_twitter_url) == 0:
+                        twitter_label_accounts.configure(text=f'Max interactions available: {return_avaliable_accounts_for_follow(entry_twitter_url)} \n You cannot make interactions in this tweet!!')
+                        twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+                        temp.set_twitter_actions(None)
+                        temp.set_twitter_follow(None)
+                else:
+                        twitter_widgets_states('disabled', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+                        twitter_widgets_configures('follow', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+                        temp.set_twitter_follow(1)
+                        temp.set_twitter_actions(None)
         # is invalid url
         else:
                 twitter_widgets_states('disabled', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
@@ -552,6 +565,7 @@ def twitter_widgets_configures(type, entry_twitter_url, twitter_checkbox_follow,
                 twitter_checkbox_cmnt.deselect()
                 twitter_checkbox_follow.configure(state='disabled')
                 twitter_checkbox_follow.deselect()
+                
 
 # change checkbox and button status on twitter option
 def twitter_widgets_states(state, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
