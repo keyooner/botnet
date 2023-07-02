@@ -315,6 +315,8 @@ def loginUserTwitter(driver, email, password, user):
     
     sleep(1)
     
+    tf.acceptCookies(driver)
+    
     # /html/body/div[1]/div/div/div[2]/header/div/div/div/div[2]/div/div/div[2]/div/div[2]/div/div/div/span
     if tf.get_user_profile(driver, 2, "/html/body/div[1]/div/div/div[2]/header/div/div/div/div[2]/div/div/div[2]/div/div[2]/div/div/div/span", user):
         return "Login User! Ok!"

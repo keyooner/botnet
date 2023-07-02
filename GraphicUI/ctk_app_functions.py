@@ -380,7 +380,6 @@ def twitter_give_like(driver, entry_twitter_url, button_entry):
                 input_message_in_textbox(f"Actions for user {user_value}")
                 result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
                 if result != "Your account is locked!":
-                        input_message_in_textbox(sf.acceptCookies(driver))
                         like = input_message_in_textbox(sf.like_tweet(driver, entry_twitter_url.get(), entry_twitter_url.get()))
                         if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
                                 count = count +1
@@ -405,7 +404,6 @@ def twitter_give_rt(driver, entry_twitter_url, button_entry):
                 input_message_in_textbox(f"User try: {user_try}")
                 input_message_in_textbox(f"Actions for user {user_value}")
                 input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
-                input_message_in_textbox(sf.acceptCookies(driver))
                 retweet = input_message_in_textbox(sf.retweet_tweet(driver, entry_twitter_url.get(), entry_twitter_url.get()))
                 if retweet == "Retweet Twitter! Ok!" or "Retweet Tweet! Fail because you already like this tweet!":
                         count = count +1
@@ -431,7 +429,6 @@ def twitter_give_follow(driver, entry_twitter_url, button_entry):
                 input_message_in_textbox(f"Actions for user {user_value}")
                 result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
                 if result != "Your account is locked!":
-                        input_message_in_textbox(sf.acceptCookies(driver))
                         follow = input_message_in_textbox(sf.follow_user(driver, entry_twitter_url.get(), entry_twitter_url.get()))
                         if follow == "Follow User Twitter! Ok!" or "Follow user! Fail because you already follow this user!":
                                 count = count +1
