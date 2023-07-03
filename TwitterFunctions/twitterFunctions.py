@@ -792,3 +792,4 @@ def split_register(driver, email_twitter, profile, year, month, day, email, pass
     step10ChangeImageProfile(driver)
     
     return "Create register step ok!"
+

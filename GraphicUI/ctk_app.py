@@ -11,10 +11,15 @@ def splitEmail(email):
     name, domain = email.split("@")
     return name, domain
 
+email_global = temp.get_email()
+password_global = temp.get_password()
+status_global = temp.get_vpn_status()
+location_global = temp.get_vpn_location()
+ip_global = temp.get_vpn_ip()
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
-
         # configure window
         self.title("BotNet Twitter")
         self.geometry('1100x580')
@@ -83,20 +88,20 @@ class App(ctk.CTk):
         self.label_profile_data = ctk.CTkLabel(master=self.profile_frame, text="User Info", font=ctk.CTkFont(size=13, weight="bold"))
         self.label_profile_data.grid(row=0, column=2, padx=20, pady=0, sticky="")
         #! we call the function to obtain name and domain
-        name, domain = splitEmail(temp.get_email())
+        name, domain = splitEmail(email_global)
         self.label_profile_user = ctk.CTkLabel(master=self.profile_frame, text=f"User: {name}")
         self.label_profile_user.grid(row=1, column=2, padx=20, pady=0, sticky="")
         self.label_profile_name = ctk.CTkLabel(master=self.profile_frame, text=f"Domain: {domain}")
         self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions Available: {fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())}")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions Available: {fdb.get_count_values_unlocked(email_global, password_global)}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_locked = ctk.CTkLabel(master=self.profile_frame, text=f"Locked accounts: {fdb.get_count_values_locked(temp.get_email(), temp.get_password())}")
+        self.label_profile_locked = ctk.CTkLabel(master=self.profile_frame, text=f"Locked accounts: {fdb.get_count_values_locked(email_global, password_global)}")
         self.label_profile_locked.grid(row=4, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_status = ctk.CTkLabel(master=self.profile_frame, text=temp.get_vpn_status())
+        self.label_profile_vpn_status = ctk.CTkLabel(master=self.profile_frame, text=status_global)
         self.label_profile_vpn_status.grid(row=5, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_location = ctk.CTkLabel(master=self.profile_frame, text=temp.get_vpn_location())
+        self.label_profile_vpn_location = ctk.CTkLabel(master=self.profile_frame, text=location_global)
         self.label_profile_vpn_location.grid(row=6, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_ip = ctk.CTkLabel(master=self.profile_frame, text=temp.get_vpn_ip())
+        self.label_profile_vpn_ip = ctk.CTkLabel(master=self.profile_frame, text=ip_global)
         self.label_profile_vpn_ip.grid(row=7, column=2, padx=20, pady=0, sticky="")
 
         # create checkbox and switch frame
