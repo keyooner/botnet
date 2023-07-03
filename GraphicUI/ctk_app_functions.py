@@ -579,13 +579,40 @@ def scrollable_popup_frame_def():
         
         return scrollable_popup_frame
 
-def twitter_popup_comment_window(button_entry, instance):
-        entry_value = int(button_entry.get())
-        popup_comment_window_def()
+# def twitter_popup_comment_window(button_entry, instance):
+#         entry_value = int(button_entry.get())
+#         popup_comment_window_def()
 
+#         scrollable_frame_entries = []
+#         for i in range(entry_value):
+#                 comment_entries = ctk.CTkEntry(master=scrollable_popup_frame_def(), placeholder_text=f"Type your comment {i+1}", width=300)
+#                 comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
+#                 setattr(instance, f"comment_entries_{i}", comment_entries)
+#                 scrollable_frame_entries.append(comment_entries)
+
+#         popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=twitter_popup_comment_go_button)
+#         popup_comment_window_button.grid(row=entry_value, column=0)
+
+def twitter_popup_comment_window(button_entry, instance):
+
+        def twitter_popup_comment_go_button():
+                for i, comment_entries in enumerate(scrollable_frame_entries):
+                        comment = comment_entries.get()
+                        print(f"Comentario {i+1}: {comment}")
+        
+        entry_value = int(button_entry.get())
+        popup_comment_window = ctk.CTkToplevel()
+        popup_comment_window.title("Comments window")
+        popup_comment_window.geometry("250x300")
+        popup_comment_window.focus()
+
+        # create scrollable frame
+        scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window, label_text="Comments")
+        scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        scrollable_popup_frame.grid_columnconfigure(0, weight=2)
         scrollable_frame_entries = []
         for i in range(entry_value):
-                comment_entries = ctk.CTkEntry(master=scrollable_popup_frame_def(), placeholder_text=f"Type your comment {i+1}", width=300)
+                comment_entries = ctk.CTkEntry(master=scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
                 comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
                 setattr(instance, f"comment_entries_{i}", comment_entries)
                 scrollable_frame_entries.append(comment_entries)
