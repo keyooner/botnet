@@ -111,13 +111,13 @@ def follow_user(driver, url, expected_url):
     try:
         tf.go_page("Go to Twitter User Page", driver, url, expected_url)
         tf.twitter_actions("Check follow button", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", False, False, None)
-        check = tf.checkColorFollowUser_1(driver)
-        if check != "Ok!":
+
+        if tf.checkColorFollowUser_1(driver) != "Ok!":
             raise Exception("Follow user! Fail because you already follow this user!")
-        tf.twitter_actions("Follow user", driver, 2, "//html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div", True, False, None)
-        check = tf.checkColorFollowUser_2(driver)
         
-        if check != "Ok!":
+        tf.twitter_actions("Follow user", driver, 2, "//html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div", True, False, None)
+        
+        if tf.checkColorFollowUser_2(driver) != "Ok!":
             return "Follow User Twitter! Ok!"
         
         return "Something has failed! Retry!"
@@ -147,52 +147,67 @@ def comment_tweet(driver, url, expected_url, comment, user):
     except Exception as e:
         return f"{e}"
 
-
-# TODO Rename this here and in `comment_tweet`
-def go_comment(driver, comment, user, arg3):
+def stepComment(driver, comment):
     tf.twitter_actions("Check and click Comment tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[1]/div", True, False, None)
     tf.twitter_actions("Click and send Comment tweet", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[3]/div[2]/div[2]/div/div/div/div[1]/div[2]/div/div/div/div/div/div/div/div/div/div/div/label/div[1]/div/div/div/div/div/div[2]/div/div/div/div", True, True, comment, False, False)
     tf.twitter_actions("Click reply!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[3]/div[2]/div[2]/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]", True, False, None)
+
+# TODO Rename this here and in `comment_tweet`
+def go_comment(driver, comment, user, arg3):
+    
+    stepComment(driver, comment)
+    
     sleep(1)
 
     if tf.get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
         
-        sleep(2)
+        sleep(1)
         
         if tf.unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[1]/div[1]/span"):
                 tf.twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/div", True, False, None)
+        
         return "Comment Twitter! Ok!"
         
     return arg3
+
+def rtRGB_1(driver):
+
+    # Get the color of the element
+    color = tf.get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]/div/div")
+    # Get the RGB values
+    r1, g1, b1, a1 = tf.get_rgba_value(color)
+    r2, g2, b2, a2 = tf.get_rgba_value(green_color_retweet_css)
+
+    return tf.check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
+
+def rtRGB_2(driver):
+    
+    color = tf.get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]/div/div")
+    
+    # Get the RGB values
+    r1, g1, b1, a1 = tf.get_rgba_value(color)
+    r2, g2, b2, a2 = tf.get_rgba_value(green_color_retweet_css)
+    
+    return tf.check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
+
+def stepRT(driver):
+    tf.twitter_actions("Retweet Tweet Click", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]", True, False, None)
+    tf.twitter_actions("Choose Retweet Option Tweet Click", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div[2]/div/div[3]/div/div/div/div", True, False, None)
+        
 
 def retweet_tweet(driver, url, expected_url):
     try:
         tf.go_page("Go to tweet", driver, url, expected_url)
         tf.twitter_actions("Get element for Retweet tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]", False, False, None)
 
-        # Get the color of the element
-        color = tf.get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]/div/div")
-        # Get the RGB values
-        r1, g1, b1, a1 = tf.get_rgba_value(color)
-        r2, g2, b2, a2 = tf.get_rgba_value(green_color_retweet_css)
-        
-        check = tf.check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
-        if check != "Ok!":
+        if rtRGB_1!= "Ok!":
             raise Exception("Retweet Tweet! Fail because you already retweet this tweet!")
         
-        tf.twitter_actions("Retweet Tweet Click", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]", True, False, None)
-        tf.twitter_actions("Choose Retweet Option Tweet Click", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div[2]/div/div[3]/div/div/div/div", True, False, None)
+        stepRT(driver)
         
         sleep(1)
         
-        color = tf.get_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]/div/div")
-        # Get the RGB values
-        r1, g1, b1, a1 = tf.get_rgba_value(color)
-        check = tf.check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
-        
-        sleep(2)
-        
-        if check != "Ok!":
+        if rtRGB_2 != "Ok!":
             if tf.unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[1]/div[1]/span"):
                 tf.twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/div", True, False, None)
             return "Retweet Twitter! Ok!"
@@ -229,6 +244,7 @@ def likeRGB_2(driver):
     return tf.check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
 
 def get_unlock_more_like(driver):
+    # sourcery skip: hoist-similar-statement-from-if, hoist-statement-from-if, remove-unnecessary-else, swap-if-else-branches
     if likeRGB_2(driver) != "Ok!":
         if tf.unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[1]/div[1]/span"):
             tf.twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/div", True, False, None)
@@ -438,6 +454,7 @@ def loginUserTwitterLocked(driver, email, password, user):
         return "Login User! Ok!"
     
     return "Something has failed retry!"
+
 # Function to close the actual session
 def closeSession(driver):
     actions = [

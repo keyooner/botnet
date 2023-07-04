@@ -411,7 +411,7 @@ def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt
 def twitter_give_like(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
         button_entry_get = int(button_entry.get())
         url = entry_twitter_url.get()
-        data = fdb.get_values_for_like(temp.get_email(), temp.get_password(), button_entry_get)
+        data = fdb.get_values_for_like(temp.get_email(), temp.get_password(), split_url_actions(url), button_entry_get)
         return_accounts = return_avaliable_accounts_for_like(entry_twitter_url)
         user_try = 1
         count = 0
@@ -469,7 +469,7 @@ def twitter_give_rt(driver, entry_twitter_url, button_entry, twitter_label_accou
 def twitter_give_follow(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
         button_entry_get = int(button_entry.get())
         url = entry_twitter_url.get()
-        data = fdb.get_values_for_follow(temp.get_email(), temp.get_password(), button_entry_get)
+        data = fdb.get_values_for_follow(temp.get_email(), temp.get_password(), split_url_follow(url), button_entry_get)
         return_accounts = return_avaliable_accounts_for_follow(entry_twitter_url)
         user_try = 1
         count = 0
