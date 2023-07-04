@@ -67,6 +67,8 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#errors">Erros</a></li>
+        <li><a href="#to do">To do</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -161,6 +163,19 @@ Use this space to show useful examples of how a project can be used. Additional 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Errors
+VisualStudioCode can't import modules
+
+Solution: Ctrl + Shift + P -> Go to User.settings.json -> Add de following line: 
+"terminal.integrated.env.windows": { "PYTHONPATH": "${workspaceFolder}" }
+  
+## To do 
+CONVERT A EXE
+
+pip install auto-pi-to-exe
+
+ir a la ruta de appdata/roaming/python39/scripts y ejecutar auto-pi-to-exe.exe y seleccionar carpetas, archivos relacionados, solo un archivo, que se abra ventana cmd... etc
 
 
 
