@@ -68,7 +68,7 @@
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
         <li><a href="#errors">Erros</a></li>
-        <li><a href="#to do">To do</a></li>
+        <li><a href="#to-do">To do</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
