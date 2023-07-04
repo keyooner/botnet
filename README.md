@@ -270,7 +270,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [product-screenshot-light]: readme_images/screenshot_light.png
 [product-screenshot-dark]: readme_images/screenshot_dark.png
 [Python]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
-[Next-url]: https://nextjs.org/
+[Python-url]: https://www.python.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
