@@ -39,7 +39,7 @@ class App(ctk.CTk):
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # sidebar buttons
-        self.sidebar_help_button = ctk.CTkButton(self.sidebar_frame, text="Help", command=lambda:self.sidebar_button_clicked('help'))
+        self.sidebar_help_button = ctk.CTkButton(self.sidebar_frame, text="Help", command=self.sidebar_button_clicked('help'))
         self.sidebar_help_button.grid(row=0, column=0, padx=20, pady=10)
         self.sidebar_accounts_button = ctk.CTkButton(self.sidebar_frame, text="Accounts", command=lambda:self.sidebar_button_clicked('accounts'))
         self.sidebar_accounts_button.grid(row=1, column=0, padx=20, pady=10)
@@ -132,7 +132,6 @@ class App(ctk.CTk):
         github_image_label_dani5fdez.pack(side="right", expand=True)
 
         github_image_label_dani5fdez.bind("<Button-1>", lambda event: ctkfun.open_url("https://github.com/dani5fdez"))
-        
 
 #########################################################################################################################################################
 ################################################ BASIC FUNCTIONS ########################################################################################
