@@ -9,6 +9,7 @@ twitter_interactions = None
 twitter_actions = None
 twitter_follow = None
 
+
 def set_credentials(new_email, new_password):
     global email, password
     email = new_email
