@@ -9,14 +9,6 @@ db = firebase.database()
 auth = firebase.auth()
 
 def getLastValue(email, password):  # sourcery skip: do-not-use-bare-except
-        # # We try to initialize app
-        # firebase = fa.initializeApp()
-
-        # db = firebase.database()
-
-        # # Get a reference to the auth service
-        # auth = firebase.auth()
-
         # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
         try:
@@ -29,13 +21,6 @@ def getLastValue(email, password):  # sourcery skip: do-not-use-bare-except
                 return 1
 
 def loadValues(email, password, data: dict):
-        # # We try to initialize app
-        # firebase = fa.initializeApp()
-
-        # db = firebase.database()
-
-        # # Get a reference to the auth service
-        # auth = firebase.auth()
         # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
 
@@ -48,12 +33,6 @@ def loadValues(email, password, data: dict):
 
 def updateValues(email, password, email_find, update_state):
         # sourcery skip: avoid-builtin-shadow
-        
-        # firebase = fa.initializeApp()
-        
-        # db = firebase.database()
-        
-        # auth = firebase.auth()
         
         user = auth.sign_in_with_email_and_password(email = email, password = password)
         
@@ -75,13 +54,7 @@ def updateValues(email, password, email_find, update_state):
         return f"{id}: has been updated!"
 
 def deleteValues(email, password):  # sourcery skip: avoid-builtin-shadow
-        # # We try to initialize app
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Get a reference to the auth service
-        # auth = firebase.auth()
         # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -95,13 +68,7 @@ def deleteValues(email, password):  # sourcery skip: avoid-builtin-shadow
 
 
 def loadValuesInUser(email, password, data: dict):
-        # # We try to initialize app
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Get a reference to the auth service
-        # auth = firebase.auth()
         # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
 
@@ -111,13 +78,6 @@ def loadValuesInUser(email, password, data: dict):
         db.child("created_users").child(email_local).set(data, token)
 
 def get_values(email, password):
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
-
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -137,13 +97,7 @@ def get_values(email, password):
         return values
 
 def get_count_values_unlocked(email, password): # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -166,13 +120,7 @@ def get_count_values_unlocked(email, password): # sourcery skip: assign-if-exp, 
                 return len(unlocked_values)
         
 def get_count_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -195,13 +143,7 @@ def get_count_values_locked(email, password):  # sourcery skip: assign-if-exp, d
                 return len(locked_values)
 
 def get_values_unlocked(email, password):  # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -224,13 +166,6 @@ def get_values_unlocked(email, password):  # sourcery skip: assign-if-exp, dict-
                 return unlocked_values
 
 def get_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
-
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -253,13 +188,7 @@ def get_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-co
                 return locked_values
 
 def get_values_for_actions(email, password, n_times: int):
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -297,9 +226,6 @@ def reorder_ids(data):
         return new_data
 
 def upload_updated_values(email, password, data):
-        # firebase = fa.initializeApp()
-        # db = firebase.database()
-        # auth = firebase.auth()
 
         user = auth.sign_in_with_email_and_password(email=email, password=password)
         email_local = user['localId']
@@ -340,13 +266,7 @@ def find_id_by_email(email, data):  # sourcery skip: use-next
 # upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez",reorder_ids(get_values("danifdezloz@gmail.com", "Dani5Fdez")))
 
 def loadValuesActionsTwitter(email, password, url, data: dict, user_twitter):
-        # # We try to initialize app
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Get a reference to the auth service
-        # auth = firebase.auth()
         # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
 
@@ -358,13 +278,7 @@ def loadValuesActionsTwitter(email, password, url, data: dict, user_twitter):
         db.child("action_users").child(email_local).child(url).child(user_twitter).set(data, token)
 
 def loadValuesFollow(email, password, url, data: dict, user_twitter):
-        # # We try to initialize app
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Get a reference to the auth service
-        # auth = firebase.auth()
         # # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
 
@@ -377,13 +291,7 @@ def loadValuesFollow(email, password, url, data: dict, user_twitter):
 
 def get_values_for_follow(email, password, url, n_items):
         # # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -416,14 +324,7 @@ def get_values_for_follow(email, password, url, n_items):
                 return dict(list(filtered_data2.items())[:n_items])
 
 def get_count_values_for_follow(email, password, url):
-        # # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
 
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -456,14 +357,7 @@ def get_count_values_for_follow(email, password, url):
                 return filtered_data2
 
 def get_values_for_like(email, password, url, n_items):
-        # # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
-
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
+        # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -497,13 +391,6 @@ def get_values_for_like(email, password, url, n_items):
 
 def get_count_values_for_like(email, password, url):
         # # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
-        # # Intentamos inicializar la aplicación
-        # firebase = fa.initializeApp()
-
-        # db = firebase.database()
-
-        # # Obtenemos una referencia al servicio de autenticación
-        # auth = firebase.auth()
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -535,5 +422,5 @@ def get_count_values_for_like(email, password, url):
                 
                 return filtered_data2
         
-# print(get_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120", 2))
+# print(len(get_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120", 2)))
 # print(upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez", reorder_ids((get_values("danifdezloz@gmail.com", "Dani5Fdez")))))

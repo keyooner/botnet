@@ -58,14 +58,15 @@ def input_message_in_textbox(message):
 def open_url(url):
         webbrowser.open(url)
 
-def help_option_content(options_frame):
-        
+def unlock_label_help(options_frame):
         unlock_label_option = ctk.CTkLabel(options_frame, text='Help', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
         unlock_label_option.pack(padx=(10,10), pady=(10,10))
 
+def unlock_label_explain_help(options_frame):
         unlock_label_explain_1 = ctk.CTkLabel(options_frame, text='You can see a demo tutorial if you do click on the image', justify='center')
         unlock_label_explain_1.pack(padx=(10,10), pady=(10,10))
 
+def image_help(options_frame):
         youtube_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/Tutorial_youtube_light.png"),
                                 dark_image=Image.open("GraphicUI/images/Tutorial_youtube_dark.png"),
                                 size=(300, 100))
@@ -75,9 +76,17 @@ def help_option_content(options_frame):
 
         welcome_image_label.bind("<Button-1>", lambda event: open_url("https://www.youtube.com"))
 
+def unlock_label_explain_2_help(options_frame):
         unlock_label_explain_2 = ctk.CTkLabel(options_frame, text='You can download a pdf tutorial if you do click on the document', justify='center')
         unlock_label_explain_2.pack(padx=(10,10), pady=(10,10))
+
+def help_option_content(options_frame):
         
+        unlock_label_help(options_frame)
+        unlock_label_explain_help(options_frame)
+        image_help(options_frame)
+        unlock_label_explain_2_help(options_frame)
+
 ############################################### ACCOUNTS ##################################################
 
 def accounts_option_content(options_frame):
@@ -147,8 +156,6 @@ def unlock_option_content(options_frame):
         #create button to unlock account
         create_account_button = ctk.CTkButton(button_frame, text="Check unlock accounts")
         create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
-
-
 
 ############################################### VPN ##################################################
 
@@ -228,15 +235,8 @@ def vpn_labels_on(vpn_location, vpn_ip, label_profile_vpn_status,
         
         temp.set_vpn_location(vpn_location)
         temp.set_vpn_ip(vpn_ip)
-        status = temp.get_vpn_status()
-        location = temp.get_vpn_location()
-        ip = temp.get_vpn_ip()
-        label_profile_vpn_status.configure(text=status)
-        vpn_switch_status_label.configure(text=status)
-        label_profile_vpn_location.configure(text=location)
-        vpn_switch_location_label.configure(text=location)
-        label_profile_vpn_ip.configure(text=ip)
-        vpn_switch_ip_label.configure(text=ip)
+        vpn_configure(label_profile_vpn_status, vpn_switch_status_label, label_profile_vpn_location, 
+                        vpn_switch_location_label,label_profile_vpn_ip, vpn_switch_ip_label)        
 
 def setVPN():
         temp.set_vpn_mode('off')
@@ -254,6 +254,11 @@ def vpn_labels_off(label_profile_vpn_status,
                 vpn_switch_status_label, label_profile_vpn_location, 
                 vpn_switch_location_label, label_profile_vpn_ip, vpn_switch_ip_label):
         setVPN()
+        vpn_configure(label_profile_vpn_status, vpn_switch_status_label, label_profile_vpn_location, 
+                        vpn_switch_location_label,label_profile_vpn_ip, vpn_switch_ip_label)
+
+def vpn_configure(label_profile_vpn_status, vpn_switch_status_label, label_profile_vpn_location, vpn_switch_location_label,
+                        label_profile_vpn_ip, vpn_switch_ip_label):
         status, location, ip = getVPN()
         label_profile_vpn_status.configure(text=status)
         vpn_switch_status_label.configure(text=status)
@@ -261,14 +266,15 @@ def vpn_labels_off(label_profile_vpn_status,
         vpn_switch_location_label.configure(text=location)
         label_profile_vpn_ip.configure(text=ip)
         vpn_switch_ip_label.configure(text=ip)
-
+        
 ############################################### TWITTER ##################################################
 
 def twitter_option_content(options_frame, instance):
         # label option selected
-        twitter_label_option = ctk.CTkLabel(options_frame, text='Twitter', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        twitter_label_option.pack(padx=(10,10), pady=(10,10))
+        twitter_label_pack(options_frame)
+        
         avaliable_accounts = return_available_accounts_twitter()
+        
         def validate_entry(text):
                 if (text.isdigit() or text == ""):
                         return text == "" or int(text) <= avaliable_accounts
@@ -296,25 +302,16 @@ def twitter_option_content(options_frame, instance):
                 entry_button_frame,
                 text=f'Max interactions available: {avaliable_accounts}',
                 )
+        
         twitter_label_accounts.pack(side="top", padx=5, pady=5)
 
         twitter_label_interactions = ctk.CTkLabel(entry_button_frame, text="Select number of interactions: ")
         twitter_label_interactions.pack(side="left", padx=5, pady=5, anchor="center")
 
-        button_entry = ctk.CTkEntry(entry_button_frame, width=30, validate="key", validatecommand=(validate_command, "%P"))
-
-        button_entry.pack(side="left", padx=5, pady=5, anchor="center")
-
-        button_increase = ctk.CTkButton(entry_button_frame, text='+', command=lambda:increase(), width=2)
-        button_increase.pack(side="left", padx=5, pady=5, anchor="center")
-
-        button_decrease = ctk.CTkButton(entry_button_frame, text='-', command=lambda:decrease(), width=2)
-        button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
-
+        button_entry, button_increase, button_decrease = button_creation(entry_button_frame, increase, decrease, validate_command)
+        
         if fdb.get_count_values_unlocked(temp.get_email(), temp.get_password()) < 1:
-                button_entry.configure(state="disabled")
-                button_increase.configure(state="disabled")
-                button_decrease.configure(state="disabled")
+                button_dissable(button_entry, button_increase, button_decrease)
         else:
                 interactions = temp.get_twitter_interactions()
                 if interactions != None:
@@ -347,32 +344,68 @@ def twitter_option_content(options_frame, instance):
         checkbox_container_frame.pack(fill="x")
         actions = temp.get_twitter_actions()
         if actions == None:
-                twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='disabled')
-                twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='disabled')
-                twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='disabled')
-                temp.set_twitter_actions(None)
+                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt = checkbox_disable(checkbox_container_frame)
         else:
-                twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='normal')
-                twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='normal')
-                twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='normal')
-
-        twitter_checkbox_like.pack(side="left", padx=(20,10), pady=(20,10))
-        twitter_checkbox_rt.pack(side="left", padx=(20,10), pady=(20,10))
-        twitter_checkbox_cmnt.pack(side="left", padx=(20,10), pady=(20,10))
-        follow = temp.get_twitter_follow()
+                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt = checkbox_normal(checkbox_container_frame)
+        
+        follow = checkbox_pack(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt)
+        
         if follow== None:
                 twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
                 temp.set_twitter_follow(None)
         else:
                 twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='normal')
-
-        if ((actions) == None) and ((follow) == None):
+                
+        if (actions == None) and (follow == None):
                 twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action))
         else:
                 twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action))
+        
+        twitter_pack(twitter_checkbox_follow, twitter_button_action)
 
+def twitter_label_pack(options_frame):
+        twitter_label_option = ctk.CTkLabel(options_frame, text='Twitter', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        twitter_label_option.pack(padx=(10,10), pady=(10,10))
+        
+def twitter_pack(twitter_checkbox_follow, twitter_button_action):
         twitter_checkbox_follow.pack(side="left", padx=(20,10), pady=(20,10))
         twitter_button_action.pack(side="left", padx=(20,10), pady=(20,10), fill="x", expand=True)
+        
+def button_dissable(button_entry, button_increase, button_decrease):
+        button_entry.configure(state="disabled")
+        button_increase.configure(state="disabled")
+        button_decrease.configure(state="disabled")
+        
+def checkbox_pack(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt):
+        twitter_checkbox_like.pack(side="left", padx=(20,10), pady=(20,10))
+        twitter_checkbox_rt.pack(side="left", padx=(20,10), pady=(20,10))
+        twitter_checkbox_cmnt.pack(side="left", padx=(20,10), pady=(20,10))
+        return temp.get_twitter_follow()
+
+def checkbox_normal(checkbox_container_frame):
+        twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='normal')
+        twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='normal')
+        twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='normal')
+        return twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt
+
+def checkbox_disable(checkbox_container_frame):  
+        twitter_checkbox_like = ctk.CTkCheckBox(checkbox_container_frame, text='Like', state='disabled')
+        twitter_checkbox_rt = ctk.CTkCheckBox(checkbox_container_frame, text='Retweet', state='disabled')
+        twitter_checkbox_cmnt = ctk.CTkCheckBox(checkbox_container_frame, text='Comment', state='disabled')
+        temp.set_twitter_actions(None)
+        return twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt
+
+def button_creation(entry_button_frame, increase, decrease, validate_command):
+        button_entry = ctk.CTkEntry(entry_button_frame, width=30, validate="key", validatecommand=(validate_command, "%P"))
+
+        button_entry.pack(side="left", padx=5, pady=5, anchor="center")
+
+        button_increase = ctk.CTkButton(entry_button_frame, text='+', command=lambda:increase(), width=2)
+        button_increase.pack(side="left", padx=5, pady=5, anchor="center")
+
+        button_decrease = ctk.CTkButton(entry_button_frame, text='-', command=lambda:decrease(), width=2)
+        button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
+        return button_entry, button_increase, button_decrease
 
 def twitter_url_check(url, button_entry):
         tweet_url = r'^https?://twitter\.com/[A-Za-z0-9_]{1,15}/status/\d+$'
@@ -383,7 +416,9 @@ def twitter_url_check(url, button_entry):
         elif re.match(follow_url, url) and (button_entry_get > 0):
                 return "follow"
         
-def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action):
+def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window,
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, 
+                        twitter_button_action):
         if twitter_url_check(entry_twitter_url.get(), button_entry) in ['actions','follow',]:
                 
                 driver_twitter = get_driver()
@@ -511,7 +546,6 @@ def loadActions(email, check1, check2, check3, url, user):
                 "retweet": check2,
                 "comment": check3,
         }
-        
         username, numbers = split_url_actions(url)
         
         fdb.loadValuesActionsTwitter("danifdezloz@gmail.com", "Dani5Fdez", f"{username}-{numbers}", data, user)
@@ -522,33 +556,21 @@ def loadFollow(email, check, url, user):
                 "email": email,
                 "follow": check
         }
-        
         username = split_url_follow(url)
 
         fdb.loadValuesFollow("danifdezloz@gmail.com", "Dani5Fdez", username, data, user)
-    
+
 def split_url_actions(url):
         pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)(/status/)([0-9]+)"
-        matches = re.search(pattern, url)
-
-        if matches:
-                username = matches.group(2)  # "TFM_Botnet_"
-                numbers = matches.group(4)  # "1674334209156997120"
-                return username, numbers
-        else:
+        if not (matches := re.search(pattern, url)):
                 return None
+        username = matches[2]
+        return username, matches[4]
 
 def split_url_follow(url):
-        # Utilizamos una expresión regular para extraer "TFM_Botnet_" y los números
         pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)"
-        matches = re.search(pattern, url)
+        return matches[2] if (matches := re.search(pattern, url)) else None
 
-        if matches:
-                username = matches.group(2)  # "TFM_Botnet_"
-                return username
-        else:
-                return None
-                
 def return_available_accounts_twitter():
         return fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())
 
@@ -620,46 +642,77 @@ def twitter_popup_comment_window(button_entry, instance):
         popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=twitter_popup_comment_go_button)
         popup_comment_window_button.grid(row=entry_value, column=0)
 
+def widget_normal_actions(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                entry_twitter_url, twitter_checkbox_follow):
+        twitter_widgets_states('normal', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        twitter_widgets_configures('actions', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        temp.set_twitter_actions(1)
+        temp.set_twitter_follow(None)
+
+def widget_disabled_invalid(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                entry_twitter_url, twitter_checkbox_follow):
+        twitter_widgets_states('disabled', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        temp.set_twitter_actions(None)
+        temp.set_twitter_follow(None)
+
+def widget_disabled_follow(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                entry_twitter_url, twitter_checkbox_follow):
+        twitter_widgets_states('disabled', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        twitter_widgets_configures('follow', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        temp.set_twitter_follow(1)
+        temp.set_twitter_actions(None)
+
+def widget_invalid_twitter(twitter_label_accounts, return_accounts, entry_twitter_url, twitter_checkbox_follow,
+                                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts} \n You cannot make interactions in this tweet!!')
+        twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        temp.set_twitter_actions(None)
+        temp.set_twitter_follow(None)
+
+def check_result_actions(url_check_result, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                        entry_twitter_url, twitter_checkbox_follow, twitter_label_accounts):
+        return_accounts = return_avaliable_accounts_for_like(entry_twitter_url)
+        twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
+        if url_check_result == 'actions':
+                widget_normal_actions(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                entry_twitter_url, twitter_checkbox_follow)
+        return return_avaliable_accounts_for_like(entry_twitter_url)
+
+def check_result_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like,
+                        twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        return_accounts = return_avaliable_accounts_for_follow(entry_twitter_url)
+        twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
+        if return_accounts == 0:
+                widget_invalid_twitter(twitter_label_accounts, return_accounts, entry_twitter_url, twitter_checkbox_follow,
+                                                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        else:
+                widget_disabled_follow(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                                entry_twitter_url, twitter_checkbox_follow)
+        
+def last_step_twitter_url_actions(twitter_label_accounts, return_accounts, entry_twitter_url, button_entry):
+        twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
+        twitter_status(entry_twitter_url, button_entry)
+
 def twitter_url_actions(url, entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action, twitter_label_accounts):
 
-        # is valid tweet url (like, rt, comment) 
-        if twitter_url_check(url, button_entry) == 'actions':
-                twitter_widgets_states('normal', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                twitter_widgets_configures('actions', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                temp.set_twitter_actions(1)
-                temp.set_twitter_follow(None)
-                
-                return_accounts = return_avaliable_accounts_for_like(entry_twitter_url)
-                twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
-                
-                if return_accounts == 0:
-                        twitter_widgets_states('disabled', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                        twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                        temp.set_twitter_actions(None)
-                        temp.set_twitter_follow(None)
-                        
-        # is valid profile tweet url (follow)
-        elif twitter_url_check(url, button_entry) == 'follow':
-                return_accounts = return_avaliable_accounts_for_follow(entry_twitter_url)
-                twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
-                if return_accounts == 0:
-                        twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts} \n You cannot make interactions in this tweet!!')
-                        twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                        temp.set_twitter_actions(None)
-                        temp.set_twitter_follow(None)
-                else:
-                        twitter_widgets_states('disabled', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                        twitter_widgets_configures('follow', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                        temp.set_twitter_follow(1)
-                        temp.set_twitter_actions(None)
-        # is invalid url
-        else:
-                twitter_widgets_states('disabled', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                temp.set_twitter_actions(None)
-                temp.set_twitter_follow(None)
+        url_check_result = twitter_url_check(url, button_entry)
+
+        return_accounts = check_result_actions(url_check_result, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                        entry_twitter_url, twitter_checkbox_follow, twitter_label_accounts)
         
-        twitter_status(entry_twitter_url, button_entry)
+        if return_accounts == 0:
+                widget_disabled_invalid(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                                entry_twitter_url, twitter_checkbox_follow)
+
+        if url_check_result == 'follow':
+                check_result_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like,
+                                        twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+        else:
+                widget_disabled_invalid(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                                                entry_twitter_url, twitter_checkbox_follow)
+        
+        last_step_twitter_url_actions(twitter_label_accounts, return_accounts, entry_twitter_url, button_entry)
 
 def type_actions(entry_twitter_url, twitter_checkbox_follow):
         entry_twitter_url.configure(border_color="green")
@@ -683,12 +736,14 @@ def type_invalid(entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_li
         twitter_checkbox_follow.deselect()      
 
 def twitter_widgets_configures(type, entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
-        if type == 'actions':
-                type_actions(entry_twitter_url, twitter_checkbox_follow)
-        elif type == 'follow':
-                type_follow(entry_twitter_url, twitter_checkbox_follow, twitter_button_action,twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt)
-        elif type == 'invalid':
-                type_invalid(entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt)
+        type_function_map = {
+        'actions': type_actions,
+        'follow': type_follow,
+        'invalid': type_invalid
+        }
+
+        if type in type_function_map:
+                type_function_map[type](entry_twitter_url, twitter_checkbox_follow, twitter_button_action, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt)
 
 # change checkbox and button status on twitter option
 def twitter_widgets_states(state, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
@@ -706,21 +761,36 @@ def twitter_status(entry_twitter_url, button_entry):
 
 ################################################ LOGOUT ##################################################
 
-def logout_option_content(options_frame, instance):
-        #create logout container frame
+def logout_container(options_frame):
         logout_container_frame = ctk.CTkFrame(options_frame)
         logout_container_frame.pack(fill="both", expand=True)
+        return logout_container_frame
 
-        #label option selected
+def logout_label(logout_container_frame):
         logout_label_option = ctk.CTkLabel(logout_container_frame, text='LogOut', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
         logout_label_option.pack(padx=(10,10), pady=(10,10))
+        return logout_label_option
 
+def logout_label_quest_def(logout_container_frame):
         logout_label_quest = ctk.CTkLabel(logout_container_frame, text="Are you sure?", justify="center")
         logout_label_quest.pack(padx=(20, 10), pady=(10, 10))
-
-        #button option selected
+        return logout_label_quest
+        
+def logout_button_yes_def(logout_container_frame, instance):
         logout_button_yes = ctk.CTkButton(logout_container_frame, text="Yes", anchor='center', command=lambda: action_logOut(instance))
         logout_button_yes.pack(side="top", padx=10, pady=10)
+
+def logout_option_content(options_frame, instance):
+        #create logout container frame
+        logout_container_frame = logout_container(options_frame)
+
+        #label option selected
+        logout_label(logout_container_frame)
+        
+        logout_label_quest_def(logout_container_frame)
+        
+        #button option selected
+        logout_button_yes_def(logout_container_frame, instance)
 
 def logout_user():
         import GraphicUI.ctk_login as login_app
@@ -736,27 +806,36 @@ def action_logOut(instance):
 
 ############################################### DISABLE BUTTONS ##################################################
 
-def disable_option_button(button, sidebar_help_button, 
-                                sidebar_accounts_button, sidebar_unlock_button, 
-                                sidebar_vpn_button, sidebar_twitter_button, 
-                                sidebar_logout_button):
-        #enable other buttons
+def configure_disable_option(sidebar_help_button, sidebar_accounts_button, sidebar_unlock_button,
+                                sidebar_twitter_button, sidebar_vpn_button, sidebar_logout_button):
         sidebar_help_button.configure(state='normal')
         sidebar_accounts_button.configure(state='normal')
         sidebar_unlock_button.configure(state='normal')
         sidebar_twitter_button.configure(state='normal')
         sidebar_vpn_button.configure(state='normal')
         sidebar_logout_button.configure(state='normal')
+
+def checkButton(button, sidebar_help_button, sidebar_accounts_button, sidebar_unlock_button, 
+                sidebar_twitter_button, sidebar_vpn_button, sidebar_logout_button):
+        button_widget_map = {
+        'help': sidebar_help_button,
+        'accounts': sidebar_accounts_button,
+        'unlock': sidebar_unlock_button,
+        'twitter': sidebar_twitter_button,
+        'vpn': sidebar_vpn_button,
+        'logout': sidebar_logout_button
+        }
+
+        if button in button_widget_map:
+                button_widget_map[button].configure(state='disabled')
+                
+def disable_option_button(button, sidebar_help_button, 
+                                sidebar_accounts_button, sidebar_unlock_button, 
+                                sidebar_vpn_button, sidebar_twitter_button, 
+                                sidebar_logout_button):
+        #enable other buttons
+        configure_disable_option(sidebar_help_button, sidebar_accounts_button, sidebar_unlock_button,
+                                sidebar_twitter_button, sidebar_vpn_button, sidebar_logout_button)
         #disable specific button
-        if button == 'help':
-                sidebar_help_button.configure(state='disabled')
-        elif button == 'accounts':
-                sidebar_accounts_button.configure(state='disabled')
-        elif button == 'unlock':
-                sidebar_unlock_button.configure(state='disabled')
-        elif button == 'twitter':
-                sidebar_twitter_button.configure(state='disabled')
-        elif button == 'vpn':
-                sidebar_vpn_button.configure(state='disabled')
-        elif button == 'logout':
-                sidebar_logout_button.configure(state='disabled')
+        checkButton(button, sidebar_help_button, sidebar_accounts_button, sidebar_unlock_button, 
+                sidebar_twitter_button, sidebar_vpn_button, sidebar_logout_button)
