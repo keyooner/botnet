@@ -188,7 +188,6 @@ def get_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-co
                 return locked_values
 
 def get_values_for_actions(email, password, n_times: int):
-
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -266,7 +265,6 @@ def find_id_by_email(email, data):  # sourcery skip: use-next
 # upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez",reorder_ids(get_values("danifdezloz@gmail.com", "Dani5Fdez")))
 
 def loadValuesActionsTwitter(email, password, url, data: dict, user_twitter):
-
         # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
 
@@ -278,8 +276,7 @@ def loadValuesActionsTwitter(email, password, url, data: dict, user_twitter):
         db.child("action_users").child(email_local).child(url).child(user_twitter).set(data, token)
 
 def loadValuesFollow(email, password, url, data: dict, user_twitter):
-
-        # # We try to sign in if this fails, throw exception
+        # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
 
         email_local = user['localId']
@@ -324,7 +321,6 @@ def get_values_for_follow(email, password, url, n_items):
                 return dict(list(filtered_data2.items())[:n_items])
 
 def get_count_values_for_follow(email, password, url):
-
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
         user = auth.sign_in_with_email_and_password(email=email, password=password)
 
@@ -421,6 +417,138 @@ def get_count_values_for_like(email, password, url):
                 filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
                 
                 return filtered_data2
+
+def get_values_for_rt(email, password, url, n_items):
+        # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("action_users").child(email_local).child(url).get(token)
+        if data.val() is None:
+                values ={}
+        else:
+        # Creamos un diccionario para almacenar los valores
+                values = {}
+                for item in data.each():
+                        key = item.key()
+                        value = item.val()
+                        values[key] = value
+                
+        filtered_values = {key: value for key, value in values.items() if value.get('retweet') == True}
+
+        # Obtenemos los valores de los usuarios existentes en otra fuente
+        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
         
+        if data2 is None:
+                return 0
+        else:
+                emails_data1 = set([v['email'] for v in filtered_values.values()])
+                filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
+                
+                return dict(list(filtered_data2.items())[:n_items])
+
+def get_count_values_for_rt(email, password, url):
+        # # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("action_users").child(email_local).child(url).get(token)
+        if data.val() is None:
+                values ={}
+        else:
+        # Creamos un diccionario para almacenar los valores
+                values = {}
+                for item in data.each():
+                        key = item.key()
+                        value = item.val()
+                        values[key] = value
+                
+        filtered_values = {key: value for key, value in values.items() if value.get('retweet') == True}
+
+        # Obtenemos los valores de los usuarios existentes en otra fuente
+        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        
+        if data2 is None:
+                return 0
+        else:
+                emails_data1 = set([v['email'] for v in filtered_values.values()])
+                filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
+                
+                return filtered_data2
+        
+def get_values_for_comment(email, password, url, n_items):
+        # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("action_users").child(email_local).child(url).get(token)
+        if data.val() is None:
+                values ={}
+        else:
+        # Creamos un diccionario para almacenar los valores
+                values = {}
+                for item in data.each():
+                        key = item.key()
+                        value = item.val()
+                        values[key] = value
+                
+        filtered_values = {key: value for key, value in values.items() if value.get('comment') == True}
+
+        # Obtenemos los valores de los usuarios existentes en otra fuente
+        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        
+        if data2 is None:
+                return 0
+        else:
+                emails_data1 = set([v['email'] for v in filtered_values.values()])
+                filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
+                
+                return dict(list(filtered_data2.items())[:n_items])
+
+def get_count_values_for_comment(email, password, url):
+        # # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("action_users").child(email_local).child(url).get(token)
+        if data.val() is None:
+                values ={}
+        else:
+        # Creamos un diccionario para almacenar los valores
+                values = {}
+                for item in data.each():
+                        key = item.key()
+                        value = item.val()
+                        values[key] = value
+                
+        filtered_values = {key: value for key, value in values.items() if value.get('comment') == True}
+
+        # Obtenemos los valores de los usuarios existentes en otra fuente
+        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        
+        if data2 is None:
+                return 0
+        else:
+                emails_data1 = set([v['email'] for v in filtered_values.values()])
+                filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
+                
+                return filtered_data2
 # print(len(get_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120", 2)))
+# print(len(get_count_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120")))
 # print(upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez", reorder_ids((get_values("danifdezloz@gmail.com", "Dani5Fdez")))))

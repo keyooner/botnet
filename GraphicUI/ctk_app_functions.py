@@ -18,7 +18,8 @@ from nordvpn_switcher import initialize_VPN, rotate_VPN, terminate_VPN
 
 instance = None
 instance_2 = None
-
+scrollable_frame_entries = []
+comments_list = []
 ################################################ DRIVER ##################################################
 
 def get_driver():
@@ -32,6 +33,20 @@ def setInstance(instance_new):
         
 def getInstance():
         return instance
+
+def set_scrollable_frame_entries(scrollable_frame_entries_new):
+        global scrollable_frame_entries
+        scrollable_frame_entries = scrollable_frame_entries_new
+
+def get_scrollable_frame_entries():
+        return scrollable_frame_entries
+
+def set_comments_list(comments_list_new):
+        global comments_list
+        comments_list = comments_list_new
+
+def get_comments_list():
+        return comments_list
 
 def create_textbox_entry():
         instance = getInstance()
@@ -357,9 +372,9 @@ def twitter_option_content(options_frame, instance):
                 twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='normal')
                 
         if (actions == None) and (follow == None):
-                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action))
+                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action))
         else:
-                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action))
+                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance,  entry_twitter_url,  twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action))
         
         twitter_pack(twitter_checkbox_follow, twitter_button_action)
 
@@ -433,7 +448,6 @@ def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt
                 
                 if checkbox_cmnt == 1:
                         twitter_popup_comment_window()
-
                 if checkbox_like == 1:
                         twitter_give_like(driver_twitter, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
                 
@@ -442,12 +456,49 @@ def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt
                         
                 if checkbox_rt == 1 and checkbox_rt == 1 and checkbox_cmnt== 1:
                         twitter_popup_comment_window()
-                        
+
+def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        driver = get_driver()
+        button_entry_get = int(button_entry.get())
+        url = entry_twitter_url.get()
+        data = fdb.get_values_for_comment(temp.get_email(), temp.get_password(), split_url_actions(url), button_entry_get)
+        return_accounts = return_avaliable_accounts_for_acctions(url)
+        user_try = 1
+        count = 0
+        i = 0
+        comments = get_comments_list()
+        input_message_in_textbox(f"Users selected : {button_entry_get}")
+        for key, value in data.items():
+                # Variables para almacenar los valores
+                id_value = key
+                email_value = value['email']
+                password_value = value['password']
+                user_value = value['user']
+                input_message_in_textbox(f"User try: {user_try}")
+                input_message_in_textbox(f"Actions for user {user_value}")
+                result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
+                if result != "Your account is locked!":
+                        comment = input_message_in_textbox(sf.comment_tweet(driver, url, url, comments[i], user_value))
+                        if comment == "Comment Twitter! Ok!" or "Comment Tweet! Fail because you already comment this tweet!":
+                                count = count +1
+                                check3 = True
+                                input_message_in_textbox("Inserting data to the database...")
+                                loadActions(email_value, False, False, check3, url, user_value)
+                        input_message_in_textbox(sf.closeSession(driver))
+                        sleep(1)
+                user_try = user_try + 1
+                i = i+1
+        input_message_in_textbox(f"Se han completado con éxito {count} likes sobre {user_try-1}")
+        return_accounts = return_avaliable_accounts_for_like(entry_twitter_url)
+        if return_accounts == 0:
+                twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts} \n You cannot make interactions in this tweet!!')
+                twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+                temp.set_twitter_actions(None)                    
 def twitter_give_like(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
         button_entry_get = int(button_entry.get())
         url = entry_twitter_url.get()
         data = fdb.get_values_for_like(temp.get_email(), temp.get_password(), split_url_actions(url), button_entry_get)
-        return_accounts = return_avaliable_accounts_for_like(entry_twitter_url)
+        return_accounts = return_avaliable_accounts_for_acctions(url)
         user_try = 1
         count = 0
         input_message_in_textbox(f"Users selected : {button_entry_get}")
@@ -565,7 +616,7 @@ def split_url_actions(url):
         if not (matches := re.search(pattern, url)):
                 return None
         username = matches[2]
-        return username, matches[4]
+        return f"{username}-{matches[4]}"
 
 def split_url_follow(url):
         pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)"
@@ -578,50 +629,27 @@ def return_avaliable_accounts_for_follow(entry_twitter_url):
         return len(fdb.get_count_values_for_follow(temp.get_email(), temp.get_password(), split_url_follow(entry_twitter_url.get())))
 
 def return_avaliable_accounts_for_like(entry_twitter_url):
-        return len(fdb.get_count_values_for_like(temp.get_email(), temp.get_password(), split_url_follow(entry_twitter_url.get())))
+        return len(fdb.get_count_values_for_like(temp.get_email(), temp.get_password(), split_url_actions(entry_twitter_url.get())))
 
-def popup_comment_window_def():
-
-        def twitter_popup_comment_go_button():
-                for i, comment_entries in enumerate(scrollable_frame_entries):
-                        comment = comment_entries.get()
-                        print(f"Comentario {i+1}: {comment}")
+def return_avaliable_accounts_for_acctions(url):
+        split_url = split_url_actions(url)
+        like = len(fdb.get_count_values_for_like(temp.get_email(), temp.get_password(), split_url))
+        rt = len(fdb.get_count_values_for_rt(temp.get_email(), temp.get_password(), split_url))
+        comment = len(fdb.get_count_values_for_comment(temp.get_email(), temp.get_password(), split_url))
         
-        popup_comment_window = ctk.CTkToplevel()
-        popup_comment_window.title("Comments window")
-        popup_comment_window.geometry("250x300")
-        popup_comment_window.focus()
-        
-        return popup_comment_window
+        return min(like, rt, comment)
 
-def scrollable_popup_frame_def():
-        scrollable_popup_frame = ctk.CTkScrollableFrame(popup_comment_window_def(), label_text="Comments")
-        scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
-        scrollable_popup_frame.grid_columnconfigure(0, weight=2)
-        
-        return scrollable_popup_frame
+def twitter_popup_comment_go_button(scrollable_frame_entries):
+        comments_list_ = []
+        for i, comment_entries in enumerate(scrollable_frame_entries):
+                comment = comment_entries.get()
+                comments_list_.append(comment)
+                print(f"Comentario {i+1}: {comment}")
+        set_comments_list(comments_list_)
+        return comments_list_
 
-# def twitter_popup_comment_window(button_entry, instance):
-#         entry_value = int(button_entry.get())
-#         popup_comment_window_def()
 
-#         scrollable_frame_entries = []
-#         for i in range(entry_value):
-#                 comment_entries = ctk.CTkEntry(master=scrollable_popup_frame_def(), placeholder_text=f"Type your comment {i+1}", width=300)
-#                 comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
-#                 setattr(instance, f"comment_entries_{i}", comment_entries)
-#                 scrollable_frame_entries.append(comment_entries)
-
-#         popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=twitter_popup_comment_go_button)
-#         popup_comment_window_button.grid(row=entry_value, column=0)
-
-def twitter_popup_comment_window(button_entry, instance):
-
-        def twitter_popup_comment_go_button():
-                for i, comment_entries in enumerate(scrollable_frame_entries):
-                        comment = comment_entries.get()
-                        print(f"Comentario {i+1}: {comment}")
-        
+def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
         entry_value = int(button_entry.get())
         popup_comment_window = ctk.CTkToplevel()
         popup_comment_window.title("Comments window")
@@ -638,10 +666,10 @@ def twitter_popup_comment_window(button_entry, instance):
                 comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
                 setattr(instance, f"comment_entries_{i}", comment_entries)
                 scrollable_frame_entries.append(comment_entries)
-
-        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=twitter_popup_comment_go_button)
+        set_scrollable_frame_entries(scrollable_frame_entries)
+        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=lambda:[twitter_popup_comment_go_button(scrollable_frame_entries), twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)])
         popup_comment_window_button.grid(row=entry_value, column=0)
-
+        
 def widget_normal_actions(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                 entry_twitter_url, twitter_checkbox_follow):
         twitter_widgets_states('normal', twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
@@ -672,12 +700,13 @@ def widget_invalid_twitter(twitter_label_accounts, return_accounts, entry_twitte
 
 def check_result_actions(url_check_result, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                         entry_twitter_url, twitter_checkbox_follow, twitter_label_accounts):
-        return_accounts = return_avaliable_accounts_for_like(entry_twitter_url)
+        url = entry_twitter_url.get()
+        return_accounts = return_avaliable_accounts_for_acctions(url)
         twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
         if url_check_result == 'actions':
                 widget_normal_actions(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                 entry_twitter_url, twitter_checkbox_follow)
-        return return_avaliable_accounts_for_like(entry_twitter_url)
+        return return_avaliable_accounts_for_acctions(url)
 
 def check_result_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like,
                         twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
@@ -689,6 +718,7 @@ def check_result_follow(entry_twitter_url, twitter_label_accounts, twitter_check
         else:
                 widget_disabled_follow(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                                 entry_twitter_url, twitter_checkbox_follow)
+        return return_accounts
         
 def last_step_twitter_url_actions(twitter_label_accounts, return_accounts, entry_twitter_url, button_entry):
         twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
@@ -697,24 +727,26 @@ def last_step_twitter_url_actions(twitter_label_accounts, return_accounts, entry
 def twitter_url_actions(url, entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action, twitter_label_accounts):
 
         url_check_result = twitter_url_check(url, button_entry)
-
-        return_accounts = check_result_actions(url_check_result, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
-                        entry_twitter_url, twitter_checkbox_follow, twitter_label_accounts)
         
-        if return_accounts == 0:
-                widget_disabled_invalid(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
-                                                entry_twitter_url, twitter_checkbox_follow)
+        if url_check_result == "actions":
+                return_accounts = check_result_actions(url_check_result, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                entry_twitter_url, twitter_checkbox_follow, twitter_label_accounts)
+                
+                if return_accounts == 0:
+                        widget_disabled_invalid(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
+                                                        entry_twitter_url, twitter_checkbox_follow)
 
-        if url_check_result == 'follow':
-                check_result_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like,
+        elif url_check_result == 'follow':
+                return_accounts = check_result_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like,
                                         twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
         else:
                 widget_disabled_invalid(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                                                 entry_twitter_url, twitter_checkbox_follow)
-        
+                return_accounts = 0
+                
         last_step_twitter_url_actions(twitter_label_accounts, return_accounts, entry_twitter_url, button_entry)
 
-def type_actions(entry_twitter_url, twitter_checkbox_follow):
+def type_actions(entry_twitter_url, twitter_checkbox_follow, twitter_button_action, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt):
         entry_twitter_url.configure(border_color="green")
         twitter_checkbox_follow.configure(state='disabled')
         twitter_checkbox_follow.deselect()
@@ -727,7 +759,7 @@ def type_follow(entry_twitter_url, twitter_checkbox_follow, twitter_button_actio
         twitter_checkbox_rt.deselect()
         twitter_checkbox_cmnt.deselect()
 
-def type_invalid(entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt):
+def type_invalid(entry_twitter_url, twitter_checkbox_follow, twitter_button_action, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt):
         entry_twitter_url.configure(border_color="red")
         twitter_checkbox_like.deselect()
         twitter_checkbox_rt.deselect()
