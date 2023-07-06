@@ -92,11 +92,13 @@ def image_help(options_frame):
         youtube_image.pack(padx=(10,10), pady=(10,10))
 
 def unlock_label_explain_2_help(options_frame):
+        unlock_label_explain_2 = ctk.CTkLabel(options_frame, text='You can download a pdf tutorial if you do click on the document', justify='center')
+        unlock_label_explain_2.pack(padx=(10,10), pady=(10,10))
+
+def unlock_button_pdf_image_help(options_frame):
         pdf_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/pdf.png"),
                                 dark_image=Image.open("GraphicUI/images/pdf.png"),
                                 size=(20, 20))
-        unlock_label_explain_2 = ctk.CTkLabel(options_frame, text='You can download a pdf tutorial if you do click on the document', justify='center')
-        unlock_label_explain_2.pack(padx=(10,10), pady=(10,10))
         unlock_button_explain_2 = ctk.CTkButton(options_frame, corner_radius=0, height=40, border_spacing=10, text="Demo botnet twitter.pdf",
                                                 fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
                                                 image=pdf_image, anchor="w", command=lambda:open_url("https://google.com"))
@@ -108,6 +110,7 @@ def help_option_content(options_frame):
         unlock_label_explain_help(options_frame)
         image_help(options_frame)
         unlock_label_explain_2_help(options_frame)
+        unlock_button_pdf_image_help(options_frame)
 
 ############################################### ACCOUNTS ##################################################
 
