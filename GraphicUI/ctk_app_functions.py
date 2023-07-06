@@ -702,6 +702,11 @@ def return_avaliable_accounts_for_actions(url):
         
         return min(like, rt, comment)
 
+def isCommentEmpty(comment):
+        if comment == "":
+                return True
+        return False
+
 def twitter_popup_comment_go_button(scrollable_frame_entries):
         comments_list_ = []
         for i, comment_entries in enumerate(scrollable_frame_entries):
@@ -709,7 +714,7 @@ def twitter_popup_comment_go_button(scrollable_frame_entries):
                 comments_list_.append(comment)
                 print(f"Comentario {i+1}: {comment}")
         set_comments_list(comments_list_)
-        return comments_list_
+        return comments_list_       
 
 def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
         entry_value = int(button_entry.get())
