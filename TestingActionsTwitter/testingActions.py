@@ -12,12 +12,21 @@ driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 # password = "Vajaqxbf_$19613930"
 # user = "EricA3febr197"
     
-email = "wmpkizhg96696548@raptoragency.es"
-password = "Oktebufk$_79375481"
-user = "RamiP3agost199"
+email = "dnfgoetv43084251@raptoragency.es"
+password = "Fjybmprd#-45297433"
+user = "3srs0pteeeh9t1E"
 
-# url = "https://twitter.com/TFM_Botnet_/status/1674334209156997120"
-url = "https://twitter.com/TFM_Botnet_"
+url = "https://twitter.com/TFM_Botnet_/status/1674334209156997120"
+# url = "https://twitter.com/TFM_Botnet_"
+
+print(function.loginUserTwitter(driver, email, password, user))
+# print(function.verifyIsAccountLocked(driver))
+# print(function.step10ChangeImageProfile(driver))
+# print(function.acceptCookies(driver))
+#print(function.follow_user(driver, url, url))
+print(function.retweet_tweet(driver, url, url))
+sleep(300)
+print(function.closeSession(driver))
 
 # function.step1CreateUserTwitter(driver, "asjodjoidsjios@as.com", "Dani5Fdez", "1996", "Julio", "17")
 # function.step2CreateUserTwitter(driver)
@@ -56,13 +65,13 @@ url = "https://twitter.com/TFM_Botnet_"
 # print(function.registerUserTwitter(driver, "danifdezloz@gmail.com", "Dani5Fdez"))
 # print(function.loginUserTwitterLocked(driver, email, password, user))
 # function.step10ChangeImageProfile(driver)
-print(function.loginUserTwitter(driver, email, password, user))
+# print(function.loginUserTwitter(driver, email, password, user))
 # print(function.verifyIsAccountLocked(driver))
 # print(function.step10ChangeImageProfile(driver))
 # print(function.acceptCookies(driver))
-print(function.follow_user(driver, url, url))
-print(function.closeSession(driver))
-sleep(300)
+# print(function.follow_user(driver, url, url))
+# print(function.closeSession(driver))
+# sleep(300)
 # like = function.like_tweet(driver, url, url)
 # if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
 #     check1 = True

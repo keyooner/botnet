@@ -20,12 +20,11 @@ instance = None
 instance_2 = None
 scrollable_frame_entries = []
 comments_list = []
-################################################ DRIVER ##################################################
+email_global_user = temp.get_email()
+password_global_user = temp.get_password()
 
 def get_driver():
         return webdriver.Chrome(service = Service(ChromeDriverManager().install()))
-
-############################################### TEXTBOX ##################################################
 
 def setInstance(instance_new):
         global instance
@@ -69,7 +68,6 @@ def input_message_in_textbox(message):
         
         return message
 
-################################################ HELP #####################################################
 def open_url(url):
         webbrowser.open(url)
 
@@ -113,7 +111,7 @@ def accounts_option_content(options_frame):
         scrollable_table_frame_values = []
 
         #accounts available
-        data = fdb.get_values_unlocked(temp.get_email(), temp.get_password())
+        data = fdb.get_values_unlocked(email_global_user, password_global_user)
         header_values = [['             EMAIL            ', ' PASSWORD ', '      USERNAME      ']]
         header_table = CTkTable(scrollable_table_frame, row=1, column=3, values=header_values, header_color="#8370F7", hover=True)
         header_table.grid(row=0 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
@@ -148,7 +146,7 @@ def unlock_option_content(options_frame):
         scrollable_table_frame_values = []
 
         #accounts available
-        data = fdb.get_values_locked(temp.get_email(), temp.get_password())
+        data = fdb.get_values_locked(email_global_user, password_global_user)
         header_values = [['             EMAIL            ', ' PASSWORD ', '      USERNAME      ']]
         header_table = CTkTable(scrollable_table_frame, row=1, column=3, values=header_values, header_color="#8370F7", hover=True)
         header_table.grid(row=0 % 3, column=0, padx=10, pady=(0, 20), sticky="ew")
@@ -325,7 +323,7 @@ def twitter_option_content(options_frame, instance):
 
         button_entry, button_increase, button_decrease = button_creation(entry_button_frame, increase, decrease, validate_command)
         
-        if fdb.get_count_values_unlocked(temp.get_email(), temp.get_password()) < 1:
+        if fdb.get_count_values_unlocked(email_global_user, password_global_user) < 1:
                 button_dissable(button_entry, button_increase, button_decrease)
         else:
                 interactions = temp.get_twitter_interactions()
@@ -365,7 +363,7 @@ def twitter_option_content(options_frame, instance):
         
         follow = checkbox_pack(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt)
         
-        if follow== None:
+        if follow == None:
                 twitter_checkbox_follow = ctk.CTkCheckBox(checkbox_container_frame, text='Follow', state='disabled')
                 temp.set_twitter_follow(None)
         else:
@@ -461,8 +459,8 @@ def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts
         driver = get_driver()
         button_entry_get = int(button_entry.get())
         url = entry_twitter_url.get()
-        data = fdb.get_values_for_comment(temp.get_email(), temp.get_password(), split_url_actions(url), button_entry_get)
-        return_accounts = return_avaliable_accounts_for_acctions(url)
+        data = fdb.get_values_for_comment(email_global_user, password_global_user, split_url_actions(url), button_entry_get)
+        return_accounts = (url)
         user_try = 1
         count = 0
         i = 0
@@ -493,70 +491,48 @@ def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts
         if return_accounts == 0:
                 twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts} \n You cannot make interactions in this tweet!!')
                 twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
-                temp.set_twitter_actions(None)                    
-def twitter_give_like(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+                temp.set_twitter_actions(None)
+                
+########
+
+def step_action_rt(user_try, user_value, driver, email_value, password_value, url, count):
+        input_message_in_textbox(f"User try: {user_try}")
+        input_message_in_textbox(f"Actions for user {user_value}")
+        result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
+        if result != "Your account is locked!":
+                rt = input_message_in_textbox(sf.retweet_tweet(driver, url, url))
+                if rt == "Retweet Twitter! Ok!" or "Retweet Tweet! Fail because you already retweet this tweet!":
+                        count = count +1
+                        check2 = True
+                        input_message_in_textbox("Inserting data to the database...")
+                        loadActions(email_value, False, check2, False, url, user_value)
+                #! Antes de cerrar la sesion debemos comprobar que no ha aparecido
+                # You’ve unlocked more on Twitter
+                # span -> con el texto -> /html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span
+                # click on button -> /html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div
+                input_message_in_textbox(sf.closeSession(driver))
+                sleep(1)
+        return count
+
+def values_action_rt(button_entry, entry_twitter_url):
         button_entry_get = int(button_entry.get())
         url = entry_twitter_url.get()
-        data = fdb.get_values_for_like(temp.get_email(), temp.get_password(), split_url_actions(url), button_entry_get)
-        return_accounts = return_avaliable_accounts_for_acctions(url)
-        user_try = 1
-        count = 0
-        input_message_in_textbox(f"Users selected : {button_entry_get}")
-        for key, value in data.items():
-                # Variables para almacenar los valores
-                id_value = key
-                email_value = value['email']
-                password_value = value['password']
-                user_value = value['user']
-                input_message_in_textbox(f"User try: {user_try}")
-                input_message_in_textbox(f"Actions for user {user_value}")
-                result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
-                if result != "Your account is locked!":
-                        like = input_message_in_textbox(sf.like_tweet(driver, url, url))
-                        if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
-                                count = count +1
-                                check1 = True
-                                input_message_in_textbox("Inserting data to the database...")
-                                loadActions(email_value, check1, False, False, url, user_value)
-                        input_message_in_textbox(sf.closeSession(driver))
-                        sleep(1)
-                user_try = user_try + 1
-        input_message_in_textbox(f"Se han completado con éxito {count} likes sobre {user_try-1}")
-        return_accounts = return_avaliable_accounts_for_like(entry_twitter_url)
+        data = fdb.get_values_for_rt(email_global_user, password_global_user, split_url_actions(url), button_entry_get)
+        return_accounts = return_avaliable_accounts_for_actions(url)
+        return button_entry_get, url, data, return_accounts
+
+def update_label_action_rt(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, 
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        return_accounts = return_avaliable_accounts_for_actions(entry_twitter_url.get())
+        twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
         if return_accounts == 0:
                 twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts} \n You cannot make interactions in this tweet!!')
                 twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
                 temp.set_twitter_actions(None)
-
-def twitter_give_rt(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
-        data = fdb.get_values_for_actions(temp.get_email(), temp.get_password(), int(button_entry.get()))
-        user_try = 1
-        count = 0
-        input_message_in_textbox(f"Users selected : {button_entry.get()}")
-        for key, value in data.items():
-                # Variables para almacenar los valores
-                id_value = key
-                email_value = value['email']
-                password_value = value['password']
-                user_value = value['user']
-                input_message_in_textbox(f"User try: {user_try}")
-                input_message_in_textbox(f"Actions for user {user_value}")
-                input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
-                retweet = input_message_in_textbox(sf.retweet_tweet(driver, entry_twitter_url.get(), entry_twitter_url.get()))
-                if retweet == "Retweet Twitter! Ok!" or "Retweet Tweet! Fail because you already like this tweet!":
-                        count = count +1
-                        check2 = True
-                loadActions(email_value, False, check2, False, entry_twitter_url.get(), user_value)
-                input_message_in_textbox("Inserting data to the database...")
-                input_message_in_textbox(sf.closeSession(driver))
-                user_try = user_try + 1
-        input_message_in_textbox(f"Se han completado con éxito {count} likes sobre {user_try}")
-
-def twitter_give_follow(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
-        button_entry_get = int(button_entry.get())
-        url = entry_twitter_url.get()
-        data = fdb.get_values_for_follow(temp.get_email(), temp.get_password(), split_url_follow(url), button_entry_get)
-        return_accounts = return_avaliable_accounts_for_follow(entry_twitter_url)
+        
+def twitter_give_rt(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, 
+                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        button_entry_get, url, data, return_accounts = values_action_rt(button_entry, entry_twitter_url)
         user_try = 1
         count = 0
         input_message_in_textbox(f"Users selected : {button_entry_get}")
@@ -566,21 +542,89 @@ def twitter_give_follow(driver, entry_twitter_url, button_entry, twitter_label_a
                 email_value = value['email']
                 password_value = value['password']
                 user_value = value['user']
-                input_message_in_textbox(f"User try: {user_try}")
-                input_message_in_textbox(f"Actions for user {user_value}")
-                result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
-                if result != "Your account is locked!":
-                        follow = input_message_in_textbox(sf.follow_user(driver, url, url))
-                        if follow == "Follow User Twitter! Ok!" or "Follow user! Fail because you already follow this user!":
-                                count = count +1
-                                check = True
-                                input_message_in_textbox("Inserting data to the database...")
-                                loadFollow(email_value, check, url, user_value)        
-                        input_message_in_textbox(sf.closeSession(driver))
-                        sleep(1)
+                count = step_action_rt(user_try, user_value, driver, email_value, password_value, url, count)
                 user_try = user_try + 1
-        input_message_in_textbox(f"Successfully completed {count} following actions out of {user_try-1}")
-        #! Tras realizar la acción actualizar la label!!!!
+                
+        input_message_in_textbox(f"Successfully completed {count} retweets out of {user_try-1}")
+        update_label_action_rt(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, 
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+
+########
+
+def step_action_like(user_try, user_value, driver, email_value, password_value, url, count):
+        input_message_in_textbox(f"User try: {user_try}")
+        input_message_in_textbox(f"Actions for user {user_value}")
+        result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
+        if result != "Your account is locked!":
+                like = input_message_in_textbox(sf.like_tweet(driver, url, url))
+                if like == "Like Twitter! Ok!" or "Like Tweet! Fail because you already like this tweet!":
+                        count = count +1
+                        check1 = True
+                        input_message_in_textbox("Inserting data to the database...")
+                        loadActions(email_value, check1, False, False, url, user_value)
+                input_message_in_textbox(sf.closeSession(driver))
+                sleep(1)
+        return count
+
+def values_action_like(button_entry, entry_twitter_url):
+        button_entry_get = int(button_entry.get())
+        url = entry_twitter_url.get()
+        data = fdb.get_values_for_like(email_global_user, password_global_user, split_url_actions(url), button_entry_get)
+        return_accounts = return_avaliable_accounts_for_actions(url)
+        return button_entry_get, url, data, return_accounts
+
+def update_label_action_like(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, 
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        return_accounts = return_avaliable_accounts_for_actions(entry_twitter_url.get())
+        twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
+        if return_accounts == 0:
+                twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts} \n You cannot make interactions in this tweet!!')
+                twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+                temp.set_twitter_actions(None)
+        
+def twitter_give_like(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, 
+                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        button_entry_get, url, data, return_accounts = values_action_like(button_entry, entry_twitter_url)
+        user_try = 1
+        count = 0
+        input_message_in_textbox(f"Users selected : {button_entry_get}")
+        for key, value in data.items():
+                # Variables para almacenar los valores
+                id_value = key
+                email_value = value['email']
+                password_value = value['password']
+                user_value = value['user']
+                count = step_action_like(user_try, user_value, driver, email_value, password_value, url, count)
+                user_try = user_try + 1
+                
+        input_message_in_textbox(f"Successfully completed {count} likes out of {user_try-1}")
+        update_label_action_like(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, 
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+
+def step_action_follow(user_try, user_value, driver, email_value, password_value, url, count):
+        input_message_in_textbox(f"User try: {user_try}")
+        input_message_in_textbox(f"Actions for user {user_value}")
+        result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
+        if result != "Your account is locked!":
+                follow = input_message_in_textbox(sf.follow_user(driver, url, url))
+                if follow == "Follow User Twitter! Ok!" or "Follow user! Fail because you already follow this user!":
+                        count = count +1
+                        check = True
+                        input_message_in_textbox("Inserting data to the database...")
+                        loadFollow(email_value, check, url, user_value)        
+                input_message_in_textbox(sf.closeSession(driver))
+                sleep(1)
+        return count
+
+def values_action_follow(button_entry, entry_twitter_url):
+        button_entry_get = int(button_entry.get())
+        url = entry_twitter_url.get()
+        data = fdb.get_values_for_follow(email_global_user, password_global_user, split_url_follow(url), button_entry_get)
+        return_accounts = return_avaliable_accounts_for_follow(entry_twitter_url)
+        return button_entry_get, url, data, return_accounts
+
+def update_label_action_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow,
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
         return_accounts = return_avaliable_accounts_for_follow(entry_twitter_url)
         twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
         if return_accounts == 0:
@@ -588,6 +632,24 @@ def twitter_give_follow(driver, entry_twitter_url, button_entry, twitter_label_a
                 twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
                 temp.set_twitter_actions(None)
                 temp.set_twitter_follow(None)
+        
+def twitter_give_follow(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        button_entry_get, url, data, return_accounts = values_action_follow(button_entry, entry_twitter_url)
+        user_try = 1
+        count = 0
+        input_message_in_textbox(f"Users selected : {button_entry_get}")
+        for key, value in data.items():
+                # Variables para almacenar los valores
+                id_value = key
+                email_value = value['email']
+                password_value = value['password']
+                user_value = value['user']
+                count = step_action_follow(user_try, user_value, driver, email_value, password_value, url, count)
+                user_try += 1
+        input_message_in_textbox(f"Successfully completed {count} following actions out of {user_try-1}")
+        #! Tras realizar la acción actualizar la label!!!!
+        update_label_action_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow,
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
         
 def loadActions(email, check1, check2, check3, url, user):
         
@@ -597,9 +659,10 @@ def loadActions(email, check1, check2, check3, url, user):
                 "retweet": check2,
                 "comment": check3,
         }
-        username, numbers = split_url_actions(url)
         
-        fdb.loadValuesActionsTwitter("danifdezloz@gmail.com", "Dani5Fdez", f"{username}-{numbers}", data, user)
+        link = split_url_actions(url)
+        
+        fdb.loadValuesActionsTwitter(email_global_user, password_global_user, link, data, user)
 
 def loadFollow(email, check, url, user):
         
@@ -609,7 +672,7 @@ def loadFollow(email, check, url, user):
         }
         username = split_url_follow(url)
 
-        fdb.loadValuesFollow("danifdezloz@gmail.com", "Dani5Fdez", username, data, user)
+        fdb.loadValuesFollow(email_global_user, password_global_user, username, data, user)
 
 def split_url_actions(url):
         pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)(/status/)([0-9]+)"
@@ -623,19 +686,19 @@ def split_url_follow(url):
         return matches[2] if (matches := re.search(pattern, url)) else None
 
 def return_available_accounts_twitter():
-        return fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())
+        return fdb.get_count_values_unlocked(email_global_user, password_global_user)
 
 def return_avaliable_accounts_for_follow(entry_twitter_url):
-        return len(fdb.get_count_values_for_follow(temp.get_email(), temp.get_password(), split_url_follow(entry_twitter_url.get())))
+        return len(fdb.get_count_values_for_follow(email_global_user, password_global_user, split_url_follow(entry_twitter_url.get())))
 
 def return_avaliable_accounts_for_like(entry_twitter_url):
-        return len(fdb.get_count_values_for_like(temp.get_email(), temp.get_password(), split_url_actions(entry_twitter_url.get())))
+        return len(fdb.get_count_values_for_like(email_global_user, password_global_user, split_url_actions(entry_twitter_url.get())))
 
-def return_avaliable_accounts_for_acctions(url):
+def return_avaliable_accounts_for_actions(url):
         split_url = split_url_actions(url)
-        like = len(fdb.get_count_values_for_like(temp.get_email(), temp.get_password(), split_url))
-        rt = len(fdb.get_count_values_for_rt(temp.get_email(), temp.get_password(), split_url))
-        comment = len(fdb.get_count_values_for_comment(temp.get_email(), temp.get_password(), split_url))
+        like = len(fdb.get_count_values_for_like(email_global_user, password_global_user, split_url))
+        rt = len(fdb.get_count_values_for_rt(email_global_user, password_global_user, split_url))
+        comment = len(fdb.get_count_values_for_comment(email_global_user, password_global_user, split_url))
         
         return min(like, rt, comment)
 
@@ -647,7 +710,6 @@ def twitter_popup_comment_go_button(scrollable_frame_entries):
                 print(f"Comentario {i+1}: {comment}")
         set_comments_list(comments_list_)
         return comments_list_
-
 
 def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
         entry_value = int(button_entry.get())
@@ -701,12 +763,12 @@ def widget_invalid_twitter(twitter_label_accounts, return_accounts, entry_twitte
 def check_result_actions(url_check_result, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                         entry_twitter_url, twitter_checkbox_follow, twitter_label_accounts):
         url = entry_twitter_url.get()
-        return_accounts = return_avaliable_accounts_for_acctions(url)
+        return_accounts = return_avaliable_accounts_for_actions(url)
         twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
         if url_check_result == 'actions':
                 widget_normal_actions(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                 entry_twitter_url, twitter_checkbox_follow)
-        return return_avaliable_accounts_for_acctions(url)
+        return return_avaliable_accounts_for_actions(url)
 
 def check_result_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like,
                         twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
@@ -813,15 +875,9 @@ def logout_button_yes_def(logout_container_frame, instance):
         logout_button_yes.pack(side="top", padx=10, pady=10)
 
 def logout_option_content(options_frame, instance):
-        #create logout container frame
         logout_container_frame = logout_container(options_frame)
-
-        #label option selected
         logout_label(logout_container_frame)
-        
         logout_label_quest_def(logout_container_frame)
-        
-        #button option selected
         logout_button_yes_def(logout_container_frame, instance)
 
 def logout_user():
@@ -835,8 +891,6 @@ def close_main_window(instance):
 def action_logOut(instance):
         close_main_window(instance)
         logout_user()  
-
-############################################### DISABLE BUTTONS ##################################################
 
 def configure_disable_option(sidebar_help_button, sidebar_accounts_button, sidebar_unlock_button,
                                 sidebar_twitter_button, sidebar_vpn_button, sidebar_logout_button):

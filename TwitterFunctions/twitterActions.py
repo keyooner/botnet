@@ -114,8 +114,8 @@ def follow_user(driver, url, expected_url):
 
         if tf.checkColorFollowUser_1(driver) != "Ok!":
             raise Exception("Follow user! Fail because you already follow this user!")
-        
-        tf.twitter_actions("Follow user", driver, 2, "//html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div", True, False, None)
+
+        tf.twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", True, False, None)
         
         if tf.checkColorFollowUser_2(driver) != "Ok!":
             return "Follow User Twitter! Ok!"
@@ -200,16 +200,17 @@ def retweet_tweet(driver, url, expected_url):
         tf.go_page("Go to tweet", driver, url, expected_url)
         tf.twitter_actions("Get element for Retweet tweet", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[1]/div/div/article/div/div/div[3]/div[6]/div/div[2]", False, False, None)
 
-        if rtRGB_1!= "Ok!":
+        if rtRGB_1(driver) != "Ok!":
             raise Exception("Retweet Tweet! Fail because you already retweet this tweet!")
         
         stepRT(driver)
         
         sleep(1)
         
-        if rtRGB_2 != "Ok!":
+        if rtRGB_2(driver) != "Ok!":
             if tf.unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[1]/div[1]/span"):
                 tf.twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/div", True, False, None)
+            
             return "Retweet Twitter! Ok!"
         
         return "Something has failed! Retry!"
@@ -289,6 +290,12 @@ def login_locked(driver, user):
 def suspicious_activity(driver, email, password):
     if tf.get_suspicious_activity(driver, 2, "//*[@id='modal-header']/span/span"):
         tf.insertCodeSuspicious(driver, email, password)
+
+def boost_security(driver):
+    if tf.get_boost_security(driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span/span/span"):
+        tf.twitter_actions("Close the window", driver, 2,
+                            "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[1]/div/div/div/div[1]/div",
+                            True, False, None)
         
 def account_locked(driver, email):
     if tf.check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
@@ -335,6 +342,10 @@ def loginUserTwitter(driver, email, password, user):
     
     if account_locked(driver, email) == "Your account is locked!":
         return "Your account is locked!"
+    
+    sleep(1)
+    
+    boost_security(driver)
     
     sleep(1)
     

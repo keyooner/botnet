@@ -2,6 +2,7 @@
 import FirebaseFunctions.firebaseAuthentication as fa
 # Firebase library for Wrapper API Client
 import firebase
+import temp
 from collections import Counter
 
 firebase = fa.initializeApp()
@@ -262,8 +263,6 @@ def find_id_by_email(email, data):  # sourcery skip: use-next
                         return id_
         return None
 
-# upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez",reorder_ids(get_values("danifdezloz@gmail.com", "Dani5Fdez")))
-
 def loadValuesActionsTwitter(email, password, url, data: dict, user_twitter):
         # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
@@ -271,8 +270,21 @@ def loadValuesActionsTwitter(email, password, url, data: dict, user_twitter):
         email_local = user['localId']
         token =  user['idToken']
 
-        # id = getLastValue(email, password)
-
+        existing_data = db.child("action_users").child(email_local).child(url).child(user_twitter).get(token = user['idToken']).val()
+        
+        if existing_data:
+                
+                comment = existing_data.get("comment", False)
+                like = existing_data.get("like", False)
+                retweet = existing_data.get("retweet", False)
+                
+                if comment:
+                        data["comment"] = comment
+                if like:
+                        data["like"] = like
+                if retweet:
+                        data["retweet"] = retweet
+                        
         db.child("action_users").child(email_local).child(url).child(user_twitter).set(data, token)
 
 def loadValuesFollow(email, password, url, data: dict, user_twitter):
@@ -310,7 +322,7 @@ def get_values_for_follow(email, password, url, n_items):
         filtered_values = {key: value for key, value in values.items() if value.get('follow') == True}
 
         # Obtenemos los valores de los usuarios existentes en otra fuente
-        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
         
         if data2 is None:
                 return 0
@@ -342,7 +354,7 @@ def get_count_values_for_follow(email, password, url):
         filtered_values = {key: value for key, value in values.items() if value.get('follow') == True}
 
         # Obtenemos los valores de los usuarios existentes en otra fuente
-        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
         
         if data2 is None:
                 return 0
@@ -375,7 +387,7 @@ def get_values_for_like(email, password, url, n_items):
         filtered_values = {key: value for key, value in values.items() if value.get('like') == True}
 
         # Obtenemos los valores de los usuarios existentes en otra fuente
-        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
         
         if data2 is None:
                 return 0
@@ -408,7 +420,7 @@ def get_count_values_for_like(email, password, url):
         filtered_values = {key: value for key, value in values.items() if value.get('like') == True}
 
         # Obtenemos los valores de los usuarios existentes en otra fuente
-        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
         
         if data2 is None:
                 return 0
@@ -441,7 +453,7 @@ def get_values_for_rt(email, password, url, n_items):
         filtered_values = {key: value for key, value in values.items() if value.get('retweet') == True}
 
         # Obtenemos los valores de los usuarios existentes en otra fuente
-        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
         
         if data2 is None:
                 return 0
@@ -474,7 +486,7 @@ def get_count_values_for_rt(email, password, url):
         filtered_values = {key: value for key, value in values.items() if value.get('retweet') == True}
 
         # Obtenemos los valores de los usuarios existentes en otra fuente
-        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
         
         if data2 is None:
                 return 0
@@ -507,7 +519,7 @@ def get_values_for_comment(email, password, url, n_items):
         filtered_values = {key: value for key, value in values.items() if value.get('comment') == True}
 
         # Obtenemos los valores de los usuarios existentes en otra fuente
-        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
         
         if data2 is None:
                 return 0
@@ -540,7 +552,7 @@ def get_count_values_for_comment(email, password, url):
         filtered_values = {key: value for key, value in values.items() if value.get('comment') == True}
 
         # Obtenemos los valores de los usuarios existentes en otra fuente
-        data2 = get_values_unlocked("danifdezloz@gmail.com", "Dani5Fdez")
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
         
         if data2 is None:
                 return 0
@@ -549,6 +561,7 @@ def get_count_values_for_comment(email, password, url):
                 filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
                 
                 return filtered_data2
+
 # print(len(get_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120", 2)))
 # print(len(get_count_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120")))
 # print(upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez", reorder_ids((get_values("danifdezloz@gmail.com", "Dani5Fdez")))))

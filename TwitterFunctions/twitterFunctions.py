@@ -366,6 +366,7 @@ def unlock_more(driver, type, element):
     
     if div_action.text in [
         "Unlock more on Twitter",
+        "You've unlocked more on Twitter"
     ]:
         return True
     return False
@@ -386,6 +387,25 @@ def get_suspicious_activity(driver, type, element):
     if div_action.text in [
         "Revisa tu correo electrónico",
         "Check your email",
+    ]:
+        return True
+    return False
+
+# This function will check if your account is locked by suspicious activity
+def get_boost_security(driver, type, element):
+    # sourcery skip: assign-if-exp, boolean-if-exp-identity, reintroduce-else, remove-unnecessary-cast
+
+    selector = get_type_selector(type)
+    
+    try:
+        div_action = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((selector, element))
+        )
+    except TimeoutException:
+        return False
+
+    if div_action.text in [
+        "Boost your account security"
     ]:
         return True
     return False
@@ -758,7 +778,7 @@ def insertUsername(driver, username):
 def checkColorStep1(driver):
     color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
     if color == "Fail! We didn't find the element!":
-        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
+        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
         return color
     return color
 
@@ -770,9 +790,10 @@ def checkColorFollowUser_1(driver):
     return check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
 
 def checkColorStep2(driver):
+
     color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
     if color == "Fail! We didn't find the element!":
-        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
+        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
         return color
     return color
 
