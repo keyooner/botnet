@@ -68,6 +68,8 @@ def input_message_in_textbox(message):
         
         return message
 
+############################################### HELP ##################################################
+
 def open_url(url):
         webbrowser.open(url)
 
@@ -82,16 +84,23 @@ def unlock_label_explain_help(options_frame):
 def image_help(options_frame):
         youtube_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/Tutorial_youtube_light.png"),
                                 dark_image=Image.open("GraphicUI/images/Tutorial_youtube_dark.png"),
-                                size=(300, 100))
+                                size=(200, 75))
 
-        welcome_image_label = ctk.CTkLabel(options_frame, image=youtube_image, text="", cursor="hand2")
-        welcome_image_label.pack(anchor="center", expand=True)
-
-        welcome_image_label.bind("<Button-1>", lambda event: open_url("https://www.youtube.com"))
+        youtube_image = ctk.CTkButton(options_frame, corner_radius=0, height=40, border_spacing=10, text="",
+                                                fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
+                                                image=youtube_image, anchor="w", command=lambda:open_url("https://youtube.com"))
+        youtube_image.pack(padx=(10,10), pady=(10,10))
 
 def unlock_label_explain_2_help(options_frame):
+        pdf_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/pdf.png"),
+                                dark_image=Image.open("GraphicUI/images/pdf.png"),
+                                size=(20, 20))
         unlock_label_explain_2 = ctk.CTkLabel(options_frame, text='You can download a pdf tutorial if you do click on the document', justify='center')
         unlock_label_explain_2.pack(padx=(10,10), pady=(10,10))
+        unlock_button_explain_2 = ctk.CTkButton(options_frame, corner_radius=0, height=40, border_spacing=10, text="Demo botnet twitter.pdf",
+                                                fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
+                                                image=pdf_image, anchor="w", command=lambda:open_url("https://google.com"))
+        unlock_button_explain_2.pack(padx=(10,10), pady=(10,10))
 
 def help_option_content(options_frame):
         
