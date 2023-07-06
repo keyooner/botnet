@@ -743,14 +743,30 @@ def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twit
         scrollable_popup_frame.grid(row=1, column=2, padx=(20, 0), pady=(20, 0), sticky="nsew")
         scrollable_popup_frame.grid_columnconfigure(0, weight=2)
         scrollable_frame_entries = []
+
+        def check_comments_inputs():
+                # Verificar si hay texto en todos los inputs
+                inputs_filled = all(entry.get() != "" for entry in scrollable_frame_entries)
+
+                # Habilitar o deshabilitar el botón en consecuencia
+                if inputs_filled:
+                        popup_comment_window_button.configure(state="normal")
+                else:
+                        popup_comment_window_button.configure(state="disabled")
+
         for i in range(entry_value):
                 comment_entries = ctk.CTkEntry(master=scrollable_popup_frame, placeholder_text=f"Type your comment {i+1}", width=300)
                 comment_entries.grid(row=i, column=0, padx=10, pady=(0, 20))
                 setattr(instance, f"comment_entries_{i}", comment_entries)
                 scrollable_frame_entries.append(comment_entries)
+                comment_entries.bind("<KeyRelease>", lambda event: check_comments_inputs())
+
         set_scrollable_frame_entries(scrollable_frame_entries)
-        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=lambda:[twitter_popup_comment_go_button(scrollable_frame_entries), twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)])
+
+        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=lambda:[twitter_popup_comment_go_button(scrollable_frame_entries), twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)], state="disabled")
         popup_comment_window_button.grid(row=entry_value, column=0)
+
+        check_comments_inputs()
         
 def widget_normal_actions(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                 entry_twitter_url, twitter_checkbox_follow):
