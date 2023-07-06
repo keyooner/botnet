@@ -453,6 +453,23 @@ def insertCodeSuspicious(driver, email, password):
         
     return "Insert Suspicious Code! Ok!"
 
+
+def unlock_more_on_twitter(driver, type, element):
+    selector = get_type_selector(type)
+    try: 
+        div_action = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((selector, element))
+        )
+    except TimeoutException:
+        return False
+    
+    if div_action.text in [
+        "Unlock more on Twitter",
+        "You've unlocked more on Twitter"
+    ]:
+        return True
+    return False
+
 ## ----------------------------------------------END-------------------------------------------------##
 #######################################################################################################
 

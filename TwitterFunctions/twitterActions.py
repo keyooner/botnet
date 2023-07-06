@@ -303,7 +303,7 @@ def account_locked(driver, email):
         return "Your account is locked!"
 
     if driver.current_url == "https://twitter.com/account/access":
-        fdb.updateValues("danifdezloz@gmail.com", "Dani5Fdez", email, "locked")
+        fdb.updateValues(temp.get_email(), temp.get_password(), email, "locked")
         return "Your account is locked!"
 
 def loginUserStep1(driver, email):
@@ -456,8 +456,7 @@ def loginUserTwitterLocked(driver, email, password, user):
     tf.verifyIsAccountLocked(driver)
         
     if tf.check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
-        # fdb.updateValues(temp.get_email(), temp.get_password(), email, "locked")
-        fdb.updateValues("danifdezloz@gmail.com", "Dani5Fdez", email, "locked")
+        fdb.updateValues(temp.get_email(), temp.get_password(), email, "locked")
         return "Your account is locked!"
     
     # /html/body/div[1]/div/div/div[2]/header/div/div/div/div[2]/div/div/div[2]/div/div[2]/div/div/div/span
@@ -480,3 +479,12 @@ def closeSession(driver):
 def acceptCookies(driver):
     tf.twitter_actions("Accept Cookies!", driver, 2, "//*[@id='layers']/div/div/div/div/div/div[2]/div[1]", True, False, None)
     return "Cookies has been accepted!"
+
+# You’ve unlocked more on Twitter
+# span -> con el texto -> /html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span
+# click on button -> /html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div
+
+def get_unlock_more_twitter(driver):
+    if tf.unlock_more_on_twitter(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
+        tf.twitter_actions("Click on button", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div",
+                            True, False, None)
