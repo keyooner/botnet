@@ -410,6 +410,25 @@ def get_boost_security(driver, type, element):
         return True
     return False
 
+# This function will check if your account is locked by suspicious activity
+def get_blue_verification(driver, type, element):
+    # sourcery skip: assign-if-exp, boolean-if-exp-identity, reintroduce-else, remove-unnecessary-cast
+
+    selector = get_type_selector(type)
+    
+    try:
+        div_action = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((selector, element))
+        )
+    except TimeoutException:
+        return False
+
+    if div_action.text in [
+        "Who are you?"
+    ]:
+        return True
+    return False
+
 def stepInsertCode(driver, code):
     actions = [
         ("Insert code!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input", True, True, code),

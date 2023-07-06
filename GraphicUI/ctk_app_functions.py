@@ -131,11 +131,14 @@ def accounts_option_content(options_frame):
         button_frame.pack(side="top", fill="x")
 
         #create button to create account
-        create_account_button = ctk.CTkButton(button_frame, text="Create Account")
+        create_account_button = ctk.CTkButton(button_frame, text="Create Account", command=createAccount)
         create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
 
+def createAccount():
+        driver = get_driver()
+        input_message_in_textbox("We are creating your account...")
+        input_message_in_textbox(sf.registerUserTwitter(driver, temp.get_email(), temp.get_password()))
 ######################################## UNLOCK ACCOUNTS #############################################
-
 
 def unlock_option_content(options_frame):
         #create scrollable frame for table
@@ -507,9 +510,7 @@ def step_action_rt(user_try, user_value, driver, email_value, password_value, ur
                         input_message_in_textbox("Inserting data to the database...")
                         loadActions(email_value, False, check2, False, url, user_value)
                 #! Antes de cerrar la sesion debemos comprobar que no ha aparecido
-                # You’ve unlocked more on Twitter
-                # span -> con el texto -> /html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span
-                # click on button -> /html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div
+                input_message_in_textbox(sf.get_unlock_more_twitter(driver))
                 input_message_in_textbox(sf.closeSession(driver))
                 sleep(1)
         return count
@@ -562,6 +563,7 @@ def step_action_like(user_try, user_value, driver, email_value, password_value, 
                         check1 = True
                         input_message_in_textbox("Inserting data to the database...")
                         loadActions(email_value, check1, False, False, url, user_value)
+                input_message_in_textbox(sf.get_unlock_more_twitter(driver))
                 input_message_in_textbox(sf.closeSession(driver))
                 sleep(1)
         return count
@@ -611,7 +613,8 @@ def step_action_follow(user_try, user_value, driver, email_value, password_value
                         count = count +1
                         check = True
                         input_message_in_textbox("Inserting data to the database...")
-                        loadFollow(email_value, check, url, user_value)        
+                        loadFollow(email_value, check, url, user_value)
+                input_message_in_textbox(sf.get_unlock_more_twitter(driver))        
                 input_message_in_textbox(sf.closeSession(driver))
                 sleep(1)
         return count

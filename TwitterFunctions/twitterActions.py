@@ -161,12 +161,13 @@ def go_comment(driver, comment, user, arg3):
 
     if tf.get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
         
-        sleep(3)
+        sleep(2)
         
         if tf.unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[1]/div[1]/span"):
                 tf.twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/div", True, False, None)
-        
-        return "Comment Twitter! Ok!"
+                return "Comment Twitter! Ok!"
+        else:
+            return "Comment Twitter! Ok!"
         
     return arg3
 
@@ -366,6 +367,12 @@ def registerUserTwitter(driver, email, password):
         tf.split_register(driver, email_twitter, profile, year, month, day,
                         email, password, data, password_twitter, user_twitter)
         
+        sleep(2)
+        
+        get_blue_verification_twitter(driver)
+        
+        acceptCookies(driver)
+        
         try_newAccount(driver, user_twitter)
         
         return "Create User! Ok!"
@@ -378,6 +385,7 @@ def registerUserTwitter(driver, email, password):
     except KeyboardInterrupt as e:
         deleteAccount(email_twitter, email, password)
         return "Ups! Seem you close the page before finishing the process"
+    
 
 ## --------------------------------------------END-------------------------------------------- ##
 #################################################################################################
@@ -413,7 +421,7 @@ def try_newAccount(driver, user_twitter):
     
     tf.verifyIsAccountLocked(driver)
     comment_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "Checked!", user_twitter)
-    
+    print("Todo ha ido bien!")
     return "All actions has been tried!"
 
 def loginUserTwitterLocked(driver, email, password, user):
@@ -488,3 +496,12 @@ def get_unlock_more_twitter(driver):
     if tf.unlock_more_on_twitter(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
         tf.twitter_actions("Click on button", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div",
                             True, False, None)
+        return "Get unlock clicked!"
+    return "There is no message to unlock!"
+
+def get_blue_verification_twitter(driver):
+    if tf.get_blue_verification(driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[2]/div[1]/span"):
+        tf.twitter_actions("Click on button", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[1]/div/div/div/div/div/div[1]/div",
+                            True, False, None)
+        return "Get blue clossed and clicked!"
+    return "There is no blue verification to unlock!"
