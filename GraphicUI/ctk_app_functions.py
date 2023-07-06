@@ -150,6 +150,8 @@ def createAccount():
         driver = get_driver()
         input_message_in_textbox("We are creating your account...")
         input_message_in_textbox(sf.registerUserTwitter(driver, temp.get_email(), temp.get_password()))
+
+
 ######################################## UNLOCK ACCOUNTS #############################################
 
 def unlock_option_content(options_frame):
