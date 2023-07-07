@@ -39,7 +39,7 @@
   <p align="center">
     An amazing app to create influence on Twitter!
     <br />
-    <a href="https://github.com/keyooner/botnet"><strong>Explore documentations »</strong></a>
+    <a href="https://github.com/keyooner/botnet"><strong>Explore documentation »</strong></a>
     <br />
     <br />
 </div>
@@ -82,16 +82,15 @@
 [![Product Name Screen Shot][product-screenshot-light]](https://example.com)
 [![Product Name Screen Shot][product-screenshot-dark]](https://example.com)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+This app it was created as an easy way to crate fake influence on Twitter. It's easy to use and have many fantastics automated options. Also, you can choose between dark themes or light themes in the gui app.
 
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
+Automated options:
+* Create twitter users
+* Give likes
+* Give retweets
+* Give follows
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
+All this actions could be realised using a nord-vpn connection or not, you must choose. If you want to use it, you neede it a nord-vpn account.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -99,7 +98,7 @@ Use the `BLANK_README.md` to get started.
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
+This app it was created using Python, Selenium, Firebase, Fernet and CustomTkinter.
 
 * [![Python][Python.com]][Python-url]
 * [![Next][Next.js]][Next-url]
