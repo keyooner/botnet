@@ -93,7 +93,7 @@ class App(ctk.CTk):
         self.label_profile_user.grid(row=1, column=2, padx=20, pady=0, sticky="")
         self.label_profile_name = ctk.CTkLabel(master=self.profile_frame, text=f"Domain: {domain}")
         self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions Available: {fdb.get_count_values_unlocked(email_global, password_global)}")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions available: {fdb.get_count_values_unlocked(email_global, password_global)}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
         self.label_profile_locked = ctk.CTkLabel(master=self.profile_frame, text=f"Locked accounts: {fdb.get_count_values_locked(email_global, password_global)}")
         self.label_profile_locked.grid(row=4, column=2, padx=20, pady=0, sticky="")
@@ -179,7 +179,7 @@ class App(ctk.CTk):
                                     self.sidebar_logout_button)
 
     def accounts_option_button_clicked(self):
-        ctkfun.accounts_option_content(self.options_frame)
+        ctkfun.accounts_option_content(self.options_frame, self.label_profile_interactions)
         ctkfun.disable_option_button('accounts', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
                                     self.sidebar_vpn_button, self.sidebar_twitter_button, 

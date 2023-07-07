@@ -114,7 +114,7 @@ def help_option_content(options_frame):
 
 ############################################### ACCOUNTS ##################################################
 
-def accounts_option_content(options_frame):
+def accounts_option_content(options_frame, label_profile_interactions):
         #create scrollable frame for table
         scrollable_table_frame = ctk.CTkScrollableFrame(options_frame, fg_color="transparent", label_text="Accounts")
         scrollable_table_frame.pack(side="top", padx=(20, 0), pady=(20, 0), fill="both", expand=True)
@@ -143,14 +143,17 @@ def accounts_option_content(options_frame):
         button_frame.pack(side="top", fill="x")
 
         #create button to create account
-        create_account_button = ctk.CTkButton(button_frame, text="Create Account", command=createAccount)
+        create_account_button = ctk.CTkButton(button_frame, text="Create Account", command=lambda:createAccount(label_profile_interactions))
         create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
 
-def createAccount():
+def createAccount(label_profile_interactions):
         driver = get_driver()
         input_message_in_textbox("We are creating your account...")
         input_message_in_textbox(sf.registerUserTwitter(driver, temp.get_email(), temp.get_password()))
+        updateProfileInteractionsAvailable(label_profile_interactions)
 
+def updateProfileInteractionsAvailable(label_profile_interactions):
+        label_profile_interactions.configure(text=f"Interactions available: {fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())}")
 
 ######################################## UNLOCK ACCOUNTS #############################################
 
