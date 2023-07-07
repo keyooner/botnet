@@ -118,19 +118,14 @@ This app it was created using Python, Selenium, Firebase, Fernet and CustomTkint
 
 Easy way to use:
 
-Download the project as a zip here: 
+* Download the project as a zip here: 
 
-Execute twitter_botnet.exe
-
-Remember that you'll need an nord-vpn account if you want to do all actions in a private mode.
+* Execute twitter_botnet.exe
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+* Optional: Nord-VPN account
+
 
 ### Installation
 
