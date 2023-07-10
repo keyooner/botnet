@@ -12,21 +12,24 @@ driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
 # password = "Vajaqxbf_$19613930"
 # user = "EricA3febr197"
     
-email = "dnfgoetv43084251@raptoragency.es"
-password = "Fjybmprd#-45297433"
-user = "3srs0pteeeh9t1E"
+email = "xkuzpbcn49334694@raptoragency.es"
+password = "Zbcdwzly-@69740615"
+user = "ALast28noviem19"
 
 url = "https://twitter.com/TFM_Botnet_/status/1674334209156997120"
 # url = "https://twitter.com/TFM_Botnet_"
 
-print(function.loginUserTwitter(driver, email, password, user))
-# print(function.verifyIsAccountLocked(driver))
-# print(function.step10ChangeImageProfile(driver))
-# print(function.acceptCookies(driver))
-#print(function.follow_user(driver, url, url))
-print(function.retweet_tweet(driver, url, url))
-sleep(300)
-print(function.closeSession(driver))
+print(function.loginUserTwitterLocked(driver, email, password, user))
+
+
+# print(function.loginUserTwitter(driver, email, password, user))
+# # print(function.verifyIsAccountLocked(driver))
+# # print(function.step10ChangeImageProfile(driver))
+# # print(function.acceptCookies(driver))
+# #print(function.follow_user(driver, url, url))
+# print(function.retweet_tweet(driver, url, url))
+# sleep(300)
+# print(function.closeSession(driver))
 
 # function.step1CreateUserTwitter(driver, "asjodjoidsjios@as.com", "Dani5Fdez", "1996", "Julio", "17")
 # function.step2CreateUserTwitter(driver)

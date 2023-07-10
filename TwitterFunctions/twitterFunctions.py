@@ -234,16 +234,11 @@ def check_authetication_step(driver, type, element):
 
 # Function that try if the account is locked by twitter
 def verifyIsAccountLocked(driver):
-    print("Check 1")
     if check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
-        print("Tu cuenta está bloqueada")
         twitter_actions("Unlock button clicked!", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
         while True:
-            print("Autentica la cuenta")
             if check_account_status(driver, 2, "/html/body/div[2]/div/div[1]") == True:
-                
                 twitter_actions("Continue to Twitter", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
-                print("Cuenta autenticada")
                 return True
     return False
 
@@ -406,6 +401,30 @@ def get_boost_security(driver, type, element):
 
     if div_action.text in [
         "Boost your account security"
+    ]:
+        return True
+    return False
+
+# You’re in control
+# /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[2]/div[1]/div[1]/span/span/span
+# click button:
+# /html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[2]/div[2]/div[2]
+
+def get_you_are_in_control(driver, type, element):
+    
+    # sourcery skip: assign-if-exp, boolean-if-exp-identity, reintroduce-else, remove-unnecessary-cast
+
+    selector = get_type_selector(type)
+    
+    try:
+        div_action = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((selector, element))
+        )
+    except TimeoutException:
+        return False
+
+    if div_action.text in [
+        "You’re in control"
     ]:
         return True
     return False
@@ -812,11 +831,7 @@ def insertUsername(driver, username):
     return "Insert username! Ok!"
 
 def checkColorStep1(driver):
-    color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
-    if color == "Fail! We didn't find the element!":
-        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
-        return color
-    return color
+    return get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
 
 def checkColorFollowUser_1(driver):
     # Get the RGB values
@@ -826,12 +841,8 @@ def checkColorFollowUser_1(driver):
     return check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
 
 def checkColorStep2(driver):
+    return get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[4]/div[1]/div")
 
-    color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
-    if color == "Fail! We didn't find the element!":
-        color = get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div")
-        return color
-    return color
 
 def checkColorFollowUser_2(driver):
     # Get the RGB values
@@ -865,6 +876,8 @@ def split_register(driver, email_twitter, profile, year, month, day, email, pass
     step9CreateUserTwitter(driver)
     
     verifyIsAccountLocked(driver)
+    
+    acceptCookies(driver)
     
     step10ChangeImageProfile(driver)
     

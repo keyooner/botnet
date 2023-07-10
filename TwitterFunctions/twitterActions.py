@@ -13,7 +13,7 @@ import FirebaseFunctions.firebaseDatabase as fdb
 import RandomProfile.randomProfileTwitter as rpt
 from time import sleep
 import temp
-import re
+import re as red
 import EmailFunctions.readEmail as re
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.service import Service
@@ -111,12 +111,9 @@ def follow_user(driver, url, expected_url):
     try:
         tf.go_page("Go to Twitter User Page", driver, url, expected_url)
         tf.twitter_actions("Check follow button", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", False, False, None)
-
         if tf.checkColorFollowUser_1(driver) != "Ok!":
             raise Exception("Follow user! Fail because you already follow this user!")
-
-        tf.twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", True, False, None)
-        
+        tf.twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div", True, False, None)
         if tf.checkColorFollowUser_2(driver) != "Ok!":
             return "Follow User Twitter! Ok!"
         
@@ -136,14 +133,11 @@ def comment_tweet(driver, url, expected_url, comment, user):
 
         if tf.get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
             raise Exception("Comment Tweet! Fail because you already comment this tweet!")
-
-        return go_comment(
-            driver, comment, user, "Something has failed! Retry!"
-        )
+        
+        return go_comment(driver, comment, user, "Something has failed! Retry!")
+    
     except TimeoutException:
-        return go_comment(
-            driver, comment, user, "Comment Twitter! Time Error!"
-        )
+        return go_comment(driver, comment, user, "Comment Twitter! Time Error!")
     except Exception as e:
         return f"{e}"
 
@@ -161,11 +155,13 @@ def go_comment(driver, comment, user, arg3):
 
     if tf.get_already_comment(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div/div/div[3]/div/div/article/div/div/div[2]/div[2]/div[1]/div/div[1]/div/div/div[2]/div/div[1]", user):
         
-        sleep(2)
+        sleep(1)
         
         if tf.unlock_more(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[1]/div[1]/span"):
-                tf.twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div/div[3]/div", True, False, None)
-                return "Comment Twitter! Ok!"
+            sleep(2)
+            tf.twitter_actions("Click ok in button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[1]/div/div/div/div[1]/div", True, False, None)
+            return "Comment Twitter! Ok!"
+        
         else:
             return "Comment Twitter! Ok!"
         
@@ -302,10 +298,14 @@ def account_locked(driver, email):
     if tf.check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
         fdb.updateValues(temp.get_email(), temp.get_password(), email, "locked")
         return "Your account is locked!"
-
-    if driver.current_url == "https://twitter.com/account/access":
+    
+    if str(driver.current_url) == "https://twitter.com/account/access" or str(driver.current_url) == "https://twitter.com/account/access?flow=login":
         fdb.updateValues(temp.get_email(), temp.get_password(), email, "locked")
         return "Your account is locked!"
+
+def account_unlocked(driver, email):
+    if tf.check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
+        return "Your account is unlocked!"
 
 def loginUserStep1(driver, email):
     actions = [
@@ -344,11 +344,9 @@ def loginUserTwitter(driver, email, password, user):
     if account_locked(driver, email) == "Your account is locked!":
         return "Your account is locked!"
     
-    sleep(1)
-    
     boost_security(driver)
     
-    sleep(1)
+    get_in_control(driver)
     
     tf.acceptCookies(driver)
 
@@ -367,15 +365,14 @@ def registerUserTwitter(driver, email, password):
         tf.split_register(driver, email_twitter, profile, year, month, day,
                         email, password, data, password_twitter, user_twitter)
         
-        sleep(2)
+        sleep(0.5)
         
         get_blue_verification_twitter(driver)
         
-        acceptCookies(driver)
+        if try_newAccount(driver, user_twitter, email_twitter) == "All actions has been tried!":
+            return "Create User! Ok!"
         
-        try_newAccount(driver, user_twitter)
-        
-        return "Create User! Ok!"
+        return "Something has failed! Retry"
         
     except exceptions as e:
         if "not connected to DevTools" in str(e):
@@ -408,10 +405,12 @@ def deleteAccount(email_twitter, email, password):
     ce.deleteMail(email_twitter)
     fdb.deleteValues(email, password)
 
-def try_newAccount(driver, user_twitter):
+def try_newAccount(driver, user_twitter, email_twitter):
     
     tf. verifyIsAccountLocked(driver)
     follow_user(driver, "https://twitter.com/TFM_Botnet_", "https://twitter.com/TFM_Botnet_")
+    
+    loadFollow(email_twitter, True, "https://twitter.com/TFM_Botnet_", user_twitter)
     
     tf.verifyIsAccountLocked(driver)
     like_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120")
@@ -421,57 +420,45 @@ def try_newAccount(driver, user_twitter):
     
     tf.verifyIsAccountLocked(driver)
     comment_tweet(driver, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "https://twitter.com/TFM_Botnet_/status/1674334209156997120", "Checked!", user_twitter)
-    print("Todo ha ido bien!")
+
+    loadActions(email_twitter, True, True, True, "https://twitter.com/TFM_Botnet_/status/1674334209156997120", user_twitter)
+    
     return "All actions has been tried!"
 
 def loginUserTwitterLocked(driver, email, password, user):
-    #! First Step we go to the login page and we check that we don't redirecto to another one
+    #! First Step we go to the login page and we check that we don't redirect to another one
     tf.go_page("Twitter Login Page", driver, url_login, "https://twitter.com/i/flow/login")
     
     #! We use this for make a chain of actions, first we check that we are in the login form
     #! Then we insert the credentials of the email, last one click on next button
-    actions = [
-        ("Check Twitter Login Page", driver, 1, "div.r-1867qdf:nth-child(2)", False, False, None),
-        ("Login User", driver, 1, ".r-30o5oe", True, True, email),
-        ("Check and Click Next Button", driver, 1, "#layers > div > div > div > div > div > div > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1pi2tsx.r-1777fci.r-1xcajam.r-ipm5af.r-g6jmlv > div.css-1dbjc4n.r-1867qdf.r-1wbh5a2.r-kwpbio.r-rsyp9y.r-1pjcn9w.r-1279nm1.r-htvplk.r-1udh08x > div > div > div.css-1dbjc4n.r-kemksi.r-6koalj.r-16y2uox.r-1wbh5a2 > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1jgb5lz.r-1ye8kvj.r-13qz1uu > div > div > div > div:nth-child(6) > div", True, False, None),
-    ]
+    loginUserStep1(driver, email)
+
+    login_locked(driver, user)
     
-    for action in actions:
-        tf.twitter_actions(*action)
+    loginUserStep2(driver, password)
     
-    if tf.get_login_locked(driver, 2, "//*[@id='modal-header']/span/span"):
-        
-        tf.twitter_actions("Insert user!", driver, 2, 
-                        "//*[@id='layers']/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input",
-                        True, True, user)
-        
-        tf.twitter_actions("Click next button!", driver, 2,
-                        "//*[@id='layers']/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div",
-                        True, False, None)
-        
-    actions2 =[    
-        ("Login Password", driver, 1, ".r-homxoj", True, True, password),
-        #("Check and Click Next Button", driver, 2, "/html/body/div/div/div/div[1]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/div", True, False, None)
-        ("Check and Click Next Button", driver, 1, "#layers > div > div > div > div > div > div > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1pi2tsx.r-1777fci.r-1xcajam.r-ipm5af.r-g6jmlv > div.css-1dbjc4n.r-1867qdf.r-1wbh5a2.r-kwpbio.r-rsyp9y.r-1pjcn9w.r-1279nm1.r-htvplk.r-1udh08x > div > div > div.css-1dbjc4n.r-kemksi.r-6koalj.r-16y2uox.r-1wbh5a2 > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1jgb5lz.r-1ye8kvj.r-13qz1uu > div.css-1dbjc4n.r-1isdzm1 > div > div > div > div > div > div", True, False, None)
-    ]
+    suspicious_activity(driver, email, password)
     
-    for action2 in actions2:
-        tf.twitter_actions(*action2)
+    if account_locked(driver, email) == "Your account is locked!":
+        return "Your account is still locked!"
+
+    sleep(1)
     
-    if tf.get_suspicious_activity(driver, 2, "//*[@id='modal-header']/span/span"):
-        tf.insertCodeSuspicious(driver, email, password)
+    boost_security(driver)
     
-    tf.verifyIsAccountLocked(driver)
-        
-    if tf.check_account_status(driver, 2, "/html/body/div[2]/div/div[1]"):
-        fdb.updateValues(temp.get_email(), temp.get_password(), email, "locked")
-        return "Your account is locked!"
+    sleep(1)
     
-    # /html/body/div[1]/div/div/div[2]/header/div/div/div/div[2]/div/div/div[2]/div/div[2]/div/div/div/span
+    get_in_control(driver)
+    
+    sleep(1)
+    
+    tf.acceptCookies(driver)
+
     if tf.get_user_profile(driver, 2, "/html/body/div[1]/div/div/div[2]/header/div/div/div/div[2]/div/div/div[2]/div/div[2]/div/div/div/span", user):
-        return "Login User! Ok!"
+        fdb.updateValues(temp.get_email(), temp.get_password(), email, "unlocked")
+        return "Congratulations! Your account has been unlocked!"
     
-    return "Something has failed retry!"
+    return "Something has failed retry to unlock this account!"
 
 # Function to close the actual session
 def closeSession(driver):
@@ -492,6 +479,12 @@ def acceptCookies(driver):
 # span -> con el texto -> /html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span
 # click on button -> /html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div
 
+def get_in_control(driver):
+    if tf.get_you_are_in_control(driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[2]/div[1]/div[1]/span/span/span"):
+        tf.twitter_actions("Click on button", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div/div[2]/div[2]/div[2]", True, False, None)
+        return "Get you are in control clicked!"
+    return "There is nothing to click!"
+
 def get_unlock_more_twitter(driver):
     if tf.unlock_more_on_twitter(driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div[1]/span"):
         tf.twitter_actions("Click on button", driver, 2, "/html/body/div[1]/div/div/div[1]/div[3]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/div",
@@ -505,3 +498,37 @@ def get_blue_verification_twitter(driver):
                             True, False, None)
         return "Get blue clossed and clicked!"
     return "There is no blue verification to unlock!"
+
+def loadActions(email, check1, check2, check3, url, user):
+        
+        data = {
+                "email": email,
+                "like": check1,
+                "retweet": check2,
+                "comment": check3,
+        }
+        
+        link = split_url_actions(url)
+        
+        fdb.loadValuesActionsTwitter(temp.get_email(), temp.get_password(), link, data, user)
+
+def loadFollow(email, check, url, user):
+        
+        data = {
+                "email": email,
+                "follow": check
+        }
+        username = split_url_follow(url)
+
+        fdb.loadValuesFollow(temp.get_email(), temp.get_password(), username, data, user)
+
+def split_url_actions(url):
+        pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)(/status/)([0-9]+)"
+        if not (matches := red.search(pattern, url)):
+                return None
+        username = matches[2]
+        return f"{username}-{matches[4]}"
+
+def split_url_follow(url):
+        pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)"
+        return matches[2] if (matches := red.search(pattern, url)) else None

@@ -149,15 +149,20 @@ def accounts_option_content(options_frame, label_profile_interactions):
 def createAccount(label_profile_interactions):
         driver = get_driver()
         input_message_in_textbox("We are creating your account...")
+        sleep(1)
         input_message_in_textbox(sf.registerUserTwitter(driver, temp.get_email(), temp.get_password()))
+        driver.close()
         updateProfileInteractionsAvailable(label_profile_interactions)
 
 def updateProfileInteractionsAvailable(label_profile_interactions):
         label_profile_interactions.configure(text=f"Interactions available: {fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())}")
 
+def updateLockedAccounts(label_profile_locked):
+        label_profile_locked.configure(text = f"Locked accounts: {fdb.get_count_values_locked(temp.get_email(), temp.get_password())}")
+
 ######################################## UNLOCK ACCOUNTS #############################################
 
-def unlock_option_content(options_frame):
+def unlock_option_content(options_frame, label_profile_interactions, label_profile_locked):
         #create scrollable frame for table
         scrollable_table_frame = ctk.CTkScrollableFrame(options_frame, fg_color="transparent", label_text="Unlock Accounts")
         scrollable_table_frame.pack(side="top", padx=(20, 0), pady=(20, 0), fill="both", expand=True)
@@ -187,7 +192,7 @@ def unlock_option_content(options_frame):
         button_frame.pack(side="top", fill="x")
 
         #create button to unlock account
-        create_account_button = ctk.CTkButton(button_frame, text="Check unlock accounts")
+        create_account_button = ctk.CTkButton(button_frame, text="Check unlock accounts", command = lambda:twitter_check_unlocked_accounts(label_profile_interactions, label_profile_locked, options_frame))
         create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
 
 ############################################### VPN ##################################################
@@ -448,7 +453,7 @@ def twitter_url_check(url, button_entry):
                 return "actions"
         elif re.match(follow_url, url) and (button_entry_get > 0):
                 return "follow"
-        
+
 def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window,
                         twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, 
                         twitter_button_action):
@@ -475,17 +480,15 @@ def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt
                 if checkbox_rt == 1 and checkbox_rt == 1 and checkbox_cmnt== 1:
                         twitter_popup_comment_window()
 
-def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+def twitter_check_unlocked_accounts(label_profile_interactions, label_profile_locked, options_frame):
+        
         driver = get_driver()
-        button_entry_get = int(button_entry.get())
-        url = entry_twitter_url.get()
-        data = fdb.get_values_for_comment(email_global_user, password_global_user, split_url_actions(url), button_entry_get)
-        return_accounts = (url)
+        data = fdb.get_values_locked(temp.get_email(), temp.get_password())
+        
         user_try = 1
         count = 0
-        i = 0
-        comments = get_comments_list()
-        input_message_in_textbox(f"Users selected : {button_entry_get}")
+        
+        input_message_in_textbox(f"Users that are going to be checked: {len(data)}")
         for key, value in data.items():
                 # Variables para almacenar los valores
                 id_value = key
@@ -494,24 +497,80 @@ def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts
                 user_value = value['user']
                 input_message_in_textbox(f"User try: {user_try}")
                 input_message_in_textbox(f"Actions for user {user_value}")
-                result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
-                if result != "Your account is locked!":
-                        comment = input_message_in_textbox(sf.comment_tweet(driver, url, url, comments[i], user_value))
-                        if comment == "Comment Twitter! Ok!" or "Comment Tweet! Fail because you already comment this tweet!":
-                                count = count +1
-                                check3 = True
-                                input_message_in_textbox("Inserting data to the database...")
-                                loadActions(email_value, False, False, check3, url, user_value)
-                        input_message_in_textbox(sf.closeSession(driver))
+                result = input_message_in_textbox(sf.loginUserTwitterLocked(driver, email_value, password_value, user_value))
+                if result != "Your account is still locked!":
+                        count = count + 1
                         sleep(1)
+                        input_message_in_textbox(sf.closeSession(driver))
+                sleep(1)
+                if result == "Your account is still locked!":
+                        driver.close()
+                        driver = get_driver()
                 user_try = user_try + 1
-                i = i+1
-        input_message_in_textbox(f"Se han completado con éxito {count} likes sobre {user_try-1}")
-        return_accounts = return_avaliable_accounts_for_like(entry_twitter_url)
+        locked = (user_try - 1 - count)        
+        input_message_in_textbox(f"{count} account/s has been unlocked with success!")
+        input_message_in_textbox(f"{locked} account/s hasn't been unlocked!")
+        updateProfileInteractionsAvailable(label_profile_interactions)
+        updateLockedAccounts(label_profile_locked)
+        destroy_options(options_frame)
+        unlock_option_content(options_frame, label_profile_interactions, label_profile_locked)
+
+def destroy_options(options_frame):
+        for widget in options_frame.winfo_children():
+                widget.destroy()
+
+def values_action_comment(button_entry, entry_twitter_url):
+        driver = get_driver()
+        button_entry_get = int(button_entry.get())
+        url = entry_twitter_url.get()
+        data = fdb.get_values_for_comment(email_global_user, password_global_user, split_url_actions(url), button_entry_get)
+        return_accounts = (url)
+        comments = get_comments_list()
+        return driver, button_entry_get, url, data, return_accounts, comments
+
+def step_action_comment(user_try, user_value, driver, email_value, password_value, url, count, comments, i):
+        input_message_in_textbox(f"User try: {user_try}")
+        input_message_in_textbox(f"Actions for user {user_value}")
+        result = input_message_in_textbox(sf.loginUserTwitter(driver, email_value, password_value, user_value))
+        if result != "Your account is locked!":
+                comment = input_message_in_textbox(sf.comment_tweet(driver, url, url, comments[i], user_value))
+                if comment == "Comment Twitter! Ok!" or "Comment Tweet! Fail because you already comment this tweet!":
+                        count = count +1
+                        check3 = True
+                        input_message_in_textbox("Inserting data to the database...")
+                        loadActions(email_value, False, False, check3, url, user_value)
+                sleep(1)
+                input_message_in_textbox(sf.closeSession(driver))
+                
+        return count
+
+def update_label_action_comment(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, 
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        return_accounts = return_avaliable_accounts_for_actions(entry_twitter_url.get())
+        twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts}')
         if return_accounts == 0:
                 twitter_label_accounts.configure(text=f'Max interactions available: {return_accounts} \n You cannot make interactions in this tweet!!')
                 twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
                 temp.set_twitter_actions(None)
+                
+def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+        driver, button_entry_get, url, data, return_accounts, comments = values_action_comment(button_entry, entry_twitter_url)
+        user_try = 1
+        count = 0
+        i = 0
+        input_message_in_textbox(f"Users selected : {button_entry_get}")
+        for key, value in data.items():
+                # Variables para almacenar los valores
+                id_value = key
+                email_value = value['email']
+                password_value = value['password']
+                user_value = value['user']
+                count = step_action_comment(user_try, user_value, driver, email_value, password_value, url, count, comments, i)
+                user_try = user_try + 1
+                i = i+1
+        input_message_in_textbox(f"Successfully completed {count} comments out of {user_try-1}")
+        update_label_action_comment(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, 
+                        twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
                 
 ########
 
@@ -713,6 +772,9 @@ def return_avaliable_accounts_for_follow(entry_twitter_url):
 
 def return_avaliable_accounts_for_like(entry_twitter_url):
         return len(fdb.get_count_values_for_like(email_global_user, password_global_user, split_url_actions(entry_twitter_url.get())))
+
+def return_avaliable_accounts_for_comment(entry_twitter_url):
+        return len(fdb.get_count_values_for_comment(email_global_user, password_global_user, split_url_actions(entry_twitter_url.get())))
 
 def return_avaliable_accounts_for_actions(url):
         split_url = split_url_actions(url)

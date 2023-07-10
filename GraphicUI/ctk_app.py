@@ -186,7 +186,7 @@ class App(ctk.CTk):
                                     self.sidebar_logout_button)
 
     def unlock_option_button_clicked(self):
-        ctkfun.unlock_option_content(self.options_frame)
+        ctkfun.unlock_option_content(self.options_frame, self.label_profile_interactions, self.label_profile_locked)
         ctkfun.disable_option_button('unlock', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
                                     self.sidebar_vpn_button, self.sidebar_twitter_button, 
