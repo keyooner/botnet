@@ -155,7 +155,7 @@ def createAccount(label_profile_interactions):
         updateProfileInteractionsAvailable(label_profile_interactions)
 
 def updateProfileInteractionsAvailable(label_profile_interactions):
-        label_profile_interactions.configure(text=f"Interactions available: {fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())}")
+        label_profile_interactions.configure(text=f"Accounts available: {fdb.get_count_values_unlocked(temp.get_email(), temp.get_password())}")
 
 def updateLockedAccounts(label_profile_locked):
         label_profile_locked.configure(text = f"Locked accounts: {fdb.get_count_values_locked(temp.get_email(), temp.get_password())}")
@@ -830,10 +830,13 @@ def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twit
 
         set_scrollable_frame_entries(scrollable_frame_entries)
 
-        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=lambda:[twitter_popup_comment_go_button(scrollable_frame_entries), twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)], state="disabled")
+        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=lambda:[twitter_popup_comment_go_button(scrollable_frame_entries), twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action), close_comment_window(popup_comment_window)], state="disabled")
         popup_comment_window_button.grid(row=entry_value, column=0)
 
         check_comments_inputs()
+
+def close_comment_window(popup_comment_window):
+        popup_comment_window.destroy()
         
 def widget_normal_actions(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                 entry_twitter_url, twitter_checkbox_follow):

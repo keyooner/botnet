@@ -93,7 +93,7 @@ class App(ctk.CTk):
         self.label_profile_user.grid(row=1, column=2, padx=20, pady=0, sticky="")
         self.label_profile_name = ctk.CTkLabel(master=self.profile_frame, text=f"Domain: {domain}")
         self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Interactions available: {fdb.get_count_values_unlocked(email_global, password_global)}")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Accounts available: {fdb.get_count_values_unlocked(email_global, password_global)}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
         self.label_profile_locked = ctk.CTkLabel(master=self.profile_frame, text=f"Locked accounts: {fdb.get_count_values_locked(email_global, password_global)}")
         self.label_profile_locked.grid(row=4, column=2, padx=20, pady=0, sticky="")
