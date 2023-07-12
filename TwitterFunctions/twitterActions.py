@@ -110,11 +110,11 @@ action_mapping = {
 def follow_user(driver, url, expected_url):
     try:
         tf.go_page("Go to Twitter User Page", driver, url, expected_url)
-        tf.twitter_actions("Check follow button", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/div/div[2]/div[1]/div[2]/div[2]/div[1]/div", False, False, None)
+        tf.twitter_actions("Check follow button", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div", False, False, None)
         if tf.checkColorFollowUser_1(driver) != "Ok!":
             raise Exception("Follow user! Fail because you already follow this user!")
-        tf.twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div", True, False, None)
-        if tf.checkColorFollowUser_2(driver) != "Ok!":
+        tf.twitter_actions("Follow user", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div", True, False, None)
+        if tf.checkColorFollowUser_2(driver) == "Ok!":
             return "Follow User Twitter! Ok!"
         
         return "Something has failed! Retry!"

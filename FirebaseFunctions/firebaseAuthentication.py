@@ -1,4 +1,3 @@
-import CryptographyFunctions.cryptographyFunctions as crypto
 import json
 # Firebase library for Wrapper API Client
 import firebase

@@ -7,6 +7,7 @@ import webbrowser
 import customtkinter as ctk
 import TwitterFunctions.twitterActions as sf
 import FirebaseFunctions.firebaseFaster as ff
+import requests
 from PIL import Image
 from time import sleep
 from CTkTable import *
@@ -21,7 +22,6 @@ scrollable_frame_entries = []
 comments_list = []
 email_global_user = temp.get_email()
 password_global_user = temp.get_password()
-widgets = []
 
 def get_driver():
         return webdriver.Chrome(service = Service(ChromeDriverManager().install()))
@@ -111,6 +111,7 @@ def help_option_content(options_frame):
         image_help(options_frame)
         unlock_label_explain_2_help(options_frame)
         unlock_button_pdf_image_help(options_frame)
+        input_message_in_textbox("Opened help menu!")
 
 ############################################### ACCOUNTS ##################################################
 
@@ -145,6 +146,8 @@ def accounts_option_content(options_frame, label_profile_interactions):
         #create button to create account
         create_account_button = ctk.CTkButton(button_frame, text="Create Account", command=lambda:createAccount(label_profile_interactions))
         create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
+        
+        input_message_in_textbox("Opened unlocked accounts menu!")
 
 def createAccount(label_profile_interactions):
         driver = get_driver()
@@ -156,7 +159,7 @@ def createAccount(label_profile_interactions):
 
 def updateProfileInteractionsAvailable(label_profile_interactions):
         ff.set_values_unlocked_ff()
-        label_profile_interactions.configure(text=f"Accounts available: {ff.get_count_values_unlocked_ff()}")
+        label_profile_interactions.configure(text=f"Avaliable accounts: {ff.get_count_values_unlocked_ff()}")
 
 def updateLockedAccounts(label_profile_locked):
         ff.set_values_locked_ff()
@@ -196,6 +199,8 @@ def unlock_option_content(options_frame, label_profile_interactions, label_profi
         #create button to unlock account
         create_account_button = ctk.CTkButton(button_frame, text="Check unlock accounts", command = lambda:twitter_check_unlocked_accounts(label_profile_interactions, label_profile_locked, options_frame))
         create_account_button.pack(side="left", padx=(20, 10), pady=(10, 10), fill="x", expand=True)
+        
+        input_message_in_textbox("Opened locked accounts menu!")
 
 ############################################### VPN ##################################################
 
@@ -213,17 +218,21 @@ def vpn_first_frame_creation(options_frame):
 
 def handle_vpn_switch(vpn_switch_var):
         if vpn_switch_var.get() == 'on':
-                temp.set_vpn_mode('on')
-                temp.set_preferences_user('on')
-                print("ESTAMOS ON")
+                _extracted_from_handle_vpn_switch_3('on')
         else:
-                temp.set_vpn_mode('off')
-                temp.set_preferences_user('off')
-                print("ESTAMOS OFF")
+                _extracted_from_handle_vpn_switch_3('off')
+
+# TODO Rename this here and in `handle_vpn_switch`
+def _extracted_from_handle_vpn_switch_3(arg0):
+        temp.set_vpn_mode(arg0)
+        temp.set_preferences_user(arg0)
+        ff.set_preferences(arg0)
         
 def vpn_switch_creation(vpn_container_frame):
         vpn_switch_var = ctk.StringVar(value=temp.get_vpn_mode())
-        temp.set_vpn_mode("on")
+        
+        temp.set_vpn_mode(ff.get_preferences())
+        
         vpn_switch = ctk.CTkSwitch(master=vpn_container_frame, 
                                         text="Vpn OFF/ON", 
                                         command=lambda:[handle_vpn_switch(vpn_switch_var)], variable=vpn_switch_var, onvalue='on', offvalue='off')
@@ -262,7 +271,11 @@ def vpn_option_content(options_frame):
 
         vpn_switch_location_label, vpn_switch_ip_label = vpn_label_second_frame(vpn_container_frame_3)
         
+        temp.set_vpn_values(vpn_switch_status_label, vpn_switch_location_label, vpn_switch_ip_label)
+        
         vpn_switch_creation(vpn_container_frame)
+        
+        input_message_in_textbox("Opened VPN menu!")
         
 def values_for_first_condition():
         stdout = sys.stdout
@@ -281,7 +294,6 @@ def check_status_first_condition(label_profile_vpn_status, vpn_switch_status_lab
                         vpn_switch_location_label, label_profile_vpn_ip, vpn_switch_ip_label):
 
         vpn_location, vpn_ip = values_for_first_condition()
-        
         vpn_labels_on(
                 vpn_location[1],
                 vpn_ip[1],
@@ -353,7 +365,10 @@ def vpn_configure(label_profile_vpn_status, vpn_switch_status_label, label_profi
                         label_profile_vpn_ip, vpn_switch_ip_label):
         status, location, ip = getVPN()
         get_status_color(status, label_profile_vpn_status)
+        input_message_in_textbox(f"{status}")
         set_status(location, ip, label_profile_vpn_location, label_profile_vpn_ip)
+        input_message_in_textbox(f"VPN {location}")
+        input_message_in_textbox(f"VPN {ip}")
 
 def set_status(location, ip, label_profile_vpn_location,label_profile_vpn_ip,):
         label_profile_vpn_location.configure(text=location)
@@ -380,14 +395,14 @@ def create_label_accounts(entry_button_frame, avaliable_accounts):
                 )
         
         twitter_label_accounts.pack(side="top", padx=5, pady=5)
-        
+        temp.set_label_accounts(twitter_label_accounts)
         return twitter_label_accounts
 
 def check_interactions(button_entry, button_increase, button_decrease):
         if len(ff.get_values_unlocked_ff()) < 1:
                 button_dissable(button_entry, button_increase, button_decrease)
         else:
-                interactions = temp.get_twitter_interactions()
+                interactions = temp.get_button_status()
                 if interactions != None:
                         button_entry.insert(interactions, f"{interactions}")
                 else:
@@ -440,11 +455,6 @@ def check_follow_in_twitter_option_content(twitter_checkbox_like, twitter_checkb
         
         return twitter_checkbox_follow
 
-def check_follow_actions_in_twitter_option_content(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, checkbox_container_frame, actions, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, instance):
-        
-        
-        return twitter_button_action
-
 def increase(button_entry, avaliable_accounts):
         value = int(button_entry.get())
         if value < avaliable_accounts:
@@ -488,7 +498,6 @@ def twitter_option_content(options_frame, instance, label_profile_vpn_status, la
 
         # create urls container frame
         url, urls_container_frame = get_url_twitter_option_content(options_frame)
-        input_message_in_textbox(f" La url es {url}")
         # create checkboxes
         checkbox_container_frame = ctk.CTkFrame(options_frame)
         checkbox_container_frame.pack(fill="x")
@@ -499,9 +508,9 @@ def twitter_option_content(options_frame, instance, label_profile_vpn_status, la
         follow = checkbox_pack(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt)
                 
         if (actions == None) and (follow == None):
-                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip))
+                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='disabled', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip))
         else:
-                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance,  entry_twitter_url,  twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip))
+                twitter_button_action = ctk.CTkButton(checkbox_container_frame, text="Do it", state='normal', command=lambda: twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, lambda: twitter_popup_comment_window(button_entry, instance,  entry_twitter_url,  twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip), twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip))
         
         
         twitter_checkbox_follow = check_follow_in_twitter_option_content(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, checkbox_container_frame)
@@ -512,6 +521,8 @@ def twitter_option_content(options_frame, instance, label_profile_vpn_status, la
         # twitter_button_action = check_follow_actions_in_twitter_option_content(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, checkbox_container_frame, actions, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, instance)
         
         twitter_pack(twitter_checkbox_follow, twitter_button_action)
+        
+        input_message_in_textbox("Opened Twitter menu!")
 
 def twitter_label_pack(options_frame):
         twitter_label_option = ctk.CTkLabel(options_frame, text='Twitter', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
@@ -553,11 +564,13 @@ def create_button_entry(entry_button_frame, validate_command):
 def create_button_increase(entry_button_frame, button_entry, avaliable_accounts):
         button_increase = ctk.CTkButton(entry_button_frame, text='+', command=lambda:increase(button_entry, avaliable_accounts), width=2)
         button_increase.pack(side="left", padx=5, pady=5, anchor="center")
+        temp.set_button_increase(button_increase)
         return button_increase
 
 def create_button_decrease(entry_button_frame, button_entry):
         button_decrease = ctk.CTkButton(entry_button_frame, text='-', command=lambda:decrease(button_entry), width=2)
         button_decrease.pack(side="left", padx=5, pady=5, anchor="center")
+        temp.set_button_decrease(button_decrease)
         return button_decrease
 
 def twitter_url_check(url, button_entry):
@@ -572,26 +585,24 @@ def twitter_url_check(url, button_entry):
 def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt, twitter_popup_comment_window,
                         twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_follow, twitter_label_accounts, 
                         twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip):
-        input_message_in_textbox("Estoy en twitter check check")
         if twitter_url_check(entry_twitter_url.get(), button_entry) in ['actions','follow',]:
-                input_message_in_textbox("dentro de url check")
                 driver_twitter = get_driver()
                 
                 checkbox_follow = twitter_checkbox_follow.get()
                 checkbox_cmnt = twitter_checkbox_cmnt.get()
                 checkbox_like = twitter_checkbox_like.get()
                 checkbox_rt = twitter_checkbox_rt.get()
-                input_message_in_textbox("Estoy dentro de twitter check checkbox")
+                
                 if checkbox_follow == 1:
                         twitter_give_follow(driver_twitter, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip)
                 
                 if checkbox_cmnt == 1:
                         twitter_popup_comment_window()
                 if checkbox_like == 1:
-                        twitter_give_like(driver_twitter, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+                        twitter_give_like(driver_twitter, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip)
                 
                 if checkbox_rt== 1:
-                        twitter_give_rt(driver_twitter, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
+                        twitter_give_rt(driver_twitter, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip)
                         
                 if checkbox_rt == 1 and checkbox_rt == 1 and checkbox_cmnt== 1:
                         twitter_popup_comment_window()
@@ -671,7 +682,7 @@ def update_label_action_comment(entry_twitter_url, twitter_label_accounts, twitt
                 twitter_widgets_configures('invalid', entry_twitter_url, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
                 temp.set_twitter_actions(None)
                 
-def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip):
         driver.close()
         driver, button_entry_get, url, data, return_accounts, comments = values_action_comment(button_entry, entry_twitter_url)
         user_try = 1
@@ -680,6 +691,8 @@ def twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts
         input_message_in_textbox(f"Users selected : {button_entry_get}")
         for key, value in data.items():
                 # Variables para almacenar los valores
+                actions_if_vpn(temp.get_preferences_user(), label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip)
+                while_check_internet()
                 id_value = key
                 email_value = value['email']
                 password_value = value['password']
@@ -727,13 +740,15 @@ def update_label_action_rt(entry_twitter_url, twitter_label_accounts, twitter_ch
                 temp.set_twitter_actions(None)
         
 def twitter_give_rt(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, 
-                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip):
         button_entry_get, url, data, return_accounts = values_action_rt(button_entry, entry_twitter_url)
         user_try = 1
         count = 0
         input_message_in_textbox(f"Users selected : {button_entry_get}")
         for key, value in data.items():
                 # Variables para almacenar los valores
+                actions_if_vpn(temp.get_preferences_user(), label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip)
+                while_check_internet()
                 id_value = key
                 email_value = value['email']
                 password_value = value['password']
@@ -780,13 +795,15 @@ def update_label_action_like(entry_twitter_url, twitter_label_accounts, twitter_
                 temp.set_twitter_actions(None)
         
 def twitter_give_like(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, 
-                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+                twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip):
         button_entry_get, url, data, return_accounts = values_action_like(button_entry, entry_twitter_url)
         user_try = 1
         count = 0
         input_message_in_textbox(f"Users selected : {button_entry_get}")
         for key, value in data.items():
                 # Variables para almacenar los valores
+                actions_if_vpn(temp.get_preferences_user(), label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip)
+                while_check_internet()
                 id_value = key
                 email_value = value['email']
                 password_value = value['password']
@@ -835,14 +852,34 @@ def update_label_action_follow(entry_twitter_url, twitter_label_accounts, twitte
 
 def actions_if_vpn(preferences_user, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip):
         if preferences_user == 'on':
+                input_message_in_textbox("Connecting to VPN...")
                 vpn_switch_status_label, vpn_switch_location_label, vpn_switch_ip_label = temp.get_vpn_values()
                 vpn_connect_clicked(label_profile_vpn_status, vpn_switch_status_label, label_profile_vpn_location,
                         vpn_switch_location_label, label_profile_vpn_ip, vpn_switch_ip_label)
         else:
                 return None
-        
+
+def check_internet_connection():
+        # sourcery skip: remove-unnecessary-else, swap-if-else-branches
+        sleep(1)
+        input_message_in_textbox("Waiting for connection...")
+        try:
+                response = requests.get("https://www.google.com")
+                if response.status_code == 200:
+                        input_message_in_textbox("Connection established!")
+                        return True
+                else:
+                        return False
+        except requests.ConnectionError:
+                return False
+
+def while_check_internet():
+        while True:
+                if check_internet_connection():
+                        break
+
 def twitter_give_follow(driver, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip):
-        print("Estoy en twitter give follow")
+
         button_entry_get, url, data, return_accounts = values_action_follow(button_entry, entry_twitter_url)
         user_try = 1
         count = 0
@@ -850,7 +887,7 @@ def twitter_give_follow(driver, entry_twitter_url, button_entry, twitter_label_a
         for key, value in data.items():
                 # Variables para almacenar los valores
                 actions_if_vpn(temp.get_preferences_user(), label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip)
-                sleep(20)
+                while_check_internet()
                 id_value = key
                 email_value = value['email']
                 password_value = value['password']
@@ -901,11 +938,10 @@ def twitter_popup_comment_go_button(scrollable_frame_entries):
         for i, comment_entries in enumerate(scrollable_frame_entries):
                 comment = comment_entries.get()
                 comments_list_.append(comment)
-                print(f"Comentario {i+1}: {comment}")
         set_comments_list(comments_list_)
         return comments_list_       
 
-def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action):
+def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip):
         entry_value = int(button_entry.get())
         popup_comment_window = ctk.CTkToplevel()
         popup_comment_window.title("Comments window")
@@ -938,7 +974,7 @@ def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twit
 
         set_scrollable_frame_entries(scrollable_frame_entries)
 
-        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=lambda:[twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action), twitter_popup_comment_go_button(scrollable_frame_entries) , close_comment_window(popup_comment_window)], state="disabled")
+        popup_comment_window_button = ctk.CTkButton(scrollable_popup_frame, text='Go!', command=lambda:[twitter_give_comment(entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip), twitter_popup_comment_go_button(scrollable_frame_entries) , close_comment_window(popup_comment_window)], state="disabled")
         popup_comment_window_button.grid(row=entry_value, column=0)
 
         check_comments_inputs()
@@ -1001,10 +1037,9 @@ def last_step_twitter_url_actions(twitter_label_accounts, return_accounts, entry
         twitter_status(entry_twitter_url, button_entry)
 
 def twitter_url_actions(url, entry_twitter_url, button_entry, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_checkbox_follow, twitter_button_action, twitter_label_accounts):
-        input_message_in_textbox("Antes de url check")
         url_check_result = twitter_url_check(url, button_entry)
-        input_message_in_textbox("Despues de url check")
         if url_check_result == "actions":
+                temp.set_twitter_interactions(return_avaliable_accounts_for_actions(url))
                 return_accounts = check_result_actions(url_check_result, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                 entry_twitter_url, twitter_checkbox_follow, twitter_label_accounts)
                 
@@ -1013,14 +1048,16 @@ def twitter_url_actions(url, entry_twitter_url, button_entry, twitter_checkbox_l
                                                         entry_twitter_url, twitter_checkbox_follow)
 
         elif url_check_result == 'follow':
+                temp.set_twitter_interactions(return_avaliable_accounts_for_follow(url))
                 return_accounts = check_result_follow(entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like,
                                         twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action)
         else:
                 widget_disabled_invalid(twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action,
                                                                 entry_twitter_url, twitter_checkbox_follow)
                 return_accounts = 0
-                
-        last_step_twitter_url_actions(twitter_label_accounts, return_accounts, entry_twitter_url, button_entry)
+                temp.set_twitter_interactions(0)
+        temp.get_button_increase().configure(command=lambda:increase(button_entry, int(temp.get_twitter_interactions())))        
+        last_step_twitter_url_actions(twitter_label_accounts, temp.get_twitter_interactions(), entry_twitter_url, button_entry)
 
 def type_actions(entry_twitter_url, twitter_checkbox_follow, twitter_button_action, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt):
         entry_twitter_url.configure(border_color="green")
@@ -1065,7 +1102,7 @@ def twitter_status(entry_twitter_url, button_entry):
                 temp.set_twitter_url(None)
         else:
                 temp.set_twitter_url(entry_twitter_url.get())
-        temp.set_twitter_interactions(button_entry.get())
+        temp.set_button_status(button_entry.get())
 
 ################################################ LOGOUT ##################################################
 
@@ -1093,6 +1130,7 @@ def logout_option_content(options_frame, instance):
         logout_label(logout_container_frame)
         logout_label_quest_def(logout_container_frame)
         logout_button_yes_def(logout_container_frame, instance)
+        input_message_in_textbox("Opened logout menu!")
 
 def logout_user():
         import GraphicUI.ctk_login as login_app

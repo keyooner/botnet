@@ -831,7 +831,7 @@ def insertUsername(driver, username):
     return "Insert username! Ok!"
 
 def checkColorStep1(driver):
-    return get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
+    return get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[2]/div[1]/div")
 
 def checkColorFollowUser_1(driver):
     # Get the RGB values
@@ -841,7 +841,7 @@ def checkColorFollowUser_1(driver):
     return check_rgba_values(r1, g1, b1, a1, r2, g2, b2, a2)
 
 def checkColorStep2(driver):
-    return get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[4]/div[1]/div")
+    return get_background_color(driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div[2]/div[3]/div[1]/div")
 
 
 def checkColorFollowUser_2(driver):

@@ -1,7 +1,7 @@
 from nordvpn_switcher import initialize_VPN,rotate_VPN,terminate_VPN
 import time
 
-settings = initialize_VPN(save=1, area_input = ['random countries 20'])
+settings = initialize_VPN(save=1, area_input = ['Europe'])
 
 initialize_VPN(stored_settings=1)
 

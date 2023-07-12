@@ -4,7 +4,7 @@ import FirebaseFunctions.firebaseFaster as ff
 from PIL import Image
 import ctk_app_functions as ctkfun
 
-ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
+ctk.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
 
 def splitEmail(email):

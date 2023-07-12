@@ -3,11 +3,67 @@ import FirebaseFunctions.firebaseAuthentication as fa
 # Firebase library for Wrapper API Client
 import firebase
 import temp
-from collections import Counter
+import os
+import base64
+from cryptography.fernet import Fernet
 
 firebase = fa.initializeApp()
 db = firebase.database()
 auth = firebase.auth()
+
+def generate_key():
+        if not os.path.exists("key.key"):
+                key = Fernet.generate_key()
+                with open("key.key", "wb") as file_key:
+                        file_key.write(key)
+                        
+generate_key()
+
+def encrypt_value(value):
+        if not os.path.exists("key.key"):
+                raise Exception("There is no key. Please generate one!.")
+        
+        with open("key.key", "rb") as file_key:
+                key = file_key.read()
+        
+        fernet = Fernet(key)
+        encrypted_value = fernet.encrypt(value.encode())
+        return base64.b64encode(encrypted_value).decode()
+
+def decrypt_value(encrypted_value):
+        if not os.path.exists("key.key"):
+                raise Exception("There is no key. Please generate one!.")
+        
+        with open("key.key", "rb") as file_key:
+                key = file_key.read()
+        
+        fernet = Fernet(key)
+        decrypted_value = fernet.decrypt(base64.b64decode(encrypted_value)).decode()
+        return decrypted_value
+
+def encrypt_existing_passwords(email, password):
+        # Intentamos iniciar sesión. Si falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos los valores actuales del usuario
+        current_data = db.child("created_users").child(email_local).get(token).val()
+
+        # Encriptamos las contraseñas existentes y actualizamos la estructura de datos
+        encrypted_data = {}
+        for key, value in current_data.items():
+                encrypted_values = {}  
+                for nested_key, nested_value in value.items():
+                        if nested_key == "password":
+                                encrypted_values[nested_key] = encrypt_value(str(nested_value))
+                        else:
+                                encrypted_values[nested_key] = nested_value
+                encrypted_data[key] = encrypted_values
+
+        # Guardamos los valores encriptados en la base de datos
+        db.child("created_users").child(email_local).update(encrypted_data, token)
 
 def getLastValue(email, password):  # sourcery skip: do-not-use-bare-except
         # We try to sign in if this fails, throw exception
@@ -22,15 +78,48 @@ def getLastValue(email, password):  # sourcery skip: do-not-use-bare-except
                 return 1
 
 def loadValues(email, password, data: dict):
+        # Intentamos iniciar sesión. Si falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        id = getLastValue(email, password)
+
+        encrypted_password = encrypt_value(data["password"])
+        encrypted_data = {
+                f"ID-{id}": {
+                **data,
+                "password": encrypted_password
+                }
+        }
+
+        # Obtenemos los valores actuales del usuario
+        current_data = db.child("created_users").child(email_local).get(token).val()
+
+        # Actualizamos los valores actuales con los nuevos valores encriptados
+        current_data.update(encrypted_data)
+
+        # Guardamos los valores actualizados en la base de datos
+        db.child("created_users").child(email_local).update(current_data, token)
+
+def loadValuesPreferences(email, password, data):
         # We try to sign in if this fails, throw exception
         user = auth.sign_in_with_email_and_password(email = email, password = password)
 
         email_local = user['localId']
         token =  user['idToken']
 
-        id = getLastValue(email, password)
+        db.child("preferences_users").child(email_local).set(data, token)
 
-        db.child("created_users").child(email_local).child(f"ID-{id}").set(data, token)
+def getValuesPreferences(email, password):
+        # We try to sign in if this fails, throw exception
+        user = auth.sign_in_with_email_and_password(email = email, password = password)
+
+        email_local = user['localId']
+        token =  user['idToken']
+
+        db.child("preferences_users").child(email_local).get(token)
 
 def updateValues(email, password, email_find, update_state):
         # sourcery skip: avoid-builtin-shadow
@@ -67,7 +156,6 @@ def deleteValues(email, password):  # sourcery skip: avoid-builtin-shadow
         # Remove the last value
         db.child("created_users").child(email_local).child(f"ID-{id-1}").remove(token)
 
-
 def loadValuesInUser(email, password, data: dict):
 
         # We try to sign in if this fails, throw exception
@@ -87,14 +175,19 @@ def get_values(email, password):
 
         # Obtenemos todos los valores existentes para el usuario
         data = db.child("created_users").child(email_local).get(token)
-        
+
         # Creamos un diccionario para almacenar los valores
         values = {}
         for item in data.each():
                 key = item.key()
                 value = item.val()
+
+                # Desciframos la contraseña si existe
+                if "password" in value:
+                        value["password"] = decrypt_value(value["password"])
+
                 values[key] = value
-        
+
         return values
 
 def get_count_values_unlocked(email, password): # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
@@ -113,13 +206,16 @@ def get_count_values_unlocked(email, password): # sourcery skip: assign-if-exp, 
         unlocked_values = {}
         for key, value in sorted_data.items():
                 if value.get('state') == 'unlocked':
+                        if 'password' in value:
+                                value['password'] = decrypt_value(value['password'])
                         unlocked_values[key] = value
 
         if len(unlocked_values) == 0:
                 return 0
         else:
                 return len(unlocked_values)
-        
+
+
 def get_count_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
 
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
@@ -136,6 +232,8 @@ def get_count_values_locked(email, password):  # sourcery skip: assign-if-exp, d
         locked_values = {}
         for key, value in sorted_data.items():
                 if value.get('state') == 'locked':
+                        if 'password' in value:
+                                value['password'] = decrypt_value(value['password'])
                         locked_values[key] = value
 
         if len(locked_values) == 0:
@@ -159,6 +257,8 @@ def get_values_unlocked(email, password):  # sourcery skip: assign-if-exp, dict-
         unlocked_values = {}
         for key, value in sorted_data.items():
                 if value.get('state') == 'unlocked':
+                        if 'password' in value:
+                                value['password'] = decrypt_value(value['password'])
                         unlocked_values[key] = value
 
         if len(unlocked_values) == 0:
@@ -181,6 +281,8 @@ def get_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-co
         locked_values = {}
         for key, value in sorted_data.items():
                 if value.get('state') == 'locked':
+                        if 'password' in value:
+                                value['password'] = decrypt_value(value['password'])
                         locked_values[key] = value
 
         if len(locked_values) == 0:
@@ -209,6 +311,8 @@ def get_values_for_actions(email, password, n_times: int):
                 if count >= n_times:
                         break
                 if value.get('state') == 'unlocked':
+                        if 'password' in value:
+                                value['password'] = decrypt_value(value['password'])
                         email_twitter = value.get('email')
                         password_twitter = value.get('password')
                         user_twitter = value.get("user")
@@ -594,9 +698,9 @@ def get_count_values_for_actions(email, password, url):
         else:
                 emails_data1 = set([v['email'] for v in filtered_values.values()])
                 filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
-                emails_data2 = set([v['email'] for v in filtered_values.values()])
+                emails_data2 = set([v['email'] for v in filtered_values_2.values()])
                 filtered_data3 = {k: v for k, v in data2.items() if v['email'] not in emails_data2}
-                emails_data3 = set([v['email'] for v in filtered_values.values()])
+                emails_data3 = set([v['email'] for v in filtered_values_3.values()])
                 filtered_data4 = {k: v for k, v in data2.items() if v['email'] not in emails_data3}
                 
                 # Comprobar los tres conjuntos de datos filtrados y retornar el valor mínimo

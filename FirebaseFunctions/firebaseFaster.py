@@ -136,3 +136,9 @@ def split_url_actions(url):
 def split_url_follow(url):
         pattern = r"(https://twitter.com/)([A-Za-z0-9_]+)"
         return matches[2] if (matches := re.search(pattern, url)) else None
+    
+def set_preferences(data):
+    fdb.loadValuesPreferences(email_global_user, password_global_user, data)
+
+def get_preferences():
+    fdb.getValuesPreferences(email_global_user, password_global_user)

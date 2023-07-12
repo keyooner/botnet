@@ -9,10 +9,41 @@ twitter_interactions = None
 twitter_actions = None
 twitter_follow = None
 preferences_user = 'on'
-
+button_increase = None
+button_decrease = None
 vpn_switch_status_label = None
 vpn_switch_location_label = None
 vpn_switch_ip_label = None
+button_status = None
+label_accounts = None
+
+def set_label_accounts(new_label_accounts):
+    global label_accounts
+    label_accounts = new_label_accounts
+
+def get_label_accounts():
+    return label_accounts
+
+def set_button_status(new_button_status):
+    global button_status
+    button_status = new_button_status
+
+def get_button_status():
+    return button_status
+
+def set_button_decrease(new_button_decrease):
+    global button_decrease
+    button_decrease = new_button_decrease
+
+def get_button_decrease():
+    return button_decrease
+
+def set_button_increase(new_button_increase):
+    global button_increase
+    button_increase = new_button_increase
+
+def get_button_increase():
+    return button_increase
 
 def set_vpn_values(new_vpn_switch_status_label, new_vpn_switch_location_label, new_vpn_switch_ip_label):
     global vpn_switch_status_label

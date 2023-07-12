@@ -4,6 +4,7 @@ import re
 import FirebaseFunctions.firebaseAuthentication as fba
 import GraphicUI.ctk_app as gui_app
 import temp
+import FirebaseFunctions.firebaseFaster as ff
 
 def togglePasswordVisibility():
     if show_password.get():
@@ -26,6 +27,7 @@ def createWindowRegister():
         if verify == True:
             #print(show_info("info", 'Register Successfully', log, new_window))
             tkmb.showinfo(title = 'Register Successfully', message = log)
+            ff.set_preferences('on')
             secondPriority()
             close_window()
         else:
