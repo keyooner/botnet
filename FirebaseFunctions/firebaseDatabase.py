@@ -362,7 +362,7 @@ def get_count_values_for_follow(email, password, url):
                 emails_data1 = set([v['email'] for v in filtered_values.values()])
                 filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
                 
-                return filtered_data2
+                return len(filtered_data2)
 
 def get_values_for_like(email, password, url, n_items):
         # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
@@ -428,7 +428,7 @@ def get_count_values_for_like(email, password, url):
                 emails_data1 = set([v['email'] for v in filtered_values.values()])
                 filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
                 
-                return filtered_data2
+                return len(filtered_data2)
 
 def get_values_for_rt(email, password, url, n_items):
         # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
@@ -494,7 +494,7 @@ def get_count_values_for_rt(email, password, url):
                 emails_data1 = set([v['email'] for v in filtered_values.values()])
                 filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
                 
-                return filtered_data2
+                return len(filtered_data2)
         
 def get_values_for_comment(email, password, url, n_items):
         # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
@@ -560,7 +560,50 @@ def get_count_values_for_comment(email, password, url):
                 emails_data1 = set([v['email'] for v in filtered_values.values()])
                 filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
                 
-                return filtered_data2
+                return len(filtered_data2)
+
+def get_count_values_for_actions(email, password, url):
+        # # sourcery skip: collection-builtin-to-comprehension, comprehension-to-generator, inline-immediately-returned-variable
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("action_users").child(email_local).child(url).get(token)
+        if data.val() is None:
+                values ={}
+        else:
+        # Creamos un diccionario para almacenar los valores
+                values = {}
+                for item in data.each():
+                        key = item.key()
+                        value = item.val()
+                        values[key] = value
+                
+        filtered_values = {key: value for key, value in values.items() if value.get('like') == True}
+        filtered_values_2 = {key: value for key, value in values.items() if value.get('retweet') == True}
+        filtered_values_3 = {key: value for key, value in values.items() if value.get('comment') == True}
+
+        # Obtenemos los valores de los usuarios existentes en otra fuente
+        data2 = get_values_unlocked(temp.get_email(), temp.get_password())
+        
+        if data2 is None:
+                return 0
+        else:
+                emails_data1 = set([v['email'] for v in filtered_values.values()])
+                filtered_data2 = {k: v for k, v in data2.items() if v['email'] not in emails_data1}
+                emails_data2 = set([v['email'] for v in filtered_values.values()])
+                filtered_data3 = {k: v for k, v in data2.items() if v['email'] not in emails_data2}
+                emails_data3 = set([v['email'] for v in filtered_values.values()])
+                filtered_data4 = {k: v for k, v in data2.items() if v['email'] not in emails_data3}
+                
+                # Comprobar los tres conjuntos de datos filtrados y retornar el valor mínimo
+                if len(filtered_data2) > 0 and len(filtered_data3) > 0 and len(filtered_data4) > 0:
+                        return min(len(filtered_data2), len(filtered_data3), len(filtered_data4))
+                else:
+                        return 0
 
 # print(len(get_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120", 2)))
 # print(len(get_count_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120")))

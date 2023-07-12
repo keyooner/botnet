@@ -8,7 +8,29 @@ twitter_url = None
 twitter_interactions = None
 twitter_actions = None
 twitter_follow = None
+preferences_user = 'on'
 
+vpn_switch_status_label = None
+vpn_switch_location_label = None
+vpn_switch_ip_label = None
+
+def set_vpn_values(new_vpn_switch_status_label, new_vpn_switch_location_label, new_vpn_switch_ip_label):
+    global vpn_switch_status_label
+    global vpn_switch_location_label
+    global vpn_switch_ip_label
+    vpn_switch_status_label = new_vpn_switch_status_label
+    vpn_switch_location_label = new_vpn_switch_location_label
+    vpn_switch_ip_label = new_vpn_switch_ip_label
+    
+def get_vpn_values():
+    return vpn_switch_status_label, vpn_switch_location_label, vpn_switch_ip_label
+    
+def set_preferences_user(new_preferences_user):
+    global preferences_user
+    preferences_user = preferences_user
+
+def get_preferences_user():
+    return preferences_user
 
 def set_credentials(new_email, new_password):
     global email, password

@@ -1,8 +1,8 @@
 import temp
 import customtkinter as ctk
-import FirebaseFunctions.firebaseDatabase as fdb
-import ctk_app_functions as ctkfun
+import FirebaseFunctions.firebaseFaster as ff
 from PIL import Image
+import ctk_app_functions as ctkfun
 
 ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
@@ -79,6 +79,7 @@ class App(ctk.CTk):
         welcome_image_label.pack(anchor="center", expand=True)
 
         # create textbox frame
+        
         ctkfun.setInstance(self)
         ctkfun.create_textbox_entry()
 
@@ -93,11 +94,12 @@ class App(ctk.CTk):
         self.label_profile_user.grid(row=1, column=2, padx=20, pady=0, sticky="")
         self.label_profile_name = ctk.CTkLabel(master=self.profile_frame, text=f"Domain: {domain}")
         self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Accounts available: {fdb.get_count_values_unlocked(email_global, password_global)}")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Accounts available: {ff.get_count_values_unlocked_ff()}")
         self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_locked = ctk.CTkLabel(master=self.profile_frame, text=f"Locked accounts: {fdb.get_count_values_locked(email_global, password_global)}")
+        self.label_profile_locked = ctk.CTkLabel(master=self.profile_frame, text=f"Locked accounts: {ff.get_count_values_locked_ff()}")
         self.label_profile_locked.grid(row=4, column=2, padx=20, pady=0, sticky="")
         self.label_profile_vpn_status = ctk.CTkLabel(master=self.profile_frame, text=status_global)
+        self.get_status_color()
         self.label_profile_vpn_status.grid(row=5, column=2, padx=20, pady=0, sticky="")
         self.label_profile_vpn_location = ctk.CTkLabel(master=self.profile_frame, text=location_global)
         self.label_profile_vpn_location.grid(row=6, column=2, padx=20, pady=0, sticky="")
@@ -137,6 +139,12 @@ class App(ctk.CTk):
 ################################################ BASIC FUNCTIONS ########################################################################################
 #########################################################################################################################################################
 
+    def get_status_color(self):
+        if status_global == "VPN Status: Disconnected":
+            self.label_profile_vpn_status.configure(text_color = "#ff0000")
+        else:
+            self.label_profile_vpn_status.configure(text_color = "#00bb2d")
+            
     def open_input_dialog_event(self):
         dialog = ctk.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
         print("CTkInputDialog:", dialog.get_input())
@@ -193,14 +201,14 @@ class App(ctk.CTk):
                                     self.sidebar_logout_button)  
 
     def vpn_option_button_clicked(self):
-        ctkfun.vpn_option_content(self.options_frame, self.label_profile_vpn_status, self.label_profile_vpn_location, self.label_profile_vpn_ip)
+        ctkfun.vpn_option_content(self.options_frame)
         ctkfun.disable_option_button('vpn', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
                                     self.sidebar_vpn_button, self.sidebar_twitter_button, 
                                     self.sidebar_logout_button)
 
     def twitter_option_button_clicked(self):
-        ctkfun.twitter_option_content(self.options_frame, self)
+        ctkfun.twitter_option_content(self.options_frame, self, self.label_profile_vpn_status, self.label_profile_vpn_location, self.label_profile_vpn_ip)
         ctkfun.disable_option_button('twitter', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
                                     self.sidebar_vpn_button, self.sidebar_twitter_button, 
@@ -213,7 +221,7 @@ class App(ctk.CTk):
                                     self.sidebar_vpn_button, self.sidebar_twitter_button, 
                                     self.sidebar_logout_button)
             
-
+    ####################
 if __name__ == "__main__":
     app = App()
     app.mainloop()
