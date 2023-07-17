@@ -112,7 +112,7 @@ Easy way to use:
 
 ### Prerequisites 
 
-* Accounts: CPanel account to using the API to asociate the Twitter accounts to real emails.
+* Accounts: CPanel account to using the API to asociate the Twitter accounts and Firebase.
 * Software: VisualStudio Code or similar and Python
 * Frameworks: Firebase, Selenium, Cryptography, CustomTkinter, CTKTable, Faker, Firebase, IMAP Tools, NordVPN Switcher, Pillow and WebDriver Manager, 
 * Optional: Nord-VPN account
@@ -140,7 +140,8 @@ _Below is an example of how you can instruct your audience on installing and set
    pip install Selenium
    pip install webdriver-manager
    ```
-4. Enter your API info in `const.py`
+4. Enter your CPanel API and Firebase info in `const.py`
+   Cpanel
    ```sh
    CPANEL_API_TOKEN = "your_API_token"
    CPANEL_BASE_URL = "https://your_domain_.com:your_port/"
@@ -148,7 +149,20 @@ _Below is an example of how you can instruct your audience on installing and set
    IMAP_SERVER = "mail.raptoragency.es"
    DOMINIO = "your_domain_.com"
    ```
-5. Run the project and enjoy it 
+   Firebase
+   ```sh
+   CONFIG = {
+        "apiKey": "AIzaSyAPBY89KNnKBP0fYyAPUf-u5M7EyPc3u_U",
+        "authDomain": "tfm-bbdd-2f16f.firebaseapp.com",
+        "databaseURL": "https://tfm-bbdd-2f16f-default-rtdb.europe-west1.firebasedatabase.app",
+        "projectId": "tfm-bbdd-2f16f",
+        "storageBucket": "tfm-bbdd-2f16f.appspot.com",
+        "messagingSenderId": "830225056723",
+        "appId": "1:830225056723:web:39aef3e2cdf9efd33d6526",
+        "measurementId": "G-TGCX8QGXRY"
+     }
+   ```
+6. Run the project and enjoy it 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
