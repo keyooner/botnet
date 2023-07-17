@@ -31,7 +31,7 @@
   <p align="center">
     An amazing app to create influence on Twitter!
     <br />
-    <a href="https://github.com/keyooner/botnet"><strong>Explore documentation »</strong></a>
+    <a href="https://github.com/keyooner/botnet/blob/main/Documentation/botnet_twitter_manual.pdf"><strong>Explore documentation »</strong></a>
     <br />
     <br />
 </div>
@@ -184,7 +184,7 @@ Run the project and create or unlock accounts before do twitter actions.
 [![Twitter Actions Screenshot][twitter-actions-screenshot-light]](https://github.com/keyooner/botnet)
 [![Twitter Actions Screenshot][twitter-actions-screenshot-dark]](https://github.com/keyooner/botnet)
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://github.com/keyooner/botnet/blob/main/Documentation/botnet_twitter_manual.pdf)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
