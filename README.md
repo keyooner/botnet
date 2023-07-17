@@ -164,7 +164,10 @@ Solution: Ctrl + Shift + P -> Go to User.settings.json -> Add de following line:
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Run the project and create or unlock accounts before do twitter actions. 
+Run the project and create or unlock accounts before do twitter actions.
+
+[![Twitter Actions Screenshot][twitter-actions-screenshot-light]](https://github.com/keyooner/botnet)
+[![Twitter Actions Screenshot][twitter-actions-screenshot-dark]](https://github.com/keyooner/botnet)
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
@@ -201,3 +204,5 @@ Project Link: [https://github.com/keyooner/botnet](https://github.com/keyooner/b
 [twitter-url]: https://twitter.com/tfm_botnet
 [botnet-screenshot-light]: ReadmeImages/screenshot_light.png
 [botnet-screenshot-dark]: ReadmeImages/screenshot_dark.png
+[twitter-actions-screenshot-light]: ReadmeImages/twitter_actions_light.png
+[twitter-actions-screenshot-dark]: ReadmeImages/twitter_actions_dark.png
