@@ -89,7 +89,7 @@ def help_image(options_frame):
 
         youtube_image = ctk.CTkButton(options_frame, corner_radius=0, height=40, border_spacing=10, text="",
                                                 fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
-                                                image=youtube_image, anchor="w", command=lambda:open_url("https://youtube.com"))
+                                                image=youtube_image, anchor="w", command=lambda:open_url("https://youtu.be/E7b5wbdzx6M"))
         youtube_image.pack(padx=(10,10), pady=(10,10))
 
 def help_label_explain_2(options_frame):
@@ -102,7 +102,7 @@ def help_button_pdf_image(options_frame):
                                 size=(20, 20))
         label_button_explain_2 = ctk.CTkButton(options_frame, corner_radius=0, height=40, border_spacing=10, text="Demo botnet twitter.pdf",
                                                 fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
-                                                image=pdf_image, anchor="w", command=lambda:open_url("https://google.com"))
+                                                image=pdf_image, anchor="w", command=lambda:open_url("https://github.com/keyooner/botnet/blob/main/Documentation/botnet_twitter_manual.pdf"))
         label_button_explain_2.pack(padx=(10,10), pady=(10,10))
 
 def help_option_content(options_frame):
