@@ -53,7 +53,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
-        <li><a href="#bugs">Bugs</a></li>
+        <li><a href="#Issues">Issues</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -154,7 +154,7 @@ _Below is an example of how you can instruct your audience on installing and set
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- BUGS -->
-## Bugs
+## Issues
 VisualStudioCode can't import modules
 
 Solution: Ctrl + Shift + P -> Go to User.settings.json -> Add de following line: 
@@ -179,7 +179,8 @@ Created by us without restrctions.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@tfm_botnet](https://twitter.com/tfm_botnet)
+Cristian Agredano Momblan - [@tfm_botnet](https://twitter.com/tfm_botnet)
+Daniel Fernández Lozano - [@tfm_botnet](https://twitter.com/tfm_botnet)
 
 Project Link: [https://github.com/keyooner/botnet](https://github.com/keyooner/botnet)
 
