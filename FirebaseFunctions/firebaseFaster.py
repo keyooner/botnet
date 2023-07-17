@@ -98,6 +98,10 @@ def update_values_unlocked_ff():
     set_values_unlocked_ff()
     return values_unlocked
 
+def update_values_locked_ff():
+    set_values_locked_ff()
+    return values_locked
+
 def set_values_unlocked_ff():
     global values_unlocked
     values_unlocked = fdb.get_values_unlocked(email_global_user, password_global_user)
@@ -112,7 +116,7 @@ def set_values_locked_ff():
 def get_values_locked_ff():
     return values_locked
 
-def set_values_unlocked_ff():
+def set_count_values_unlocked_ff():
     global count_values_unlocked
     count_values_unlocked = fdb.get_count_values_unlocked(email_global_user, password_global_user)
     
@@ -141,4 +145,13 @@ def set_preferences(data):
     fdb.loadValuesPreferences(email_global_user, password_global_user, data)
 
 def get_preferences():
-    fdb.getValuesPreferences(email_global_user, password_global_user)
+    return fdb.getValuesPreferences(email_global_user, password_global_user)
+
+def get_last_user_create():
+    return fdb.getLastValueUser(email_global_user, password_global_user)
+
+def get_last_email_create():
+    return fdb.getLastValueEmail(email_global_user, password_global_user)
+
+def deleteValues():
+    fdb.deleteValues(email_global_user, password_global_user)

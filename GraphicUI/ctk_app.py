@@ -1,9 +1,6 @@
 import temp
 import customtkinter as ctk
-import FirebaseFunctions.firebaseFaster as ff
 from PIL import Image
-import ctk_app_functions as ctkfun
-
 ctk.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
 
@@ -20,6 +17,12 @@ ip_global = temp.get_vpn_ip()
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
+        while True:
+            if temp.get_email() is not None:
+                break
+            
+        import FirebaseFunctions.firebaseFaster as ff
+        import ctk_app_functions as ctkfun
         # configure window
         self.title("BotNet Twitter")
         self.geometry('1100x580')
@@ -78,33 +81,12 @@ class App(ctk.CTk):
         welcome_image_label = ctk.CTkLabel(self.options_frame, image=welcome_image, text="")
         welcome_image_label.pack(anchor="center", expand=True)
 
-        # create textbox frame
-        
-        ctkfun.setInstance(self)
-        ctkfun.create_textbox_entry()
-
         # create profile data frame
         self.profile_frame = ctk.CTkFrame(self)
         self.profile_frame.grid(row=0, column=3, padx=(20, 20), pady=(20, 0), sticky="nsew")
         self.label_profile_data = ctk.CTkLabel(master=self.profile_frame, text="User Info", font=ctk.CTkFont(size=13, weight="bold"))
         self.label_profile_data.grid(row=0, column=2, padx=20, pady=0, sticky="")
-        #! we call the function to obtain name and domain
-        name, domain = splitEmail(email_global)
-        self.label_profile_user = ctk.CTkLabel(master=self.profile_frame, text=f"User: {name}")
-        self.label_profile_user.grid(row=1, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_name = ctk.CTkLabel(master=self.profile_frame, text=f"Domain: {domain}")
-        self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Accounts available: {ff.get_count_values_unlocked_ff()}")
-        self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_locked = ctk.CTkLabel(master=self.profile_frame, text=f"Locked accounts: {ff.get_count_values_locked_ff()}")
-        self.label_profile_locked.grid(row=4, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_status = ctk.CTkLabel(master=self.profile_frame, text=status_global)
-        self.get_status_color()
-        self.label_profile_vpn_status.grid(row=5, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_location = ctk.CTkLabel(master=self.profile_frame, text=location_global)
-        self.label_profile_vpn_location.grid(row=6, column=2, padx=20, pady=0, sticky="")
-        self.label_profile_vpn_ip = ctk.CTkLabel(master=self.profile_frame, text=ip_global)
-        self.label_profile_vpn_ip.grid(row=7, column=2, padx=20, pady=0, sticky="")
+
 
         # create checkbox and switch frame
         self.image_frame = ctk.CTkFrame(self)
@@ -123,17 +105,38 @@ class App(ctk.CTk):
         
         github_image_label_keyooner = ctk.CTkLabel(self.image_frame, image=github_image_keyooner, text="", cursor="hand2")
         github_image_label_keyooner.pack(side="left", expand=True)
-
-        github_image_label_keyooner.bind("<Button-1>", lambda event: ctkfun.open_url("https://github.com/keyooner"))
-
+        
         github_image_dani5fdez = ctk.CTkImage(light_image=Image.open("GraphicUI/images/github_dani5fdez_light.png"),
                                 dark_image=Image.open("GraphicUI/images/github_dani5fdez_dark.png"),
                                 size=(80, 30))
         
         github_image_label_dani5fdez = ctk.CTkLabel(self.image_frame, image=github_image_dani5fdez, text="", cursor="hand2")
         github_image_label_dani5fdez.pack(side="right", expand=True)
-
+        
+        # create textbox frame
+        ctkfun.setInstance(self)
+        ctkfun.create_textbox_entry()
+        github_image_label_keyooner.bind("<Button-1>", lambda event: ctkfun.open_url("https://github.com/keyooner"))
         github_image_label_dani5fdez.bind("<Button-1>", lambda event: ctkfun.open_url("https://github.com/dani5fdez"))
+    
+        #! we call the function to obtain name and domain
+        email_global = temp.get_email()
+        name, domain = splitEmail(email_global)
+        self.label_profile_user = ctk.CTkLabel(master=self.profile_frame, text=f"User: {name}")
+        self.label_profile_user.grid(row=1, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_name = ctk.CTkLabel(master=self.profile_frame, text=f"Domain: {domain}")
+        self.label_profile_name.grid(row=2, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_interactions = ctk.CTkLabel(master=self.profile_frame, text=f"Accounts available: {ff.get_count_values_unlocked_ff()}")
+        self.label_profile_interactions.grid(row=3, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_locked = ctk.CTkLabel(master=self.profile_frame, text=f"Locked accounts: {ff.get_count_values_locked_ff()}")
+        self.label_profile_locked.grid(row=4, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_vpn_status = ctk.CTkLabel(master=self.profile_frame, text=status_global)
+        self.get_status_color()
+        self.label_profile_vpn_status.grid(row=5, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_vpn_location = ctk.CTkLabel(master=self.profile_frame, text=location_global)
+        self.label_profile_vpn_location.grid(row=6, column=2, padx=20, pady=0, sticky="")
+        self.label_profile_vpn_ip = ctk.CTkLabel(master=self.profile_frame, text=ip_global)
+        self.label_profile_vpn_ip.grid(row=7, column=2, padx=20, pady=0, sticky="")
 
 #########################################################################################################################################################
 ################################################ BASIC FUNCTIONS ########################################################################################
@@ -180,6 +183,7 @@ class App(ctk.CTk):
             self.logout_option_button_clicked()
 
     def help_option_button_clicked(self):
+        import ctk_app_functions as ctkfun
         ctkfun.help_option_content(self.options_frame)
         ctkfun.disable_option_button('help', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
@@ -187,20 +191,23 @@ class App(ctk.CTk):
                                     self.sidebar_logout_button)
 
     def accounts_option_button_clicked(self):
-        ctkfun.accounts_option_content(self.options_frame, self.label_profile_interactions)
+        import ctk_app_functions as ctkfun
+        ctkfun.accounts_option_content(self.options_frame, self.label_profile_interactions, self.label_profile_vpn_status,self.label_profile_vpn_location, self.label_profile_vpn_ip)
         ctkfun.disable_option_button('accounts', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
                                     self.sidebar_vpn_button, self.sidebar_twitter_button, 
                                     self.sidebar_logout_button)
 
     def unlock_option_button_clicked(self):
-        ctkfun.unlock_option_content(self.options_frame, self.label_profile_interactions, self.label_profile_locked)
+        import ctk_app_functions as ctkfun
+        ctkfun.unlock_option_content(self.options_frame, self.label_profile_interactions, self.label_profile_locked, self.label_profile_vpn_status, self.label_profile_vpn_location, self.label_profile_vpn_ip)
         ctkfun.disable_option_button('unlock', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
                                     self.sidebar_vpn_button, self.sidebar_twitter_button, 
                                     self.sidebar_logout_button)  
 
     def vpn_option_button_clicked(self):
+        import ctk_app_functions as ctkfun
         ctkfun.vpn_option_content(self.options_frame)
         ctkfun.disable_option_button('vpn', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
@@ -208,6 +215,7 @@ class App(ctk.CTk):
                                     self.sidebar_logout_button)
 
     def twitter_option_button_clicked(self):
+        import ctk_app_functions as ctkfun
         ctkfun.twitter_option_content(self.options_frame, self, self.label_profile_vpn_status, self.label_profile_vpn_location, self.label_profile_vpn_ip)
         ctkfun.disable_option_button('twitter', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 
@@ -215,6 +223,7 @@ class App(ctk.CTk):
                                     self.sidebar_logout_button)
 
     def logout_option_button_clicked(self):
+        import ctk_app_functions as ctkfun
         ctkfun.logout_option_content(self.options_frame, self) 
         ctkfun.disable_option_button('logout', self.sidebar_help_button, 
                                     self.sidebar_accounts_button, self.sidebar_unlock_button, 

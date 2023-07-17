@@ -76,6 +76,54 @@ def getLastValue(email, password):  # sourcery skip: do-not-use-bare-except
                 return last_id + 1
         except:
                 return 1
+        
+def getLastValueUser(email, password):
+        try:
+                # Iniciar sesión en Firebase con el email y contraseña proporcionados
+                user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+                # Obtener el diccionario de usuarios creados desde la base de datos
+                snapshot = db.child("created_users").child(user["localId"]).get(token=user['idToken']).val()
+
+                # Obtener una lista de los IDs (quitando el prefijo 'ID-') y ordenarlos
+                ids = [int(id_.replace('ID-', '')) for id_ in snapshot.keys()]
+                sorted_ids = sorted(ids)
+
+                if sorted_ids:
+                        # Obtener el último ID y el nombre de usuario asociado a ese ID
+                        last_id = 'ID-' + str(sorted_ids[-1])
+                        return snapshot[last_id]['user']
+                else:
+                        # Si no hay IDs en la lista, devolver None o algún valor que indique que no hay usuarios creados aún.
+                        return None
+        except Exception as e:
+                # Manejar cualquier excepción que pueda ocurrir durante el proceso y devolver un valor predeterminado (por ejemplo, None).
+                print(f"Error: {e}")
+        return None
+
+def getLastValueEmail(email, password):
+        try:
+                # Iniciar sesión en Firebase con el email y contraseña proporcionados
+                user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+                # Obtener el diccionario de usuarios creados desde la base de datos
+                snapshot = db.child("created_users").child(user["localId"]).get(token=user['idToken']).val()
+
+                # Obtener una lista de los IDs (quitando el prefijo 'ID-') y ordenarlos
+                ids = [int(id_.replace('ID-', '')) for id_ in snapshot.keys()]
+                sorted_ids = sorted(ids)
+
+                if sorted_ids:
+                        # Obtener el último ID y el nombre de usuario asociado a ese ID
+                        last_id = 'ID-' + str(sorted_ids[-1])
+                        return snapshot[last_id]['email']
+                else:
+                        # Si no hay IDs en la lista, devolver None o algún valor que indique que no hay usuarios creados aún.
+                        return None
+        except Exception as e:
+                # Manejar cualquier excepción que pueda ocurrir durante el proceso y devolver un valor predeterminado (por ejemplo, None).
+                print(f"Error: {e}")
+        return None
 
 def loadValues(email, password, data: dict):
         # Intentamos iniciar sesión. Si falla, lanzamos una excepción
@@ -86,22 +134,15 @@ def loadValues(email, password, data: dict):
 
         id = getLastValue(email, password)
 
-        encrypted_password = encrypt_value(data["password"])
         encrypted_data = {
                 f"ID-{id}": {
                 **data,
-                "password": encrypted_password
+                "password": encrypt_value(data["password"])  # Se encripta la contraseña
                 }
         }
 
-        # Obtenemos los valores actuales del usuario
-        current_data = db.child("created_users").child(email_local).get(token).val()
-
-        # Actualizamos los valores actuales con los nuevos valores encriptados
-        current_data.update(encrypted_data)
-
         # Guardamos los valores actualizados en la base de datos
-        db.child("created_users").child(email_local).update(current_data, token)
+        db.child("created_users").child(email_local).update(encrypted_data, token)
 
 def loadValuesPreferences(email, password, data):
         # We try to sign in if this fails, throw exception
@@ -119,8 +160,9 @@ def getValuesPreferences(email, password):
         email_local = user['localId']
         token =  user['idToken']
 
-        db.child("preferences_users").child(email_local).get(token)
-
+        return db.child("preferences_users").child(email_local).get(token).val()
+        
+        
 def updateValues(email, password, email_find, update_state):
         # sourcery skip: avoid-builtin-shadow
         
@@ -154,7 +196,7 @@ def deleteValues(email, password):  # sourcery skip: avoid-builtin-shadow
         id = getLastValue(email, password)
 
         # Remove the last value
-        db.child("created_users").child(email_local).child(f"ID-{id-1}").remove(token)
+        db.child("created_users").child(email_local).child(f"ID-{id}").remove(token)
 
 def loadValuesInUser(email, password, data: dict):
 
@@ -190,6 +232,30 @@ def get_values(email, password):
 
         return values
 
+def get_count_values(email, password):
+        # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
+        user = auth.sign_in_with_email_and_password(email=email, password=password)
+
+        email_local = user['localId']
+        token = user['idToken']
+
+        # Obtenemos todos los valores existentes para el usuario
+        data = db.child("created_users").child(email_local).get(token)
+
+        # Creamos un diccionario para almacenar los valores
+        values = {}
+        for item in data.each():
+                key = item.key()
+                value = item.val()
+
+                # Desciframos la contraseña si existe
+                if "password" in value:
+                        value["password"] = decrypt_value(value["password"])
+
+                values[key] = value
+
+        return values
+
 def get_count_values_unlocked(email, password): # sourcery skip: assign-if-exp, dict-comprehension, simplify-len-comparison
 
         # Intentamos iniciar sesión. Si esto falla, lanzamos una excepción
@@ -201,6 +267,8 @@ def get_count_values_unlocked(email, password): # sourcery skip: assign-if-exp, 
         # Obtenemos todos los valores existentes para el usuario
         data = db.child("created_users").child(email_local).get(token)
         data_dict = data.val()
+        if data_dict is None:
+                return 0
         sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
         # Creamos un diccionario para almacenar los valores desbloqueados
         unlocked_values = {}
@@ -227,6 +295,8 @@ def get_count_values_locked(email, password):  # sourcery skip: assign-if-exp, d
         # Obtenemos todos los valores existentes para el usuario
         data = db.child("created_users").child(email_local).get(token)
         data_dict = data.val()
+        if data_dict is None:
+                return 0
         sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
         # Creamos un diccionario para almacenar los valores desbloqueados
         locked_values = {}
@@ -252,6 +322,10 @@ def get_values_unlocked(email, password):  # sourcery skip: assign-if-exp, dict-
         # Obtenemos todos los valores existentes para el usuario
         data = db.child("created_users").child(email_local).get(token)
         data_dict = data.val()
+        
+        if data_dict is None:
+                return 0
+
         sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
         # Creamos un diccionario para almacenar los valores desbloqueados
         unlocked_values = {}
@@ -276,6 +350,10 @@ def get_values_locked(email, password):  # sourcery skip: assign-if-exp, dict-co
         # Obtenemos todos los valores existentes para el usuario
         data = db.child("created_users").child(email_local).get(token)
         data_dict = data.val()
+        
+        if data_dict is None:
+                return 0
+        
         sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
         # Creamos un diccionario para almacenar los valores desbloqueados
         locked_values = {}
@@ -301,7 +379,8 @@ def get_values_for_actions(email, password, n_times: int):
         data = db.child("created_users").child(email_local).get(token)
         # Convertir el objeto FirebaseResponse en un diccionario
         data_dict = data.val()
-        
+        if data_dict is None:
+                return 0
         # Ordenar los elementos del diccionario por clave
         sorted_data = {k: data_dict[k] for k in sorted(data_dict, key=lambda x: int(x.split('-')[1]))}
         # Creamos un diccionario para almacenar los valores desbloqueados

@@ -48,7 +48,7 @@ def readMailSuspiciousActivity(username, password):
         messages = list(mailbox.fetch(criteria="ALL"))
         for msg in reversed(messages):
             if ("Your Twitter confirmation code is" in msg.subject
-                and (datetime.datetime.now(datetime.timezone.utc) - msg.date).total_seconds() <= 1200):
+                and (datetime.datetime.now(datetime.timezone.utc) - msg.date).total_seconds() <= 240):
                 
                 # print(f"===== MESSAGE ID: {msg.uid} =====")
                 # print(f"From: {msg.from_}")

@@ -1,3 +1,4 @@
+import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -93,8 +94,28 @@ def step1Part3(driver):
     for action3 in actions3:
         twitter_actions(*action3)
 
+def while_check_internet():
+        while True:
+                if check_internet_connection():
+                        break
+
+def check_internet_connection():
+        # sourcery skip: remove-unnecessary-else, swap-if-else-branches
+        sleep(1)
+        try:
+                response = requests.get("https://www.google.com")
+                if response.status_code == 200:
+                        return True
+                else:
+                        return False
+        except requests.ConnectionError:
+                return False
+
 def step1CreateUserTwitter(driver, mail, name, year, month, day):
+    
     # Go to register page
+    while_check_internet()
+    
     go_page("Twitter Register Page", driver, url_register, "https://twitter.com/i/flow/signup")
     
     step1Part1(driver, name, mail)
@@ -155,7 +176,7 @@ def step7IntroduceUSername(driver, username):
         if action != "Find elements! OK!":
             return False
         split_word_clear(username, driver, div, selector, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/label/div/div[2]/div/input ")
-        sleep(1)
+        sleep(2)
         twitter_actions("Insert username button!", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div/div/div/div", True, False, None)
         return "Step 7! Create User! Ok!" 
     except ValueError:
@@ -184,7 +205,7 @@ def step9CreateUserTwitter(driver):
 
 def step10ChangeImageProfile(driver):
     actions = [
-        ("Go profile", driver, 2, "/html/body/div[1]/div/div/div[2]/header/div/div/div/div[1]/div[2]/nav/a[8]/div", True, False, None),
+        ("Go profile", driver, 2, "/html/body/div[1]/div/div/div[2]/header/div/div/div/div[1]/div[2]/nav/a[8]", True, False, None),
         ("Setup profile", driver, 2, "/html/body/div[1]/div/div/div[2]/main/div/div/div/div[1]/div/div[3]/div/div/div/div[2]/div[1]/div[2]/a/div", True, False, None),
         ("Insert photo", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div/input", False, True, rpt.randomImage(), False),
         ("Apply photo", driver, 2, "/html/body/div[1]/div/div/div[1]/div[2]/div[2]/div/div/div/div/div[2]/div[2]/div/div/div/div[1]/div/div/div/div/div/div[3]/div", True, False, None),
@@ -672,6 +693,7 @@ def twitter_actions(action, driver, type, element, click, send_keys, word_send_k
 # Function that go to the page
 def go_page(log, driver, url, expected_url):
     try:
+        while_check_internet()
         # Open the url
         driver.get(url)
         # Maximize the window

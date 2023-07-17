@@ -4,7 +4,6 @@ import re
 import FirebaseFunctions.firebaseAuthentication as fba
 import GraphicUI.ctk_app as gui_app
 import temp
-import FirebaseFunctions.firebaseFaster as ff
 
 def togglePasswordVisibility():
     if show_password.get():
@@ -27,6 +26,8 @@ def createWindowRegister():
         if verify == True:
             #print(show_info("info", 'Register Successfully', log, new_window))
             tkmb.showinfo(title = 'Register Successfully', message = log)
+            temp.set_credentials(email, password)
+            import FirebaseFunctions.firebaseFaster as ff
             ff.set_preferences('on')
             secondPriority()
             close_window()
@@ -35,7 +36,7 @@ def createWindowRegister():
             #show_info("error", 'Register Failed', log, new_window)
             tkmb.showerror(title = 'Register failed', message = log)
         
-        firstPriority()
+        # firstPriority()
         
     def close_window():
         new_window.destroy()
@@ -96,7 +97,7 @@ def createWindowRegister():
     password_input_reg2.pack(pady = 12, padx = 10)
     
     show_password = ctk.BooleanVar()
-    show_password_button = ctk.CTkCheckBox(register_frame, text="Mostrar contraseñas", variable=show_password, command=togglePasswordVisibilityForRegister)
+    show_password_button = ctk.CTkCheckBox(register_frame, text="Show passwords", variable=show_password, command=togglePasswordVisibilityForRegister)
     show_password_button.pack()
     
     # Create a register account button
@@ -229,7 +230,7 @@ def getEmail():
     return False, None
         
 # Appearance window tkinter app
-ctk.set_appearance_mode('light') # Modes: system (default), light, dark
+ctk.set_appearance_mode('System') # Modes: system (default), light, dark
 ctk.set_default_color_theme('green') # Themes: blue (default), dark-blue, green
 
 # Create main window tkinter app
@@ -268,7 +269,7 @@ password_input = ctk.CTkEntry(login_frame, placeholder_text = 'Password', show =
 password_input.pack(pady = 12, padx = 10)
 
 show_password = ctk.BooleanVar()
-show_password_button = ctk.CTkCheckBox(login_frame, text="Mostrar contraseña", variable=show_password, command=togglePasswordVisibility)
+show_password_button = ctk.CTkCheckBox(login_frame, text="Show password", variable=show_password, command=togglePasswordVisibility)
 show_password_button.pack()
 
 # Create a recover password button
@@ -304,5 +305,4 @@ register_button.pack(side='right', pady = 0, padx = 10)
 
 # Launch main window tkinter app
 main_window.mainloop()
-
 
