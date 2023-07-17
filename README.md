@@ -141,7 +141,7 @@ _Below is an example of how you can instruct your audience on installing and set
    pip install webdriver-manager
    ```
 4. Enter your CPanel API and Firebase info in `const.py`
-   Cpanel
+   _Cpanel
    ```sh
    CPANEL_API_TOKEN = "your_API_token"
    CPANEL_BASE_URL = "https://your_domain_.com:your_port/"
