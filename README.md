@@ -153,14 +153,14 @@ _Below is an example of how you can instruct your audience on installing and set
    Firebase
    ```sh
    CONFIG = {
-        "apiKey": "AIzaSyAPBY89KNnKBP0fYyAPUf-u5M7EyPc3u_U",
-        "authDomain": "tfm-bbdd-2f16f.firebaseapp.com",
-        "databaseURL": "https://tfm-bbdd-2f16f-default-rtdb.europe-west1.firebasedatabase.app",
-        "projectId": "tfm-bbdd-2f16f",
-        "storageBucket": "tfm-bbdd-2f16f.appspot.com",
-        "messagingSenderId": "830225056723",
-        "appId": "1:830225056723:web:39aef3e2cdf9efd33d6526",
-        "measurementId": "G-TGCX8QGXRY"
+        "apiKey": "your_key",
+        "authDomain": "your_auth_domain.com",
+        "databaseURL": "your_database_url.app",
+        "projectId": "your_project_id",
+        "storageBucket": "your_bucket_storage.com",
+        "messagingSenderId": "your_messaging_string_id",
+        "appId": "your:app:web:id",
+        "measurementId": "measurement-ID"
      }
    ```
 6. Run the project and enjoy it 
