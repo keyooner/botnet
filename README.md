@@ -61,8 +61,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
-        <li><a href="#errors">Erros</a></li>
-        <li><a href="#to-do">To do</a></li>
+        <li><a href="#bugs">Bugs</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -98,16 +97,14 @@ All this actions could be realised using a nord-vpn connection or not, you must 
 
 ### Built With
 
-This app it was created using Python, Selenium, Firebase, Fernet and CustomTkinter.
+This app it was created using:
 
-* [![Python][Python.com]][Python-url]
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
+* VisualStudio Code
+* Python
+* Selenium
+* Firebase
+* Cryptography
+* CustomTkinter
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -118,12 +115,15 @@ This app it was created using Python, Selenium, Firebase, Fernet and CustomTkint
 
 Easy way to use:
 
-* Download the project as a zip here: 
+* Download the project as a zip or clone the repository 
 
-* Execute twitter_botnet.exe
+* Run the project using VisualStudio Code or similar workspace.
 
-### Prerequisites
+### Prerequisites 
 
+* Accounts: CPanel account to using the API to asociate the Twitter accounts to real emails.
+* Software: VisualStudio Code or similar and Python
+* Frameworks: Firebase, Selenium, Cryptography, CustomTkinter, CTKTable, Faker, Firebase, IMAP Tools, NordVPN Switcher, Pillow and WebDriver Manager, 
 * Optional: Nord-VPN account
 
 
@@ -131,19 +131,33 @@ Easy way to use:
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Get a API Key at [https://cpanel.net](https://cpanel.net)
+2. Clone or download the repository
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   git clone https://github.com/keyooner/botnet.git
    ```
-3. Install NPM packages
+3. Install PIP packages
    ```sh
-   npm install
+   pip install cryptography
+   pip install customtkinter
+   pip install CTkTable
+   pip install Faker
+   pip install firebase-admin
+   pip install imap-tools
+   pip install nordvpn-switcher
+   pip install Pillow
+   pip install Selenium
+   pip install webdriver-manager
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+4. Enter your API info in `const.py`
+   ```sh
+   CPANEL_API_TOKEN = "your_API_token"
+   CPANEL_BASE_URL = "https://your_domain_.com:your_port/"
+   CPANEL_USERNAME = "your_username"
+   IMAP_SERVER = "mail.raptoragency.es"
+   DOMINIO = "your_domain_.com"
    ```
+5. Run the project and enjoy it 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -158,18 +172,11 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Errors
+## Bugs
 VisualStudioCode can't import modules
 
 Solution: Ctrl + Shift + P -> Go to User.settings.json -> Add de following line: 
 "terminal.integrated.env.windows": { "PYTHONPATH": "${workspaceFolder}" }
-  
-## To do 
-CONVERT A EXE
-
-pip install auto-pi-to-exe
-
-Go to ppdata/roaming/python39/scripts execute auto-pi-to-exe.exe and configure the options you need
 
 <!-- LICENSE -->
 ## License
@@ -207,7 +214,6 @@ Use this space to list resources you find helpful and would like to give credit 
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
 [contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
@@ -222,19 +228,3 @@ Use this space to list resources you find helpful and would like to give credit 
 [linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot-light]: ReadmeImages/screenshot_light.png
 [product-screenshot-dark]: ReadmeImages/screenshot_dark.png
-[Python.com]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
-[Python-url]: https://www.python.org 
-[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
-[Next-url]: https://nextjs.org/
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
