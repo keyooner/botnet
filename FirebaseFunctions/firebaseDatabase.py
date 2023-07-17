@@ -788,6 +788,6 @@ def get_count_values_for_actions(email, password, url):
                 else:
                         return 0
 
-# print(len(get_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120", 2)))
-# print(len(get_count_values_for_like("danifdezloz@gmail.com", "Dani5Fdez", "TFM_Botnet_-1674334209156997120")))
-# print(upload_updated_values("danifdezloz@gmail.com", "Dani5Fdez", reorder_ids((get_values("danifdezloz@gmail.com", "Dani5Fdez")))))
+# print(len(get_values_for_like("", "", "TFM_Botnet_-1674334209156997120", 2)))
+# print(len(get_count_values_for_like("", "", "TFM_Botnet_-1674334209156997120")))
+# print(upload_updated_values("", "", reorder_ids((get_values("", "")))))

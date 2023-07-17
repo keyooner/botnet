@@ -74,15 +74,15 @@ def input_message_in_textbox(message):
 def open_url(url):
         webbrowser.open(url)
 
-def unlock_label_help(options_frame):
-        unlock_label_option = ctk.CTkLabel(options_frame, text='Help', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
-        unlock_label_option.pack(padx=(10,10), pady=(10,10))
+def help_label(options_frame):
+        label_option = ctk.CTkLabel(options_frame, text='Help', justify='center', font=ctk.CTkFont(size=13, weight="bold"))
+        label_option.pack(padx=(10,10), pady=(10,10))
 
-def unlock_label_explain_help(options_frame):
-        unlock_label_explain_1 = ctk.CTkLabel(options_frame, text='You can see a demo tutorial if you do click on the image', justify='center')
-        unlock_label_explain_1.pack(padx=(10,10), pady=(10,10))
+def help_label_explain(options_frame):
+        label_explain_1 = ctk.CTkLabel(options_frame, text='You can see a demo tutorial if you do click on the image', justify='center')
+        label_explain_1.pack(padx=(10,10), pady=(10,10))
 
-def image_help(options_frame):
+def help_image(options_frame):
         youtube_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/Tutorial_youtube_light.png"),
                                 dark_image=Image.open("GraphicUI/images/Tutorial_youtube_dark.png"),
                                 size=(200, 75))
@@ -92,26 +92,26 @@ def image_help(options_frame):
                                                 image=youtube_image, anchor="w", command=lambda:open_url("https://youtube.com"))
         youtube_image.pack(padx=(10,10), pady=(10,10))
 
-def unlock_label_explain_2_help(options_frame):
-        unlock_label_explain_2 = ctk.CTkLabel(options_frame, text='You can download a pdf tutorial if you do click on the document', justify='center')
-        unlock_label_explain_2.pack(padx=(10,10), pady=(10,10))
+def help_label_explain_2(options_frame):
+        label_explain_2 = ctk.CTkLabel(options_frame, text='You can download a pdf tutorial if you do click on the document', justify='center')
+        label_explain_2.pack(padx=(10,10), pady=(10,10))
 
-def unlock_button_pdf_image_help(options_frame):
+def help_button_pdf_image(options_frame):
         pdf_image = ctk.CTkImage(light_image=Image.open("GraphicUI/images/pdf.png"),
                                 dark_image=Image.open("GraphicUI/images/pdf.png"),
                                 size=(20, 20))
-        unlock_button_explain_2 = ctk.CTkButton(options_frame, corner_radius=0, height=40, border_spacing=10, text="Demo botnet twitter.pdf",
+        label_button_explain_2 = ctk.CTkButton(options_frame, corner_radius=0, height=40, border_spacing=10, text="Demo botnet twitter.pdf",
                                                 fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
                                                 image=pdf_image, anchor="w", command=lambda:open_url("https://google.com"))
-        unlock_button_explain_2.pack(padx=(10,10), pady=(10,10))
+        label_button_explain_2.pack(padx=(10,10), pady=(10,10))
 
 def help_option_content(options_frame):
         
-        unlock_label_help(options_frame)
-        unlock_label_explain_help(options_frame)
-        image_help(options_frame)
-        unlock_label_explain_2_help(options_frame)
-        unlock_button_pdf_image_help(options_frame)
+        help_label(options_frame)
+        help_label_explain(options_frame)
+        help_image(options_frame)
+        help_label_explain_2(options_frame)
+        help_button_pdf_image(options_frame)
         input_message_in_textbox("Opened help menu!")
 
 ############################################### ACCOUNTS ##################################################
@@ -251,7 +251,6 @@ def _extracted_from_handle_vpn_switch_3(arg0):
         ff.set_preferences(arg0)
         
 def vpn_switch_creation(vpn_container_frame):
-        print(ff.get_preferences())
         vpn_switch_var = ctk.StringVar(value=ff.get_preferences())
         
         temp.set_vpn_mode(ff.get_preferences())
@@ -617,8 +616,6 @@ def twitter_checkCheckbox(entry_twitter_url, button_entry, twitter_checkbox_cmnt
                 checkbox_like = twitter_checkbox_like.get()
                 checkbox_rt = twitter_checkbox_rt.get()
                 
-                print(f"CF: {checkbox_follow} || CCMNT: {checkbox_cmnt} || CLIKE: {checkbox_like} || CRT: {checkbox_rt}")
-                
                 if (checkbox_like == 1 and checkbox_rt == 1 and checkbox_cmnt== 1):
                         twitter_popup_comment_window()
                         twitter_give_like(driver_twitter, entry_twitter_url, button_entry, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip)
@@ -702,7 +699,6 @@ def values_action_comment(button_entry, entry_twitter_url):
         data = ff.update_values_comment(url, button_entry_get)
         return_accounts = (url)
         comments = get_comments_list()
-        print(comments)
         return driver, button_entry_get, url, data, return_accounts, comments
 
 def step_action_comment(user_try, user_value, driver, email_value, password_value, url, count, comments, i):
@@ -1017,7 +1013,6 @@ def twitter_popup_comment_go_button(scrollable_frame_entries):
                 comment = comment_entries.get()
                 comments_list_.append(comment)
         set_comments_list(comments_list_)
-        print(comments_list_)
         return comments_list_       
 
 def twitter_popup_comment_window(button_entry, instance, entry_twitter_url, twitter_label_accounts, twitter_checkbox_follow, twitter_checkbox_like, twitter_checkbox_rt, twitter_checkbox_cmnt, twitter_button_action, label_profile_vpn_status,label_profile_vpn_location, label_profile_vpn_ip):

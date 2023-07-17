@@ -31,11 +31,11 @@ print(function.loginUserTwitterLocked(driver, email, password, user))
 # sleep(300)
 # print(function.closeSession(driver))
 
-# function.step1CreateUserTwitter(driver, "asjodjoidsjios@as.com", "Dani5Fdez", "1996", "Julio", "17")
+# function.step1CreateUserTwitter(driver, "", "", "1996", "Julio", "17")
 # function.step2CreateUserTwitter(driver)
 # function.step3CreateUserTwitter(driver)
 
-# data = fdb.get_values("danifdezloz@gmail.com", "Dani5Fdez")
+# data = fdb.get_values("", "")
 # limit = 20  # Número de veces que quieres iterar
 # count = 0
 
@@ -65,7 +65,7 @@ print(function.loginUserTwitterLocked(driver, email, password, user))
 #     if count >= limit:
 #         break
     
-# print(function.registerUserTwitter(driver, "danifdezloz@gmail.com", "Dani5Fdez"))
+# print(function.registerUserTwitter(driver, "", ""))
 # print(function.loginUserTwitterLocked(driver, email, password, user))
 # function.step10ChangeImageProfile(driver)
 # print(function.loginUserTwitter(driver, email, password, user))

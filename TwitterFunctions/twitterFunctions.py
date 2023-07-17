@@ -238,7 +238,7 @@ def verifyIsAccountLocked(driver, email):
                 twitter_actions("Continue to Twitter", driver, 2, "/html/body/div[2]/div/form/input[6]", True, False, None)
                 print("Cuenta autenticada")
                 # fdb.updateValues(temp.get_email(), temp.get_password(), email, "locked")
-                fdb.updateValues("danifdezloz@gmail.com", "Dani5Fdez", email, "unlocked")
+                fdb.updateValues(temp.get_email(), temp.get_password(), email, "unlocked")
                 return True
     return False
 
