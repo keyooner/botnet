@@ -53,7 +53,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
-        <li><a href="#Issues">Issues</a></li>
+        <li><a href="#issues">Issues</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -70,8 +70,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot-light]](https://example.com)
-[![Product Name Screen Shot][product-screenshot-dark]](https://example.com)
+[![Botnet Twitter Welcome Screenshot][botnet-screenshot-light]](https://example.com)
+[![Botnet Twitter Welcome Screenshot][botnet-screenshot-dark]](https://example.com)
 
 This app it was created as an easy way to crate fake influence on Twitter. It's easy to use and have many fantastics automated options. Also, you can choose between dark themes or light themes in the gui app.
 
@@ -157,14 +157,15 @@ _Below is an example of how you can instruct your audience on installing and set
 ## Issues
 VisualStudioCode can't import modules
 
-Solution: Ctrl + Shift + P -> Go to User.settings.json -> Add de following line: 
+Solution: Ctrl + Shift + P -> Go to User.settings.json -> Add de following line:
+```sh
 "terminal.integrated.env.windows": { "PYTHONPATH": "${workspaceFolder}" }
-
+```
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+Run the project and create or unlock accounts before do twitter actions. 
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
@@ -219,5 +220,5 @@ Use this space to list resources you find helpful and would like to give credit 
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot-light]: ReadmeImages/screenshot_light.png
-[product-screenshot-dark]: ReadmeImages/screenshot_dark.png
+[botnet-screenshot-light]: ReadmeImages/screenshot_light.png
+[botnet-screenshot-dark]: ReadmeImages/screenshot_dark.png
